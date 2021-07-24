@@ -3,7 +3,7 @@ import React from "react";
 import { Provider } from "react-redux";
 import store from "./store";
 import Login from "./screens/Login.jsx";
-// import Register from './screens/Register.jsx'
+import Register from "./screens/Register.jsx";
 // import Home from './screens/Home.jsx'
 import AddExpense from "./screens/AddExpense.jsx";
 // import EditExpense from './screens/EditExpense.jsx'
@@ -23,6 +23,7 @@ export default function App() {
         <Text>asdasdasdadas</Text> */}
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="AddExpense" component={AddExpense} />
         </Stack.Navigator>
         {/* </View> */}

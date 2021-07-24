@@ -35,9 +35,9 @@ export default function Login({ navigation }) {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          // if (data.message !== "Wrong Email/Password") {
-          //   navigation.navigate("Home");
-          // }
+          if (data.message !== "Wrong Email/Password") {
+            navigation.navigate("Home");
+          }
         })
         .catch((err) => {
           console.log(err);
