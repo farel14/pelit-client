@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { Text, View, Image, StyleSheet, TextInput, ScrollView, Pressable, Button } from "react-native"
 import ProgressBar from 'react-native-progress/Bar'
+import NumberFormat from 'react-number-format'
 
 const Separator = () => (
     <View style={styles.separator} />
@@ -22,6 +23,8 @@ export default function TargetProgress({navigation, route, activeTarget, spendin
     
     return (
         <>
+        <Text style={styles.targetTextBold}>Spending target until 31 July 2021:  
+            <NumberFormat value={activeTarget.monthlyTarget} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue => <Text style={styles.targetText}>{` ${formattedValue}`}</Text>} /> </Text>
         <View style={styles.container}>
             <Text style={styles.summaryText}>You’ve spent <Text style={spendProgress > 0.5 ? styles.over : styles.under }>{progressPercentage}</Text> of your monthly spending target
             </Text>
@@ -42,7 +45,7 @@ const styles = StyleSheet.create({
     },  
     container: {
         flex: 1,
-        marginTop: 20,
+        marginTop: 10,
         alignItems: 'center',
         marginBottom: 20
     },
@@ -50,6 +53,21 @@ const styles = StyleSheet.create({
         fontSize: 12,
         textAlign: 'center',
         color: 'white',
+        marginBottom: 10
+    },
+    targetTextBold: {
+        marginTop: 10,
+        fontSize: 14,
+        fontWeight: 'normal',
+        textAlign: 'center',
+        color: 'white',
+        marginBottom: 10
+    },
+    targetText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: 'aqua',
         marginBottom: 10
     },
     projectionText: {
