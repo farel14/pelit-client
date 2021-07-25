@@ -1,0 +1,4 @@
+export const SET_USER = 'SET_USER'
+export const SET_BADGES = 'SET_BADGES'
+export const SET_ACTIVE_TARGET = 'SET_ACTIVE_TARGET'
+export const TOGGLE_LOADER_PROFILE = 'TOGGLE_LOADER_PROFILE'
