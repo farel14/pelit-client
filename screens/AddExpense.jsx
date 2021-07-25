@@ -1,5 +1,7 @@
 import React from "react";
 import { View, Text, Button, StyleSheet, TextInput } from "react-native"
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { useSelector, useDispatch } from 'react-redux'
 import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select'
@@ -14,6 +16,7 @@ export default function AddExpense({ navigation, route }) {
     const [date, setDate] = useState(new Date())
     const [amount, setAmount] = useState(0)
     const [receiptImage, setReceiptImage] = useState('')
+    const [UserId, setUserId] = useState('')
 
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
@@ -23,9 +26,18 @@ export default function AddExpense({ navigation, route }) {
     const expenseItems = expenseChoices.map(ele => ({ label: ele, value: ele }))
     const incomeItems = incomeChoices.map(ele => ({ label: ele, value: ele }))
 
+    useEffect(() => {
+        async function fetchStart() {
+            const dataAsyncUser = await AsyncStorage.getItem('@dataUser')
+            setUserId(dataAsyncUser.id)
+        }
+        fetchStart()
+    }, [])
+
     const dateHandler = (event, selectedDate) => {
         const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'android');
+        // setShow(Platform.OS === 'android');
+        setShow(false)
         setDate(currentDate);
     };
 
@@ -43,16 +55,18 @@ export default function AddExpense({ navigation, route }) {
     async function submitHandler(e) {
         // data diubah jadi form
         const data = { type, category, name, date, amount, receiptImage }
+        // console.log(data)
         const payload = new FormData();
         payload.append("type", type);
         payload.append("category", category);
         payload.append("name", name);
-        payload.append("date", date);
+        payload.append("fullDate", date.toSt);
         payload.append("amount", amount);
         payload.append("receiptImage", receiptImage);
   
-        dispatch(postTransaction(payload))
-        navigation.navigate('Home')
+        // console.log(payload)
+        dispatch(postTransaction(payload, userid))
+        // navigation.navigate('Home')
     }
 
     return (
@@ -130,6 +144,7 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     buttonStyle: {
-        backgroundColor: 'green'
+        backgroundColor: 'green',
+        color: 'black'
     }
 })

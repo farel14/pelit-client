@@ -1,4 +1,4 @@
-import { SET_TRANSACTION } from "../fileTypes"
+import { SET_TRANSACTION } from "./actionTypes"
 
 const initialState = {
     transaction: {},

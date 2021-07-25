@@ -10,12 +10,14 @@ export function setTransaction(payload) {
 export function postTransaction(payload) {
     return async (dispatch) => {
         try {
+            // console.log(payload, 'dari action')
             let res = await fetch('http://localhost:3000/transactions', {
-                method: 'POST', // or 'PUT'
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                body: JSON.stringify(payload),
+                method: 'POST',
+                // headers: {
+                //     'Content-Type': 'multipart/form-data',
+                // },
+                // body: JSON.stringify(payload),
+                body: payload
             })
             res = await res.json()
             console.log('Success:', res);
