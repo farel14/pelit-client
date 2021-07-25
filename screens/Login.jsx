@@ -22,8 +22,8 @@ export default function Login({ navigation }) {
     else if (!email) Alert.alert("Please input your email");
     else if (!password) Alert.alert("Please input your password");
     else {
-      console.log(email, password);
       try {
+        console.log(email, password);
         const response = await fetch("https://pelit-app.herokuapp.com/login", {
           method: "POST",
           headers: {
@@ -31,22 +31,16 @@ export default function Login({ navigation }) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: email.toLowerCase().replace(" ", ""),
+            email: email.replace(" ", ""),
             password,
           }),
         });
         const result = await response.json();
+        const { data } = result;
 
-        const dataUser = {
-          balance: result.data.balance,
-          email: result.data.email,
-          fullName: result.data.fullName,
-          id: result.data.id,
-          photoProfile: result.data.photoProfile,
-        };
-        if (result.data.message !== "Wrong Email/Password") {
-          await AsyncStorage.setItem("@dataUser", JSON.stringify(dataUser));
-          navigation.navigate("Home", { dataUser });
+        if (result.access_token) {
+          await AsyncStorage.setItem("@dataUser", JSON.stringify(data));
+          navigation.navigate("Home", { dataUser: data });
         }
       } catch (err) {
         console.log(err);

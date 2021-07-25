@@ -8,13 +8,101 @@ import {
   TextInput,
   Image,
   KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
+import { monthYearFormatter, monthFormatter } from "../helpers/dateFormatter";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
-export default function DateCard({ navigation }) {
+export default function DateCard({ navigation, dataUser }) {
+  const [dataAsyncUser, setDataAsyncUser] = useState("");
+  async function getItem() {
+    const dataAsyncUser = await AsyncStorage.getItem("@dataUser");
+    setDataAsyncUser(JSON.parse(dataAsyncUser));
+  }
+  useEffect(() => {
+    getItem();
+  }, []);
+  if (!dataAsyncUser)
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+
+  console.log(dataAsyncUser.Transactions);
+  // const month = monthFormatter();
+  // console.log(dataUser);
   return (
     <View style={styles.container}>
       {/* <Text style={styles.textWarning}>You Have No Recorded Transactions</Text> */}
-      <View style={{ alignItems: "center" }}>
+      {dataAsyncUser.Transactions.data.map((data) => (
+        <View style={{ alignItems: "center" }}>
+          <View style={styles.cardPerDate}>
+            <View
+              style={{
+                flexDirection: "row",
+              }}
+            >
+              <Text style={styles.textDateCard}>
+                {data.date} {monthFormatter(data.month)}
+              </Text>
+              <Text style={styles.textTotalCard}>{data.amount}</Text>
+            </View>
+            <Text style={styles.borderTitleCard}></Text>
+            <View
+              style={{
+                flexDirection: "row",
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: 200,
+                }}
+              >
+                <Text style={styles.simbolListCard}>-</Text>
+                <Text style={styles.textListCard}>{data.title}</Text>
+              </View>
+              <Text style={styles.textListCard}>{data.amount}</Text>
+            </View>
+            {/* <View
+              style={{
+                flexDirection: "row",
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: 200,
+                }}
+              >
+                <Text style={styles.simbolListCard}>-</Text>
+                <Text style={styles.textListCard}>Transportion</Text>
+              </View>
+              <Text style={styles.textListCard}>-50,000</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: 200,
+                }}
+              >
+                <Text style={styles.simbolListCard}>-</Text>
+                <Text style={styles.textListCard}>Health</Text>
+              </View>
+              <Text style={styles.textListCard}>-1,000,000</Text>
+            </View> */}
+          </View>
+        </View>
+      ))}
+
+      {/* <View style={{ alignItems: "center" }}>
         <View style={styles.cardPerDate}>
           <View
             style={{
@@ -74,7 +162,7 @@ export default function DateCard({ navigation }) {
             <Text style={styles.textListCard}>-1,000,000</Text>
           </View>
         </View>
-      </View>
+      </View> */}
     </View>
   );
 }

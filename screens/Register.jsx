@@ -14,6 +14,7 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const keyboardVerticalOffset = Platform.OS === "android" ? -25 : 0;
 
   function handleRegisterButton() {
     if (!email && !password)
@@ -37,8 +38,8 @@ export default function Register({ navigation }) {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          Alert.alert("Registered and password");
-          navigation.navigate("Home");
+          Alert.alert("Registered has been successfully");
+          navigation.navigate("Login");
         })
         .catch((err) => {
           console.log(err);
@@ -48,33 +49,39 @@ export default function Register({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={{
-          uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
-        }}
-      />
-      <Text style={styles.text}>Full Name</Text>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(e) => setFullName(e)}
-      ></TextInput>
-      <Text style={styles.text}>Email</Text>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(e) => setEmail(e)}
-      ></TextInput>
-      <Text style={styles.text}>Password</Text>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(e) => setPassword(e)}
-      ></TextInput>
-      <TouchableOpacity
-        style={styles.buttonRegister}
-        onPress={handleRegisterButton}
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={keyboardVerticalOffset}
       >
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
+        <Image
+          style={styles.logo}
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
+          }}
+        />
+        <Text style={styles.text}>Full Name</Text>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(e) => setFullName(e)}
+        ></TextInput>
+        <Text style={styles.text}>Email</Text>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(e) => setEmail(e)}
+        ></TextInput>
+        <Text style={styles.text}>Password</Text>
+        <TextInput
+          style={styles.textInput}
+          secureTextEntry={true}
+          onChangeText={(e) => setPassword(e)}
+        ></TextInput>
+        <TouchableOpacity
+          style={styles.buttonRegister}
+          onPress={handleRegisterButton}
+        >
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </View>
   );
 }

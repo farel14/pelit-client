@@ -8,72 +8,81 @@ import {
   TextInput,
   Image,
   KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
 import DateCard from "../components/DateCard";
+import { monthYearFormatter } from "../helpers/dateFormatter";
 
 export default function Home({ navigation, route }) {
   const { dataUser } = route.params;
-  console.log(dataUser);
+  const date = new Date();
+  const monthYear = monthYearFormatter(date);
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
+      <ScrollView>
         <View
           style={{
             flexDirection: "row",
+            justifyContent: "space-between",
           }}
         >
-          <Text style={styles.textTop}>July 2021</Text>
-          <TouchableOpacity style={styles.buttonAdd}>
-            <Text style={styles.textAdd}>+</Text>
+          <View
+            style={{
+              flexDirection: "row",
+            }}
+          >
+            <Text style={styles.textTop}>{monthYear}</Text>
+            <TouchableOpacity style={styles.buttonAdd}>
+              <Text style={styles.textAdd}>+</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.textTop}>Hi, {dataUser.fullName}!</Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={styles.colTitle}>Income</Text>
+          <Text style={styles.colTitle}>Expense</Text>
+          <Text style={styles.colTitle}>Balance</Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={styles.colBody}>
+            {dataUser.Transactions.totalIncome}
+          </Text>
+          <Text style={styles.colBody}>
+            {dataUser.Transactions.totalExpense}
+          </Text>
+          <Text style={styles.colBody}>{dataUser.balance}</Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            marginTop: 20,
+          }}
+        >
+          <Text style={styles.textGroupBy}>Group By:</Text>
+          <TouchableOpacity style={styles.buttonDate}>
+            <Text style={styles.textGroupBy}>Date</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonCategory}>
+            <Text style={styles.textGroupBy}>Category</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.textTop}>Hi, Faisal</Text>
-      </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-        }}
-      >
-        <Text style={styles.colTitle}>Income</Text>
-        <Text style={styles.colTitle}>Expense</Text>
-        <Text style={styles.colTitle}>Balance</Text>
-      </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-        }}
-      >
-        <Text style={styles.colBody}>0</Text>
-        <Text style={styles.colBody}>0</Text>
-        <Text style={styles.colBody}>0</Text>
-      </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          marginTop: 20,
-        }}
-      >
-        <Text style={styles.textGroupBy}>Group By:</Text>
-        <TouchableOpacity style={styles.buttonDate}>
-          <Text style={styles.textGroupBy}>Date</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonCategory}>
-          <Text style={styles.textGroupBy}>Category</Text>
-        </TouchableOpacity>
-      </View>
-      {/* <Text style={styles.textWarning}>You Have No Recorded Transactions</Text> */}
-      <DateCard></DateCard>
+        {/* <Text style={styles.textWarning}>You Have No Recorded Transactions</Text> */}
+        <DateCard></DateCard>
+      </ScrollView>
     </View>
   );
 }
@@ -90,14 +99,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   colTitle: {
-    width: 100,
+    width: 110,
     marginTop: 10,
     fontSize: 18,
     textAlign: "center",
   },
   colBody: {
-    width: 100,
-    fontSize: 18,
+    width: 110,
+    fontSize: 15,
     textAlign: "center",
   },
   textGroupBy: {
