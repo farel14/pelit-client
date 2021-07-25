@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 
-export default function Register() {
+export default function Register({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -29,7 +29,7 @@ export default function Register() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          email: email.toLowerCase(),
           password,
           fullName,
         }),
@@ -37,6 +37,8 @@ export default function Register() {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
+          Alert.alert("Registered and password");
+          navigation.navigate("Home");
         })
         .catch((err) => {
           console.log(err);
