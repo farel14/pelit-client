@@ -9,64 +9,74 @@ import {
   Image,
   KeyboardAvoidingView,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPasswordl] = useState("");
+  const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
 
-  function handleLoginButton() {
+  async function handleLoginButton() {
     if (!email && !password)
       Alert.alert("Please input your email and password");
     else if (!email) Alert.alert("Please input your email");
     else if (!password) Alert.alert("Please input your password");
     else {
-      console.log(email, password);
-      fetch("https://pelit-app.herokuapp.com/login", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          if (data.message !== "Wrong Email/Password") {
-            navigation.navigate("Home");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
+      try {
+        console.log(email, password);
+        const response = await fetch("https://pelit-app.herokuapp.com/login", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email.replace(" ", ""),
+            password,
+          }),
         });
+        const result = await response.json();
+        const { data } = result;
+
+        if (result.access_token) {
+          await AsyncStorage.setItem("@dataUser", JSON.stringify(data));
+          navigation.navigate("Home", { dataUser: data });
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 
   function handleRegisterButton() {
-    navigation.navigate("Register");
+    navigation.navigate("Register", {});
   }
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={{
-          uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
-        }}
-      />
-      <Text style={styles.text}>Email</Text>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(e) => setEmail(e)}
-      ></TextInput>
-      <Text style={styles.text}>Password</Text>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(e) => setPasswordl(e)}
-      ></TextInput>
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={keyboardVerticalOffset}
+      >
+        <Image
+          style={styles.logo}
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
+          }}
+        />
+
+        <Text style={styles.text}>Email</Text>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(e) => setEmail(e)}
+        ></TextInput>
+        <Text style={styles.text}>Password</Text>
+        <TextInput
+          secureTextEntry={true}
+          style={styles.textInput}
+          onChangeText={(e) => setPasswordl(e)}
+        ></TextInput>
+      </KeyboardAvoidingView>
       <TouchableOpacity style={styles.buttonLogin} onPress={handleLoginButton}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
