@@ -4,10 +4,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useState } from "react";
 import RNPickerSelect from 'react-native-picker-select'
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {postTransaction} from '../store/actions'
+import {postTransaction, fetchTransaction} from '../store/actions'
 
 export default function EditExpense({ navigation, route }) {
     const dispatch = useDispatch()
+    const {TransactionId} = route.params
     const [type, setType] = useState('')
     const [category, setCategory] = useState('')
     const [name, setName] = useState('')
@@ -17,15 +18,26 @@ export default function EditExpense({ navigation, route }) {
 
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
-
-    // useEffect(() => {
-    //     dispatch(fetchTransaction())
-    // }, [])
-
+    
     const expenseChoices = ['Housing', 'Transportation', 'Food & Beverage', 'Utilities', 'Insurance', 'Medical & Healthcare', 'Saving, Investing, & Debt Payments', 'Personal Spending', 'Other Expense']
     const incomeChoices = ['Salary', 'Wages', 'Commission', 'Interest', 'Investments', 'Gifts', 'Allowance', 'Other Income']
     const expenseItems = expenseChoices.map(ele => ({ label: ele, value: ele }))
     const incomeItems = incomeChoices.map(ele => ({ label: ele, value: ele }))
+    
+    useEffect(() => {
+        async function fetchStart() {
+            await dispatch(fetchTransaction(TransactionId))
+            const transaction = useSelector(state => state.transaction)
+            setType(transaction.type)
+            setCategory(transaction.category)
+            setName(transaction.name)
+            setDate(transaction.date)
+            setAmount(transaction.amount)
+            // setReceiptImage(transaction.type)
+        }
+        fetchStart()
+    }, [])
+
 
     const dateHandler = (event, selectedDate) => {
         const currentDate = selectedDate || date;
