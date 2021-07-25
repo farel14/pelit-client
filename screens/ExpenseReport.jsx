@@ -1,12 +1,12 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, TextInput } from "react-native"
+import { View, Text, Button, StyleSheet, TextInput, ScrollView } from "react-native"
 
 export default function ExpenseReport({ navigation, route }) {
 
     return (
         <ScrollView>
             <View style={styles.containerView}>
-                <Text>Profile</Text>
+                <Text>Report</Text>
             </View>
         </ScrollView>
     )

@@ -7,6 +7,7 @@ import Register from "./screens/Register.jsx";
 import Home from "./screens/Home.jsx";
 import AddExpense from "./screens/AddExpense.jsx";
 import EditExpense from "./screens/EditExpense";
+import Dashboard from "./screens/Dashboard.jsx";
 import MyProfile from "./screens/MyProfile.jsx";
 import ExpenseReport from "./screens/ExpenseReport.jsx";
 import { StyleSheet, Text, View } from "react-native";
@@ -28,6 +29,8 @@ export default function App() {
           <Stack.Screen name="AddExpense" component={AddExpense} />
           <Stack.Screen name="EditExpense" component={EditExpense} />
           <Stack.Screen name="MyProfile" component={MyProfile} />
+          <Stack.Screen name="ExpenseReport" component={ExpenseReport} />
+          <Stack.Screen name="My Dashboard" component={Dashboard} />
           <Stack.Screen name="ExpenseReport" component={ExpenseReport} />
         </Stack.Navigator>
         {/* </View> */}
