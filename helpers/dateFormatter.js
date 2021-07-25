@@ -13,3 +13,15 @@ export function dateFormatter(date) {
     
     return `${day} ${monthName} ${year}`;  
 }
+
+// Formatting month from numberic to string
+export function monthFormatter(date) {
+    let monthNames =["January","February","March","April",
+                    "May","June","July","August",
+                    "September", "October","November","December"];
+    
+    let monthIndex = date.getMonth();
+    let monthName = monthNames[monthIndex];
+    
+    return `${monthName}`;  
+}

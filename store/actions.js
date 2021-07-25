@@ -1,4 +1,4 @@
-import { } from './actionTypes.js'
+import { } from './actionTypesGaluh.js'
 
 export function postTransaction(data) {
     return async (dispatch) => {
