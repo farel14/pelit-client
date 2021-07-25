@@ -43,7 +43,15 @@ export default function AddExpense({ navigation, route }) {
     async function submitHandler(e) {
         // data diubah jadi form
         const data = { type, category, name, date, amount, receiptImage }
-        dispatch(postTransaction(data))
+        const payload = new FormData();
+        payload.append("type", type);
+        payload.append("category", category);
+        payload.append("name", name);
+        payload.append("date", date);
+        payload.append("amount", amount);
+        payload.append("receiptImage", receiptImage);
+  
+        dispatch(postTransaction(payload))
         navigation.navigate('Home')
     }
 
