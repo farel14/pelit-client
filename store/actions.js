@@ -40,6 +40,7 @@ export function postOcr(payload) {
             })
             res = await res.json()
             console.log('Success:', res);
+            return res
         } catch (error) {
             console.error('Error:', error)
         }

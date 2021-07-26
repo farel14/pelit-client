@@ -1,8 +1,10 @@
-import React, {} from "react"
+import React, { useState } from "react"
 import {ImageBackground, View, TouchableOpacity, Text} from 'react-native'
 
 const CameraPreview = ({photo, retakePicture, savePhoto}) => {
     // console.log('sdsfds', photo)
+  // const [isLoading, setLoading] = useState(false)
+
     return (
       <View
         style={{

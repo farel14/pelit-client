@@ -1,16 +1,18 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Platform, ActivityIndicator } from 'react-native'
 import { Camera } from 'expo-camera'
 import CameraPreview from '../components/CameraPreview'
-import {useDispatch} from 'react-redux'
-import {postOcr} from '../store/actions'
+import { useDispatch } from 'react-redux'
+import { postOcr } from '../store/actions'
+import * as ImagePicker from 'expo-image-picker';
 
-export default function AddRecord({navigation, route}) {
+export default function AddRecord({ navigation, route }) {
     const dispatch = useDispatch()
     const [startCamera, setStartCamera] = useState(false)
     const [previewVisible, setPreviewVisible] = useState(false)
     const [capturedImage, setCapturedImage] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     async function startCameraHandler() {
         const { status } = await Camera.requestPermissionsAsync()
@@ -22,40 +24,135 @@ export default function AddRecord({navigation, route}) {
         }
     }
 
-    const savePhotoHandler = () => {
+    const savePhotoHandler = async () => {
         const payload = new FormData();
-        payload.append("imageUrl", capturedImage);
+        // payload.append("imageUrl", capturedImage.uri);
+        const fileName = 'receiptImage'
+        const mimeType = 'image/jpeg'
+        payload.append('receiptImage', { uri: capturedImage.uri, name: fileName, type: mimeType })
+        payload.append("dummyText", 'dummy');
 
-        dispatch(postOcr(payload))
+        // !kirim data ke ocr
+        const result = await dispatch(postOcr(payload))
         // dispatch(postOcr(capturedImage.uri))
+        if (!result.cancelled) {
+            // console.log('tidak masuk', result)
+            setCapturedImage(result);
+            setIsLoading(true)
+            const processedImage = await postToServer(result)
+            if (processedImage) {
+                // e.preventDefault()
+                console.log('siap-siap sebelum navigate', processedImage)
+                setIsLoading(false)
+                navigation.navigate('AddExpense', {data: processedImage, imageUri: result.uri})
+            }
+        }
+        
     }
     const retakePictureHandler = () => {
-      setCapturedImage(null)
-      setPreviewVisible(false)
-      startCameraHandler()
+        setCapturedImage(null)
+        setPreviewVisible(false)
+        startCameraHandler()
     }
-    function testFetch() {
-        console.log('masuk')
-        fetch('http://192.168.100.9:3000/transactions/1')
-        .then(res => res.json())
-        .then(data => console.log(data))
-        .catch(err => console.error(err))
+    // function testFetch() {
+    //     console.log('masuk')
+    //     fetch('http://192.168.100.9:3000/transactions/1')
+    //     .then(res => res.json())
+    //     .then(data => console.log(data))
+    //     .catch(err => console.error(err))
+    // }
+
+
+    async function imagePickerHandler() {
+        console.log('gottem')
+        // (async () => {
+        if (Platform.OS !== 'web') {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
+                return
+            }
+        }
+        //   })();
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            // aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.cancelled) {
+            // console.log('tidak masuk', result)
+            setCapturedImage(result);
+            setIsLoading(true)
+            const processedImage = await postToServer(result)
+            if (processedImage) {
+                // e.preventDefault()
+                console.log('siap-siap sebelum naviagate', processedImage)
+                setIsLoading(false)
+                navigation.navigate('AddExpense', {data: processedImage, imageUri: result.uri})
+            }
+        }
     }
 
+    async function postToServer(imgObj) {
+        // !lanjut ke ocr
+        try {
+
+            // console.log('coba console log', capturedImage.uri)
+            const payload = new FormData();
+            // payload.append("imageUrl", capturedImage.uri);
+            const fileName = 'receiptImage'
+            const mimeType = 'image/jpeg'
+            // console.log('capturedImage',result)
+            payload.append('receiptImage', { uri: imgObj.uri, name: fileName, type: mimeType })
+            payload.append("dummyText", 'dummy');
+
+            return await dispatch(postOcr(payload))
+        } catch (error) {
+            console.error(error)
+            return
+        }
+    }
+
+    // const pickImage = async () => {
+    //     let result = await ImagePicker.launchImageLibraryAsync({
+    //       mediaTypes: ImagePicker.MediaTypeOptions.All,
+    //       allowsEditing: true,
+    //       aspect: [4, 3],
+    //       quality: 1,
+    //     });
+
+    //     console.log(result);
+
+    //     if (!result.cancelled) {
+    //       setImage(result.uri);
+    //     }
+    //   };
+
     function toAddExpense(e) {
-        e.preventDefault()
-        console.log('masukkk')
+        // e.preventDefault()
+        // console.log('masukkk')
         navigation.navigate('AddExpense')
     }
 
     async function takePictureHandler() {
         if (!camera) return
         const photo = await camera.takePictureAsync()
-        console.log(photo)
+        // console.log(photo)
         setPreviewVisible(true)
         setCapturedImage(photo)
 
     }
+
+    if (isLoading) return (
+        <View style={[styles.container, styles.horizontal]}>
+            <ActivityIndicator size="large" />
+        </View>
+    )
 
     return (
         <View style={styles.container}>
@@ -64,7 +161,7 @@ export default function AddRecord({navigation, route}) {
                     <CameraPreview photo={capturedImage} savePhoto={savePhotoHandler} retakePicture={retakePictureHandler} />
                 ) : (
                     <Camera
-                        style={{ flex: 1, width:'100%' }}
+                        style={{ flex: 1, width: '100%' }}
                         ref={(r) => {
                             camera = r
                         }}
@@ -143,6 +240,29 @@ export default function AddRecord({navigation, route}) {
                         {/* <Button onPress={testFetch} title='test for post'  style={{marginBottom:5}}/> */}
                     </TouchableOpacity>
                     <TouchableOpacity
+                        onPress={imagePickerHandler}
+                        style={{
+                            width: 130,
+                            borderRadius: 4,
+                            backgroundColor: '#14274e',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: 40,
+                            marginTop: 10
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: '#fff',
+                                fontWeight: 'bold',
+                                textAlign: 'center'
+                            }}
+                        >
+                            Upload from phone
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         onPress={toAddExpense}
                         style={{
                             width: 130,
@@ -165,29 +285,6 @@ export default function AddRecord({navigation, route}) {
                             Input Manually
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={()=>console.log('gottem')}
-                        style={{
-                            width: 130,
-                            borderRadius: 4,
-                            backgroundColor: '#14274e',
-                            flexDirection: 'row',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            height: 40,
-                            marginTop: 10
-                        }}
-                    >
-                        <Text
-                            style={{
-                                color: '#fff',
-                                fontWeight: 'bold',
-                                textAlign: 'center'
-                            }}
-                        >
-                            Upload from phone
-                        </Text>
-                    </TouchableOpacity>
                 </View>
             )}
             <StatusBar style="auto" />
@@ -201,5 +298,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center'
-    }
+    },
+    horizontal: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        padding: 10
+      }
 })
