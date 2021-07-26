@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { dateFormatter } from '../helpers/dateFormatter.js'
+import { dateFormatter, monthYearFormatter } from '../helpers/dateFormatter.js'
 import { View, Text, Button, StyleSheet, TextInput, ScrollView, Dimensions, Pressable } from "react-native"
 import {
     LineChart,
@@ -9,7 +9,8 @@ import {
     ContributionGraph,
     StackedBarChart
   } from "react-native-chart-kit";
-  import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { monthList } from "../helpers/dateBetween.js";
 
 const Separator = () => (
     <View style={styles.separator} />
@@ -28,8 +29,10 @@ export default function ExpenseReport({ navigation, route }) {
     const [showEnd, setShowEnd] = useState(false);
     const [labels, setLabels] = useState(["Feb", "Mar", "Apr", "May", "Jun", "Jul"])
 
-    const start = dateFormatter(dateStart)
-    const end = dateFormatter(dateEnd)
+    const start = monthYearFormatter(dateStart)
+    const end = monthYearFormatter(dateEnd)
+
+    console.log(monthList(start, end))
 
     const onChangeStart = (event, selectedDate) => {
         const currentDate = selectedDate || date;
