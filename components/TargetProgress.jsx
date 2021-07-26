@@ -3,10 +3,6 @@ import { Text, View, Image, StyleSheet, TextInput, ScrollView, Pressable, Button
 import ProgressBar from 'react-native-progress/Bar'
 import NumberFormat from 'react-number-format'
 
-const Separator = () => (
-    <View style={styles.separator} />
-);
-
 export default function TargetProgress({navigation, route, activeTarget, spending, projection}) {
     const spendProgress = spending / activeTarget.monthlyTarget
     const progressPercentage = `${spending / activeTarget.monthlyTarget * 100}%`
@@ -34,7 +30,7 @@ export default function TargetProgress({navigation, route, activeTarget, spendin
             <Text style={styles.projectionText}>You will likely go <Text style={flag == 'over' ? styles.over : styles.under }>{projectionPercentage}</Text> your target
             </Text>
         </View>
-        <Separator/>
+        <View style={styles.separator} />
         </>
     )
 }

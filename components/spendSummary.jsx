@@ -5,10 +5,6 @@ import NumberFormat from 'react-number-format'
 import TargetProgress from "./TargetProgress.jsx"
 import { useSelector } from 'react-redux'
 
-const Separator = () => (
-    <View style={styles.separator} />
-);
-
 export default function MyProfile({ navigation, route, allSpending }) {
     const select = useSelector    
     const today = dateFormatter(new Date())

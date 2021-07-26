@@ -1,7 +1,6 @@
 import React, {useState} from "react";
-import { View, Image, StyleSheet, ScrollView, Modal, Alert, Pressable } from "react-native"
+import { View, Image, StyleSheet, ScrollView, Modal, Alert, Pressable, Text } from "react-native"
 import { dateFormatter } from '../helpers/dateFormatter.js'
-import { Tab, TabView, Text } from 'react-native-elements'
 import SpendSummary from '../components/spendSummary'
 import EarnedBadges from '../components/EarnedBadges'
 import ModalBadge from "../components/AllBadges";
