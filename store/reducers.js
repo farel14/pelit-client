@@ -4,6 +4,7 @@ import {
   SET_BADGES,
   SET_ACTIVE_TARGET,
   TOGGLE_LOADER_PROFILE,
+  SET_SPENDING_BETWEEN
 } from "./actionTypesGaluh.js";
 
 const initialState = {
@@ -13,6 +14,7 @@ const initialState = {
   allBadges: [],
   activeTarget: {},
   loadingProfile: true,
+  spendingBetween: {}
 };
 
 function reducer(state = initialState, action) {
@@ -28,6 +30,8 @@ function reducer(state = initialState, action) {
       return { ...state, activeTarget: payload };
     case TOGGLE_LOADER_PROFILE:
       return { ...state, loadingProfile: payload };
+    case SET_SPENDING_BETWEEN:
+      return { ...state, spendingBetween: payload}
     default:
       return state;
   }
