@@ -60,7 +60,7 @@ export default function MyProfile({ navigation, route, user, earnedBadges, allBa
                 
                 {
                     user.Transactions ? 
-                    <SpendSummary spending={user.Transactions.totalExpense} activeTarget={activeTarget}/>
+                    <SpendSummary allSpending={user.Transactions} activeTarget={activeTarget}/>
                     :
                     null
                 }
