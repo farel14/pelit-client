@@ -22,14 +22,13 @@ export default function App() {
       <NavigationContainer>
         {/* <View style={styles.container}>
         <Text>asdasdasdadas</Text> */}
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="AddExpense" component={AddExpense} />
           <Stack.Screen name="EditExpense" component={EditExpense} />
           <Stack.Screen name="MyProfile" component={MyProfile} />
-          <Stack.Screen name="ExpenseReport" component={ExpenseReport} />
           <Stack.Screen name="My Dashboard" component={Dashboard} />
           <Stack.Screen name="ExpenseReport" component={ExpenseReport} />
         </Stack.Navigator>
