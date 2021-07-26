@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { View, Image, StyleSheet, ScrollView, Modal, Alert, Pressable, Text } from "react-native"
 import { dateFormatter } from '../helpers/dateFormatter.js'
-import SpendSummary from '../components/spendSummary'
+import SpendSummary from '../components/SpendSummary'
 import EarnedBadges from '../components/EarnedBadges'
 import ModalBadge from "../components/AllBadges";
 import NumberFormat from 'react-number-format'
@@ -12,7 +12,6 @@ const Separator = () => (
 
 export default function MyProfile({ navigation, route, user, earnedBadges, allBadges, activeTarget }) {    
     const today = dateFormatter(new Date())
-    const [index, setIndex] = React.useState(0);
     const [modalVisible, setModalVisible] = useState(false);
 
     return (
@@ -59,7 +58,7 @@ export default function MyProfile({ navigation, route, user, earnedBadges, allBa
                 
                 {
                     user.Transactions ? 
-                    <SpendSummary allSpending={user.Transactions} activeTarget={activeTarget}/>
+                    <SpendSummary allSpending={user.Transactions} activeTarget={activeTarget} user={user}/>
                     :
                     null
                 }
@@ -74,7 +73,7 @@ export default function MyProfile({ navigation, route, user, earnedBadges, allBa
                 }}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                        <ModalBadge allBadges={allBadges}/>  
+                        <ModalBadge allBadges={allBadges} earnedBadges={earnedBadges}/>  
                         <Pressable
                             style={[styles.button, styles.buttonClose]}
                             onPress={() => setModalVisible(!modalVisible)}
