@@ -1,7 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Image, TextInput, ScrollView, Button, Alert, Animated, Modal, Pressable } from 'react-native';
 
-export default function ModalBadge({allBadges}) {
+export default function ModalBadge({allBadges, earnedBadges}) {
+    const myBadges = []
+
+    for (let i = 0; i < earnedBadges.length; i++) {
+      myBadges.push(earnedBadges[i].name)
+    }
+
     return (
         <View>
         <View style={{flexDirection:'row', justifyContent: 'center'}}>
@@ -11,7 +17,7 @@ export default function ModalBadge({allBadges}) {
                     <View key={indexNo} style={{flexDirection:'column', width: '30%', alignItems: 'center', paddingHorizontal: 7}}>
                     <Text style={styles.modalTitle}>{badgeItem.name}</Text>
                     <Image 
-                        style={styles.badgeImageModal}
+                        style={myBadges.includes(badgeItem.name) ? styles.badgeImageModal : styles.badgeImageModalTransparent}
                         source={{uri: `${badgeItem.imgUrl}`}}/>
                     <Text style={styles.modalText}>{badgeItem.description}</Text>
                     </View>
@@ -27,7 +33,7 @@ export default function ModalBadge({allBadges}) {
                     <View key={indexNo} style={{flexDirection:'column', width: '30%', marginTop: 20, alignItems: 'center', paddingHorizontal: 7}}>
                     <Text style={styles.modalTitle}>{badgeItem.name}</Text>
                     <Image 
-                        style={styles.badgeImageModal}
+                        style={myBadges.includes(badgeItem.name) ? styles.badgeImageModal : styles.badgeImageModalTransparent}
                         source={{uri: `${badgeItem.imgUrl}`}}/>
                     <Text style={styles.modalText}>{badgeItem.description}</Text>
                     </View>
@@ -99,6 +105,16 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         resizeMode: 'cover',
-        marginBottom: 8
+        marginBottom: 8,
     },
+    badgeImageModalTransparent: {
+      borderColor: 'gold',
+      borderWidth: 2,
+      borderRadius: 25,
+      width: 50,
+      height: 50,
+      resizeMode: 'cover',
+      marginBottom: 8,
+      opacity: 0.3
+  },
 })

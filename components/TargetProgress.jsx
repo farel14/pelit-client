@@ -3,10 +3,6 @@ import { Text, View, Image, StyleSheet, TextInput, ScrollView, Pressable, Button
 import ProgressBar from 'react-native-progress/Bar'
 import NumberFormat from 'react-number-format'
 
-const Separator = () => (
-    <View style={styles.separator} />
-);
-
 export default function TargetProgress({navigation, route, activeTarget, spending, projection}) {
     const spendProgress = spending / activeTarget.monthlyTarget
     const progressPercentage = `${spending / activeTarget.monthlyTarget * 100}%`
@@ -23,8 +19,10 @@ export default function TargetProgress({navigation, route, activeTarget, spendin
     
     return (
         <>
-        <Text style={styles.targetTextBold}>Spending target until 31 July 2021:  
-            <NumberFormat value={activeTarget.monthlyTarget} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue => <Text style={styles.targetText}>{` ${formattedValue}`}</Text>} /> </Text>
+        <Text style={styles.titleText}>Your Target Progress for July</Text>
+        <View style={{marginTop: 10}}>
+            <NumberFormat value={activeTarget.monthlyTarget} displayType={'text'} prefix={'Target Rp '} thousandSeparator={true} decimalScale={0} renderText={formattedValue => <Text style={styles.targetText}>{` ${formattedValue}`}</Text>} />
+        </View>
         <View style={styles.container}>
             <Text style={styles.summaryText}>You’ve spent <Text style={spendProgress > 0.5 ? styles.over : styles.under }>{progressPercentage}</Text> of your monthly spending target
             </Text>
@@ -32,7 +30,7 @@ export default function TargetProgress({navigation, route, activeTarget, spendin
             <Text style={styles.projectionText}>You will likely go <Text style={flag == 'over' ? styles.over : styles.under }>{projectionPercentage}</Text> your target
             </Text>
         </View>
-        <Separator/>
+        <View style={styles.separator} />
         </>
     )
 }
@@ -82,5 +80,12 @@ const styles = StyleSheet.create({
     },
     under: {
         color: 'lawngreen'
-    }
+    },
+    titleText: {
+        fontSize: 20,
+        marginTop: 10,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: 'white'
+    },
 });
