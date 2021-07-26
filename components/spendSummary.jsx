@@ -26,7 +26,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
     const beginningOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
     const spendingBetween = select(state => state.spendingBetween)
     const [dateEnd, setDateEnd] = useState(new Date(endOfMonth));
-    const [dateStart, setDateStart] = useState(new Date(new Date(endOfMonth).setDate(new Date(endOfMonth).getDate()-180)));
+    const [dateStart, setDateStart] = useState(new Date(new Date(endOfMonth).setDate(new Date(endOfMonth).getDate()-30)));
     const [modeStart, setModeStart] = useState('date');
     const [modeEnd, setModeEnd] = useState('date');
     const [showStart, setShowStart] = useState(false);
@@ -87,7 +87,6 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
     function setTarget(e) {
         e.preventDefault()
         setModalVisible(!modalVisible)
-        console.log('function add target')
         let newTarget = {}
         newTarget.startDate = dateStart
         newTarget.endDate = dateEnd
@@ -133,7 +132,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
     return (
         <ScrollView>
         {
-            activeTarget ? 
+            activeTarget.monthlyTarget ? 
             <>
             {
                 spendingBetween.total !== undefined ?

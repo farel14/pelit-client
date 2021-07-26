@@ -74,17 +74,25 @@ export function getUserActiveTarget(id) {
         fetch(`https://pelit-app.herokuapp.com/target/active/${userId}`)
         .then(response => response.json())
         .then(data => {
+            if (data.length > 0) {
             dispatch(setActiveTarget(data[0]))
-            let startDate = data[0].startDate
-            let endDate = data[0].endDate
-            return fetch(`https://pelit-app.herokuapp.com/transactions/between/${startDate}/${endDate}/${userId}/Expense`)            
-        })
-        .then(response => response.json())
-        .then(transactionData => {
-            dispatch(setTotalSpendingBetween(transactionData))
+                console.log('MASUKKK')
+                let startDate = data[0].startDate
+                let endDate = data[0].endDate
+                fetch(`https://pelit-app.herokuapp.com/transactions/between/${startDate}/${endDate}/${userId}/Expense`)
+                .then(response => response.json())
+                .then(transactionData => {
+                    dispatch(setTotalSpendingBetween(transactionData))
+                })
+                .catch(err => {
+                    console.log('error fetch active target', err)
+                })                
+            } else {
+                dispatch(setActiveTarget({}))
+            }
         })
         .catch(err => {
-            console.log('error fetch active target', err)
-        })
+            console.log('error fetch active target 2', err)
+        })       
     }
 }

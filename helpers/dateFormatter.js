@@ -48,6 +48,29 @@ export function monthYearFormatter(date) {
   return { name: `${monthName} ${year}`, numMonth: monthIndex + 1 };
 }
 
+export function monthYearFormatterReport(date) {
+  let monthNames = [
+    "Jan",
+    "Feb",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  let monthIndex = date.getMonth();
+  let monthName = monthNames[monthIndex];
+  let year = date.getFullYear();
+
+  return `${monthName} ${year}`;
+}
+
 export function monthFormatter(month) {
   let monthNames = [
     "Jan",
