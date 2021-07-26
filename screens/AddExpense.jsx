@@ -3,7 +3,7 @@ import { View, Text, Button, StyleSheet, TextInput } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useSelector, useDispatch } from 'react-redux'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RNPickerSelect from 'react-native-picker-select'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {postTransaction} from '../store/actions'

@@ -13,6 +13,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AddRecord from "./screens/AddRecord";
+// import Example from "./screens/Example";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -30,6 +31,7 @@ export default function App() {
           <Stack.Screen name="AddRecord" component={AddRecord} />
           <Stack.Screen name="MyProfile" component={MyProfile}/>
           <Stack.Screen name="ExpenseReport" component={ExpenseReport}/>
+          {/* <Stack.Screen name="Example" component={Example}/> */}
         </Stack.Navigator>
         {/* </View> */}
       </NavigationContainer>

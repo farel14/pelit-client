@@ -1,10 +1,13 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native'
 import { Camera } from 'expo-camera'
 import CameraPreview from '../components/CameraPreview'
+import {useDispatch} from 'react-redux'
+import {postOcr} from '../store/actions'
 
-export default function App() {
+export default function AddRecord({navigation, route}) {
+    const dispatch = useDispatch()
     const [startCamera, setStartCamera] = useState(false)
     const [previewVisible, setPreviewVisible] = useState(false)
     const [capturedImage, setCapturedImage] = useState(null)
@@ -19,11 +22,30 @@ export default function App() {
         }
     }
 
-    const savePhotoHandler = () => {}
+    const savePhotoHandler = () => {
+        const payload = new FormData();
+        payload.append("imageUrl", capturedImage);
+
+        dispatch(postOcr(payload))
+        // dispatch(postOcr(capturedImage.uri))
+    }
     const retakePictureHandler = () => {
       setCapturedImage(null)
       setPreviewVisible(false)
       startCameraHandler()
+    }
+    function testFetch() {
+        console.log('masuk')
+        fetch('http://192.168.100.9:3000/transactions/1')
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(err => console.error(err))
+    }
+
+    function toAddExpense(e) {
+        e.preventDefault()
+        console.log('masukkk')
+        navigation.navigate('AddExpense')
     }
 
     async function takePictureHandler() {
@@ -117,6 +139,53 @@ export default function App() {
                             }}
                         >
                             Take picture
+                        </Text>
+                        {/* <Button onPress={testFetch} title='test for post'  style={{marginBottom:5}}/> */}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={toAddExpense}
+                        style={{
+                            width: 130,
+                            borderRadius: 4,
+                            backgroundColor: '#14274e',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: 40,
+                            marginTop: 10
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: '#fff',
+                                fontWeight: 'bold',
+                                textAlign: 'center'
+                            }}
+                        >
+                            Input Manually
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={()=>console.log('gottem')}
+                        style={{
+                            width: 130,
+                            borderRadius: 4,
+                            backgroundColor: '#14274e',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: 40,
+                            marginTop: 10
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: '#fff',
+                                fontWeight: 'bold',
+                                textAlign: 'center'
+                            }}
+                        >
+                            Upload from phone
                         </Text>
                     </TouchableOpacity>
                 </View>
