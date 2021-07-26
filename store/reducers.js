@@ -4,7 +4,6 @@ import {
   SET_BADGES,
   SET_ACTIVE_TARGET,
   TOGGLE_LOADER_PROFILE,
-  SET_SPEND_BETWEEN
 } from "./actionTypesGaluh.js";
 import {
   SET_ALL_TRANSACTION_USER,
@@ -21,7 +20,6 @@ const initialState = {
   allBadges: [],
   activeTarget: {},
   loadingProfile: true,
-  spendingBetween: {},
   isLogin: false,
   allTransaction: {},
   transByCategory: {},
@@ -42,8 +40,6 @@ function reducer(state = initialState, action) {
       return { ...state, activeTarget: payload };
     case TOGGLE_LOADER_PROFILE:
       return { ...state, loadingProfile: payload };
-    case SET_SPEND_BETWEEN:
-      return { ...state, spendingBetween: payload };  
     case SET_IS_LOGIN:
       return { ...state, isLogin: payload };
     case SET_ALL_TRANSACTION_USER:

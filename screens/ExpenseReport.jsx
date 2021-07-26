@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { dateFormatter, monthYearFormatter } from '../helpers/dateFormatter.js'
-import { View, Text, Button, StyleSheet, TextInput, ScrollView, Dimensions, Pressable, ActivityIndicator } from "react-native"
+import { View, Text, Button, StyleSheet, TextInput, ScrollView, Dimensions, Pressable } from "react-native"
 import {
     LineChart,
     BarChart,
@@ -85,8 +85,12 @@ export default function ExpenseReport({ navigation, route }) {
             }
 
             setExpenses(monthExp)
-            return fetch(`https://pelit-app.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/11/Income`)
         })
+        .catch(err => {
+            console.log('error fetch expense data', err)
+        })
+
+        fetch(`https://pelit-app.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/11/Income`)
         .then(response => response.json())
         .then(data => {
             let group = [];
@@ -134,22 +138,20 @@ export default function ExpenseReport({ navigation, route }) {
         setIncome(monthInc)
         })
         .catch(err => {
-            console.log('error fetch expense/income data', err)
+            console.log('error fetch expense data', err)
         })
 
     }, [monthArr])
 
     useEffect(() => {
-        if (income.length > 0 && expenses.length > 0) {
-            let nett = []
-            for (let i = 0; i < monthArr.length; i++) {
-                nett.push(income[i] - expenses[i])
-            }
-    
-            setNetIncome(nett)
-            setChart2(true)    
+        let nett = []
+        for (let i = 0; i < monthArr.length; i++) {
+            nett.push(income[i] - expenses[i])
         }
-    }, [income])
+
+        setNetIncome(nett)
+        setChart2(true)
+    }, [income, expenses])
 
     useEffect(() => {
         setMonthArr(monthList(start,end))
@@ -275,12 +277,11 @@ export default function ExpenseReport({ navigation, route }) {
                     }}
                     />
                     :
-                    <ActivityIndicator size="large" color="#00ff00"/>
+                    null
                 }
-                <Text style={{color:'white', marginTop: 20}}>Monthly Nett Income</Text>
-                {/* <Pressable onPress={secondChart} style={{marginTop: 20}}><Text style={{color:'white'}}>Monthly Nett Income ▼</Text></Pressable> */}
+                <Pressable onPress={secondChart} style={{marginTop: 20}}><Text style={{color:'white'}}>Monthly Nett Income ▼</Text></Pressable>
                 {
-                    nettIncome.length > 0 ?
+                    nettIncomeChart ?
                     <BarChart
                     data={{
                     labels: monthArr,
@@ -319,7 +320,7 @@ export default function ExpenseReport({ navigation, route }) {
                     }}
                     />
                     :
-                    <ActivityIndicator size="large" color="#00ff00"/>
+                    null
                 }
 
                 </View>
