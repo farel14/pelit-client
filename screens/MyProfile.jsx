@@ -85,9 +85,10 @@ export default function MyProfile({
         <View style={{ marginTop: 30 }} />
         <Separator />
 
-        {user.Transactions ?
-        <SpendSummary allSpending={user.Transactions} activeTarget={activeTarget} user={user}/>
-        : null}
+        {user.Transactions ? 
+         <SpendSummary allSpending={user.Transactions} activeTarget={activeTarget} user={user}/>
+         :
+        null}
 
         <Modal
           animationType="slide"

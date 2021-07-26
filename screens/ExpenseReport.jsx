@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { dateFormatter, monthYearFormatter } from '../helpers/dateFormatter.js'
+import { dateFormatter, monthYearFormatterReport } from '../helpers/dateFormatter.js'
 import { View, Text, Button, StyleSheet, TextInput, ScrollView, Dimensions, Pressable, ActivityIndicator } from "react-native"
 import {
     LineChart,
@@ -21,15 +21,15 @@ export default function ExpenseReport({ navigation, route }) {
     let endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
 
     const screenWidth = Dimensions.get("window").width;
+    const [monthArr, setMonthArr] = useState(["Feb", "Mar", "Apr", "May", "Jun", "Jul"])
     const [dateEnd, setDateEnd] = useState(new Date(endOfMonth));
     const [dateStart, setDateStart] = useState(new Date(new Date(endOfMonth).setDate(new Date(endOfMonth).getDate()-180)));
     const [modeStart, setModeStart] = useState('date');
     const [modeEnd, setModeEnd] = useState('date');
     const [showStart, setShowStart] = useState(false);
     const [showEnd, setShowEnd] = useState(false);
-    const [start, setStart] = useState(monthYearFormatter(dateStart))
-    const [end, setEnd] = useState(monthYearFormatter(dateEnd))
-    const [monthArr, setMonthArr] = useState(["Feb", "Mar", "Apr", "May", "Jun", "Jul"])
+    const [start, setStart] = useState(monthYearFormatterReport(dateStart))
+    const [end, setEnd] = useState(monthYearFormatterReport(dateEnd))
     const [expenses, setExpenses] = useState([])
     const [income, setIncome] = useState([])
     const [nettIncome, setNetIncome] = useState([])
@@ -37,6 +37,7 @@ export default function ExpenseReport({ navigation, route }) {
     const [nettIncomeChart, setNettIncomeChart] = useState(false)
     let monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" ];
+    
 
     useEffect(() => {
         fetch(`https://pelit-app.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/11/Expense`)
@@ -159,14 +160,14 @@ export default function ExpenseReport({ navigation, route }) {
         const currentDate = selectedDate || date;
         setShowStart(Platform.OS === 'Android')
         setDateStart(currentDate);
-        setStart(monthYearFormatter(currentDate))
+        setStart(monthYearFormatterReport(currentDate))
     };
 
     const onChangeEnd = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShowEnd(Platform.OS === 'Android')
         setDateEnd(currentDate);
-        setEnd(monthYearFormatter(currentDate))
+        setEnd(monthYearFormatterReport(currentDate))
     };
 
     const showModeStart = (currentMode) => {
@@ -191,10 +192,11 @@ export default function ExpenseReport({ navigation, route }) {
         setNettIncomeChart(true)
     }
 
+    // console.log(income, 'INCOME')
     // console.log(expenses, 'EXP')
-    // console.log(income, 'INC')
-    // console.log(monthArr)
     // console.log(nettIncome, 'NETT')
+    // console.log(monthArr, 'MONTHARR')
+    // console.log(start, end)
 
     return (
         <ScrollView contentContainerStyle={styles.pageScrollContainer}>
@@ -278,7 +280,6 @@ export default function ExpenseReport({ navigation, route }) {
                     <ActivityIndicator size="large" color="#00ff00"/>
                 }
                 <Text style={{color:'white', marginTop: 20}}>Monthly Nett Income</Text>
-                {/* <Pressable onPress={secondChart} style={{marginTop: 20}}><Text style={{color:'white'}}>Monthly Nett Income ▼</Text></Pressable> */}
                 {
                     nettIncome.length > 0 ?
                     <BarChart
