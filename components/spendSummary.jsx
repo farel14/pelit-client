@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import { View, Image, StyleSheet, TextInput, Modal, ScrollView, Pressable, Button, Text } from "react-native"
-import { dateFormatter, monthFormatterFromDate } from '../helpers/dateFormatter.js'
+import { dateFormatter, monthFormatterFromDate, monthYearFormatter } from '../helpers/dateFormatter.js'
 import NumberFormat from 'react-number-format'
 import TargetProgress from "./TargetProgress.jsx"
 import { useSelector, useDispatch } from 'react-redux'
 import { getUserActiveTarget } from '../store/actionsGaluh'
 import {Picker} from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function SpendSummary({ navigation, route, allSpending, user }) {
     // console.log(user)
@@ -23,6 +24,15 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
     const [targetAmount, setTargetAmount] = useState('')
     const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
     const beginningOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    const spendingBetween = select(state => state.spendingBetween)
+    const [dateEnd, setDateEnd] = useState(new Date(endOfMonth));
+    const [dateStart, setDateStart] = useState(new Date(new Date(endOfMonth).setDate(new Date(endOfMonth).getDate()-180)));
+    const [modeStart, setModeStart] = useState('date');
+    const [modeEnd, setModeEnd] = useState('date');
+    const [showStart, setShowStart] = useState(false);
+    const [showEnd, setShowEnd] = useState(false);
+    const [start, setStart] = useState(dateFormatter(dateStart))
+    const [end, setEnd] = useState(dateFormatter(dateEnd))
 
     let spending = 0
 
@@ -36,6 +46,40 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
 
     const projection = spending/dateNum * 31
 
+    const onChangeStart = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShowStart(Platform.OS === 'Android')
+        setDateStart(currentDate);
+        setDateEnd(new Date(new Date(currentDate).setDate(new Date(currentDate).getDate()+31)));
+        setEnd(dateFormatter(new Date(new Date(currentDate).setDate(new Date(currentDate).getDate()+31))))
+        setStart(dateFormatter(currentDate))
+    };
+
+    const onChangeEnd = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShowEnd(Platform.OS === 'Android')
+        setDateEnd(currentDate);
+        setEnd(dateFormatter(currentDate))
+    };
+
+    const showModeStart = (currentMode) => {
+        setShowStart(true);
+        setModeStart(currentMode);
+    };
+
+    const showModeEnd = (currentMode) => {
+        setShowEnd(true);
+        setModeEnd(currentMode);
+    };
+    
+    const showDatepickerStart = () => {
+        showModeStart('date');
+    };
+
+    const showDatepickerEnd = () => {
+        showModeEnd('date');
+    };
+
     function changeTargetAmount(text) {
         setTargetAmount(text)
       }
@@ -45,8 +89,8 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
         setModalVisible(!modalVisible)
         console.log('function add target')
         let newTarget = {}
-        newTarget.startDate = beginningOfMonth
-        newTarget.endDate = endOfMonth
+        newTarget.startDate = dateStart
+        newTarget.endDate = dateEnd
         newTarget.monthlyTarget = targetAmount
 
         fetch(`https://pelit-app.herokuapp.com/target/all/${userId}`, {
@@ -84,12 +128,19 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
           })
     }
 
+    // console.log(spendingBetween)
+
     return (
         <ScrollView>
         {
             activeTarget ? 
             <>
-            <TargetProgress activeTarget={activeTarget} spending={spending} projection={projection} />
+            {
+                spendingBetween.total !== undefined ?
+                <TargetProgress activeTarget={activeTarget} spending={spending} spendingBetween={spendingBetween}/>
+                :
+                null
+            }
             <View style={styles.container}>
                 <Text style={styles.summaryText}>Summary for the Month of {month}</Text>
                 <View style={{marginBottom: 15}}/>
@@ -99,7 +150,6 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
                 
                 <View style={{marginBottom: 30}}/>
                 <Button title='Remove Target' onPress={(e) => deleteTarget(e)} color='grey'/>
-                <View style={{marginBottom: 40}}/>
             </View>
             </>
             :
@@ -138,19 +188,45 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
                         value={targetAmount}>
                         </TextInput>
 
-                    <Pressable
-                        style={[styles.buttonModalSubmit]}
-                        onPress={(e) => setTarget(e)}
-                        >
-                        <Text style={styles.textStyleSubmit}>Add Target</Text>
-                    </Pressable>
+                        <Text style={styles.formTitle}>Set Period</Text>
+                        <Text style={{marginTop: 5, color:'black'}}>From {start} to {end}</Text>
+                        <View style={{marginTop: 10, flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <Pressable
+                            style={styles.seeBadges}
+                            onPress={showDatepickerStart}>
+                            <Text style={styles.seeBadgesText}>Change Start date</Text>
+                            </Pressable>
+
+                        </View>
+
+                        {showStart && (
+                            <DateTimePicker
+                            testID="dateTimePickerStart"
+                            value={dateStart}
+                            mode={modeStart}
+                            is24Hour={true}
+                            display="default"
+                            onChange={onChangeStart}
+                            />
+                        )}
+
+                    <View style={{marginTop: 10, flexDirection: 'row', justifyContent: 'space-between'}}>
+
+                        <Pressable
+                            style={[styles.buttonModalClose, styles.buttonClose]}
+                            onPress={() => setModalVisible(!modalVisible)}
+                            >
+                            <Text style={styles.textStyle}>Close</Text>
+                        </Pressable>
+
+                        <Pressable
+                            style={[styles.buttonModalSubmit]}
+                            onPress={(e) => setTarget(e)}
+                            >
+                            <Text style={styles.textStyleSubmit}>Add Target</Text>
+                        </Pressable>
                     
-                    <Pressable
-                        style={[styles.buttonModalClose, styles.buttonClose]}
-                        onPress={() => setModalVisible(!modalVisible)}
-                        >
-                        <Text style={styles.textStyle}>Close</Text>
-                    </Pressable>
+                    </View>
 
                     </View>
                     </View>  
@@ -172,6 +248,7 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 20,
         alignItems: 'center',
+        marginBottom: 60
     },
     summaryText: {
         fontSize: 20,
@@ -203,6 +280,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         marginBottom: 10,
+        marginRight: 10,
         elevation: 2
       },
     buttonText: {
@@ -267,5 +345,17 @@ const styles = StyleSheet.create({
       },
     textStyleSubmit: {
         color: 'white'
-    }
+    },
+    seeBadges: {
+        backgroundColor: "green",
+        marginHorizontal: 5,
+        padding: 10,
+        marginBottom: 10,
+        alignItems: 'center'
+    },
+    seeBadgesText: {
+        alignItems: 'center',
+        fontSize: 9,
+        color: 'white'
+    },
   });
