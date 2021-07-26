@@ -23,8 +23,10 @@ export default function TargetProgress({navigation, route, activeTarget, spendin
     
     return (
         <>
-        <Text style={styles.targetTextBold}>Spending target until 31 July 2021:  
-            <NumberFormat value={activeTarget.monthlyTarget} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue => <Text style={styles.targetText}>{` ${formattedValue}`}</Text>} /> </Text>
+        <Text style={styles.titleText}>Your Target Progress for July</Text>
+        <View style={{marginTop: 10}}>
+            <NumberFormat value={activeTarget.monthlyTarget} displayType={'text'} prefix={'Target Rp '} thousandSeparator={true} decimalScale={0} renderText={formattedValue => <Text style={styles.targetText}>{` ${formattedValue}`}</Text>} />
+        </View>
         <View style={styles.container}>
             <Text style={styles.summaryText}>You’ve spent <Text style={spendProgress > 0.5 ? styles.over : styles.under }>{progressPercentage}</Text> of your monthly spending target
             </Text>
@@ -82,5 +84,12 @@ const styles = StyleSheet.create({
     },
     under: {
         color: 'lawngreen'
-    }
+    },
+    titleText: {
+        fontSize: 20,
+        marginTop: 10,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: 'white'
+    },
 });

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { dateFormatter, monthYearFormatter } from '../helpers/dateFormatter.js'
 import { View, Text, Button, StyleSheet, TextInput, ScrollView, Dimensions, Pressable } from "react-native"
 import {
@@ -27,23 +27,136 @@ export default function ExpenseReport({ navigation, route }) {
     const [modeEnd, setModeEnd] = useState('date');
     const [showStart, setShowStart] = useState(false);
     const [showEnd, setShowEnd] = useState(false);
-    const [labels, setLabels] = useState(["Feb", "Mar", "Apr", "May", "Jun", "Jul"])
+    const [start, setStart] = useState(monthYearFormatter(dateStart))
+    const [end, setEnd] = useState(monthYearFormatter(dateEnd))
+    const [monthArr, setMonthArr] = useState(["Feb", "Mar", "Apr", "May", "Jun", "Jul"])
+    const [expenses, setExpenses] = useState([])
+    const [income, setIncome] = useState([])
+    // const [netIncome, setNetIncome] = useState([])
+    let monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" ];
 
-    const start = monthYearFormatter(dateStart)
-    const end = monthYearFormatter(dateEnd)
+    useEffect(() => {
+        fetch(`https://pelit-app.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/11/Expense`)
+        .then(response => response.json())
+        .then(data => {
+            let group = [];
+            let flag = true;
+            data.data.forEach((ele) => {
+            if (group.length > 0) {
+                for (let i = 0; i < group.length; i++) {
+                    if (group[i].month == monthNames[ele.month - 1]) {
+                        flag = true;
+                        group[i].expense += ele.amount;
+                    } else {
+                        flag = false;
+                    }
+                }
+            } else {
+                flag = false;
+            }
 
-    console.log(monthList(start, end))
+            if (flag == false) {
+                group.push({
+                month: monthNames[ele.month - 1],
+                expense: ele.amount
+                });
+            }
+            return ele;
+            });
+
+            let monthExp = []
+            for (let i = 0; i < monthArr.length; i++) {
+                let flag = false
+                let expense;
+                for (let j = 0; j < group.length; j++) {
+                    if (monthArr[i] == group[j].month) {
+                        flag = true
+                        expense = group[j].expense
+                    }
+                }
+                if (flag == true) {
+                    monthExp.push((expense * - 1)/1000)
+                } else {
+                    monthExp.push(0)
+                }
+            }
+
+            setExpenses(monthExp)
+        })
+        .catch(err => {
+            console.log('error fetch expense data', err)
+        })
+
+        fetch(`https://pelit-app.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/11/Income`)
+        .then(response => response.json())
+        .then(data => {
+            let group = [];
+            let flag = true;
+            data.data.forEach((ele) => {
+            if (group.length > 0) {
+                for (let i = 0; i < group.length; i++) {
+                    if (group[i].month == monthNames[ele.month - 1]) {
+                        flag = true;
+                        group[i].income += ele.amount;
+                    } else {
+                        flag = false;
+                    }
+                }
+          } else {
+            flag = false;
+          }
+
+          if (flag == false) {
+            group.push({
+              month: monthNames[ele.month - 1],
+              income: ele.amount
+            });
+          }
+          return ele;
+        });
+
+        let monthInc = []
+        for (let i = 0; i < monthArr.length; i++) {
+            let flag = false
+            let income;
+            for (let j = 0; j < group.length; j++) {
+                if (monthArr[i] == group[j].month) {
+                    flag = true
+                    income = group[j].income
+                }
+            }
+            if (flag == true) {
+                monthInc.push(income/1000)
+            } else {
+                monthInc.push(0)
+            }
+        }
+
+        setIncome(monthInc)
+        })
+        .catch(err => {
+            console.log('error fetch expense data', err)
+        })
+
+    }, [monthArr])
+
+    useEffect(() => {
+        setMonthArr(monthList(start,end))
+    }, [start, end])
 
     const onChangeStart = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShowStart(Platform.OS === 'Android')
         setDateStart(currentDate);
+        setStart(monthYearFormatter(currentDate))
     };
 
     const onChangeEnd = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShowEnd(Platform.OS === 'Android')
         setDateEnd(currentDate);
+        setEnd(monthYearFormatter(currentDate))
     };
 
     const showModeStart = (currentMode) => {
@@ -64,10 +177,12 @@ export default function ExpenseReport({ navigation, route }) {
         showModeEnd('date');
     };
 
-    let data = []
+    console.log(expenses)
+    console.log(income)
+    console.log(monthArr)
 
     return (
-        <ScrollView contentContainerStyle={styles.pageScrollContainer}>
+        // <ScrollView contentContainerStyle={styles.pageScrollContainer}>
             <View style={styles.pageViewContainer}>
             <View style={{alignItems: 'center'}}>
                 <Text style={{marginTop: 30, color:'white'}}>From {start} to {end}</Text>
@@ -106,33 +221,27 @@ export default function ExpenseReport({ navigation, route }) {
             </View>
                 
                 <View style={{marginTop: 20}}>
-                <Text>Account Balance</Text>
-                <LineChart
+                <Text style={{color:'white'}}>Monthly Expense</Text>
+                {
+                    expenses.length > 0 ?
+                    <LineChart
                     data={{
-                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+                    labels: monthArr,
                     datasets: [
                         {
-                        data: [
-                            Math.random() * 100,
-                            Math.random() * 100,
-                            Math.random() * 100,
-                            Math.random() * 100,
-                            Math.random() * 100,
-                            Math.random() * 100
-                        ]
+                        data: expenses
                         }
                     ]
                     }}
                     width={screenWidth * 0.9} // from react-native
-                    height={220}
-                    yAxisLabel="$"
+                    height={200}
                     yAxisSuffix="k"
                     yAxisInterval={1} // optional, defaults to 1
                     chartConfig={{
                         backgroundColor: "#e26a00",
                         backgroundGradientFrom: "#fb8c00",
                         backgroundGradientTo: "#ffa726",
-                        decimalPlaces: 2, // optional, defaults to 2dp
+                        decimalPlaces: 0, // optional, defaults to 2dp
                         color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                         labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                         style: {
@@ -149,10 +258,14 @@ export default function ExpenseReport({ navigation, route }) {
                     marginVertical: 8,
                     borderRadius: 16
                     }}
-                />
+                    />
+                    :
+                    null
+                }
                 </View>
+
                 </View>
-        </ScrollView>
+        // </ScrollView>
     )
 }
 
