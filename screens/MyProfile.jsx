@@ -10,7 +10,7 @@ import {
   Text,
 } from "react-native";
 import { dateFormatter } from "../helpers/dateFormatter.js";
-// import SpendSummary from "../components/SpendSummary";
+import SpendSummary from "../components/spendSummary";
 import EarnedBadges from "../components/EarnedBadges";
 import ModalBadge from "../components/AllBadges";
 import NumberFormat from "react-number-format";
@@ -85,10 +85,9 @@ export default function MyProfile({
         <View style={{ marginTop: 30 }} />
         <Separator />
 
-        {user.Transactions ? (
-          <Text>Masuk</Text>
-        ) : // <SpendSummary allSpending={user.Transactions} activeTarget={activeTarget} user={user}/>
-        null}
+        {user.Transactions ?
+        <SpendSummary allSpending={user.Transactions} activeTarget={activeTarget} user={user}/>
+        : null}
 
         <Modal
           animationType="slide"
