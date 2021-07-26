@@ -1,4 +1,4 @@
-import { SET_USER, SET_BADGES, SET_ACTIVE_TARGET, TOGGLE_LOADER_PROFILE, SET_SPENDING_BETWEEN } from './actionTypesGaluh.js'
+import { SET_USER, SET_BADGES, SET_ACTIVE_TARGET, TOGGLE_LOADER_PROFILE } from './actionTypesGaluh.js'
 
 export function setUser(input) {
     return {
@@ -24,13 +24,6 @@ export function setActiveTarget(input) {
 export function toggleLoadingProfile(input) {
     return {
         type: TOGGLE_LOADER_PROFILE,
-        payload: input
-    }
-}
-
-export function setTotalSpendingBetween(input) {
-    return {
-        type: SET_SPENDING_BETWEEN,
         payload: input
     }
 }
@@ -75,13 +68,6 @@ export function getUserActiveTarget(id) {
         .then(response => response.json())
         .then(data => {
             dispatch(setActiveTarget(data[0]))
-            let startDate = data[0].startDate
-            let endDate = data[0].endDate
-            return fetch(`https://pelit-app.herokuapp.com/transactions/between/${startDate}/${endDate}/${userId}/Expense`)            
-        })
-        .then(response => response.json())
-        .then(transactionData => {
-            dispatch(setTotalSpendingBetween(transactionData))
         })
         .catch(err => {
             console.log('error fetch user data', err)
