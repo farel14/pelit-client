@@ -1,6 +1,5 @@
-import React, {useState} from "react";
-import { dateFormatter } from '../helpers/dateFormatter.js'
-import { View, Text, Button, StyleSheet, TextInput, ScrollView, Dimensions, Pressable } from "react-native"
+import React from "react";
+import { View, Text, Button, StyleSheet, TextInput, ScrollView, Dimensions } from "react-native"
 import {
     LineChart,
     BarChart,
@@ -9,104 +8,18 @@ import {
     ContributionGraph,
     StackedBarChart
   } from "react-native-chart-kit";
-  import DateTimePicker from '@react-native-community/datetimepicker';
 
-const Separator = () => (
-    <View style={styles.separator} />
-);
 
 export default function ExpenseReport({ navigation, route }) {
-    let month = new Date().getMonth() + 1
-    let endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-
     const screenWidth = Dimensions.get("window").width;
-    const [dateEnd, setDateEnd] = useState(new Date(endOfMonth));
-    const [dateStart, setDateStart] = useState(new Date(new Date(endOfMonth).setDate(new Date(endOfMonth).getDate()-180)));
-    const [modeStart, setModeStart] = useState('date');
-    const [modeEnd, setModeEnd] = useState('date');
-    const [showStart, setShowStart] = useState(false);
-    const [showEnd, setShowEnd] = useState(false);
-    const [labels, setLabels] = useState(["Feb", "Mar", "Apr", "May", "Jun", "Jul"])
-
-    const start = dateFormatter(dateStart)
-    const end = dateFormatter(dateEnd)
-
-    const onChangeStart = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShowStart(Platform.OS === 'Android')
-        setDateStart(currentDate);
-    };
-
-    const onChangeEnd = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShowEnd(Platform.OS === 'Android')
-        setDateEnd(currentDate);
-    };
-
-    const showModeStart = (currentMode) => {
-        setShowStart(true);
-        setModeStart(currentMode);
-    };
-
-    const showModeEnd = (currentMode) => {
-        setShowEnd(true);
-        setModeEnd(currentMode);
-    };
-    
-    const showDatepickerStart = () => {
-        showModeStart('date');
-    };
-
-    const showDatepickerEnd = () => {
-        showModeEnd('date');
-    };
-
-    let data = []
 
     return (
-        <ScrollView contentContainerStyle={styles.pageScrollContainer}>
-            <View style={styles.pageViewContainer}>
-            <View style={{alignItems: 'center'}}>
-                <Text style={{marginTop: 30, color:'white'}}>From {start} to {end}</Text>
-                <View style={{marginTop: 10, flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <Pressable
-                        style={styles.seeBadges}
-                        onPress={showDatepickerStart}>
-                        <Text style={styles.seeBadgesText}>Change Start date</Text>
-                    </Pressable>
-                    <Pressable
-                        style={styles.seeBadges}
-                        onPress={showDatepickerEnd}>
-                        <Text style={styles.seeBadgesText}>Change End date</Text>
-                    </Pressable>
-                </View>
-                {showStart && (
-                    <DateTimePicker
-                    testID="dateTimePickerStart"
-                    value={dateStart}
-                    mode={modeStart}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChangeStart}
-                    />
-                )}
-                {showEnd && (
-                    <DateTimePicker
-                    testID="dateTimePickerEnd"
-                    value={dateEnd}
-                    mode={modeEnd}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChangeEnd}
-                    />
-                )}
-            </View>
-                
-                <View style={{marginTop: 20}}>
-                <Text>Account Balance</Text>
+        <ScrollView>
+            <View>
+                <Text>Bezier Line Chart</Text>
                 <LineChart
                     data={{
-                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+                    labels: ["January", "February", "March", "April", "May", "June"],
                     datasets: [
                         {
                         data: [
@@ -120,7 +33,7 @@ export default function ExpenseReport({ navigation, route }) {
                         }
                     ]
                     }}
-                    width={screenWidth * 0.9} // from react-native
+                    width={Dimensions.get("window").width} // from react-native
                     height={220}
                     yAxisLabel="$"
                     yAxisSuffix="k"
@@ -148,34 +61,16 @@ export default function ExpenseReport({ navigation, route }) {
                     }}
                 />
                 </View>
-                </View>
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    pageScrollContainer: {
-        flexGrow: 1,
-    },
-    pageViewContainer: {
-        flex: 1,
-        paddingHorizontal: 20,
-        backgroundColor: "#04009A",
-    },
-    separator: {
-        borderBottomColor: 'lightgrey',
-        borderBottomWidth: StyleSheet.hairlineWidth,
-    },  
-    seeBadges: {
-        backgroundColor: "white",
-        marginHorizontal: 5,
-        padding: 3,
-        borderRadius: 15,    
-        alignItems: 'center'
-    },
-    seeBadgesText: {
-        alignItems: 'center',
-        fontSize: 9,
-        color: 'black'
+    containerView: {
+      flex: 1,
+      flexGrow: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   });

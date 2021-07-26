@@ -21,7 +21,6 @@ export default function Dashboard({ navigation, route }) {
     const allBadges = select(state => state.allBadges)
     const activeTarget = select(state => state.activeTarget)
     const loadingProfile = select(state => state.loadingProfile)
-    const spendingBetween = select(state => state.spendingBetween)
 
     useEffect(() => {
         dispatch(getUserDetails(11))
@@ -45,13 +44,13 @@ export default function Dashboard({ navigation, route }) {
     
             {
                 index == 0 ?
-                <ScrollView contentContainerStyle={styles.pageViewContainer}>
-                    <MyProfile user={user} earnedBadges={earnedBadges} allBadges={allBadges} activeTarget={activeTarget} spendingBetween={spendingBetween}/>
-                </ScrollView>            
+                <View style={styles.pageViewContainer}>
+                    <MyProfile user={user} earnedBadges={earnedBadges} allBadges={allBadges} activeTarget={activeTarget}/>
+                </View>            
                 :
-                <ScrollView contentContainerStyle={styles.pageViewContainer}>
+                <View style={styles.pageViewContainer}>
                     <ExpenseReport/>
-                </ScrollView>
+                </View>
             }
             </>
         }
