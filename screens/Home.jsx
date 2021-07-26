@@ -61,7 +61,7 @@ export default function Home({ navigation }) {
             }}
           >
             <Text style={styles.textTop}>Hi, {dataUser.data.fullName}!</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("MyProfile")}>
               <Image
                 style={styles.userProfilePicture}
                 resizeMode="cover"

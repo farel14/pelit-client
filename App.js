@@ -30,7 +30,6 @@ export default function App() {
           <Stack.Screen name="EditExpense" component={EditExpense} />
           <Stack.Screen name="MyProfile" component={MyProfile} />
           <Stack.Screen name="My Dashboard" component={Dashboard} />
-          <Stack.Screen name="ExpenseReport" component={ExpenseReport} />
         </Stack.Navigator>
         {/* </View> */}
       </NavigationContainer>

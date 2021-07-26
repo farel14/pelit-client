@@ -68,3 +68,25 @@ export function monthFormatter(month) {
 
   return `${monthName}`;
 }
+
+export function monthFormatterFromDate(date) {
+  let monthNames = [
+    "Jan",
+    "Feb",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  let index = date.getMonth();
+  let monthName = monthNames[index];
+
+  return `${monthName}`;
+}
