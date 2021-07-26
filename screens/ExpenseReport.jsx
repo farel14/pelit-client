@@ -33,6 +33,8 @@ export default function ExpenseReport({ navigation, route }) {
     const [expenses, setExpenses] = useState([])
     const [income, setIncome] = useState([])
     const [nettIncome, setNetIncome] = useState([])
+    const [chart2, setChart2] = useState(false)
+    const [nettIncomeChart, setNettIncomeChart] = useState(false)
     let monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" ];
 
@@ -148,6 +150,7 @@ export default function ExpenseReport({ navigation, route }) {
         }
 
         setNetIncome(nett)
+        setChart2(true)
     }, [income, expenses])
 
     useEffect(() => {
@@ -186,10 +189,14 @@ export default function ExpenseReport({ navigation, route }) {
         showModeEnd('date');
     };
 
-    console.log(expenses, 'EXP')
-    console.log(income, 'INC')
+    function secondChart() {
+        setNettIncomeChart(true)
+    }
+
+    // console.log(expenses, 'EXP')
+    // console.log(income, 'INC')
     // console.log(monthArr)
-    console.log(nettIncome, 'NETT')
+    // console.log(nettIncome, 'NETT')
 
     return (
         <ScrollView contentContainerStyle={styles.pageScrollContainer}>
@@ -272,9 +279,9 @@ export default function ExpenseReport({ navigation, route }) {
                     :
                     null
                 }
-                <Text style={{color:'white', marginTop: 15}}>Monthly Nett Income</Text>
+                <Pressable onPress={secondChart} style={{marginTop: 20}}><Text style={{color:'white'}}>Monthly Nett Income ▼</Text></Pressable>
                 {
-                    nettIncome.length > 0 ?
+                    nettIncomeChart ?
                     <BarChart
                     data={{
                     labels: monthArr,
@@ -317,7 +324,6 @@ export default function ExpenseReport({ navigation, route }) {
                 }
 
                 </View>
-
                 </View>
         </ScrollView>
     )
