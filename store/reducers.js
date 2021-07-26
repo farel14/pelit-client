@@ -5,6 +5,13 @@ import {
   SET_ACTIVE_TARGET,
   TOGGLE_LOADER_PROFILE,
 } from "./actionTypesGaluh.js";
+import {
+  SET_ALL_TRANSACTION_USER,
+  SET_TRANSACTION_BY_CATEGORY,
+  SET_TRANSACTION_BY_DATE,
+  SET_LOADING_TRANSACTION,
+  SET_IS_LOGIN,
+} from "./actionTypesFaisal";
 
 const initialState = {
   transaction: {},
@@ -13,6 +20,11 @@ const initialState = {
   allBadges: [],
   activeTarget: {},
   loadingProfile: true,
+  isLogin: false,
+  allTransaction: {},
+  transByCategory: {},
+  transByDate: {},
+  loadingTransaction: {},
 };
 
 function reducer(state = initialState, action) {
@@ -28,6 +40,16 @@ function reducer(state = initialState, action) {
       return { ...state, activeTarget: payload };
     case TOGGLE_LOADER_PROFILE:
       return { ...state, loadingProfile: payload };
+    case SET_IS_LOGIN:
+      return { ...state, isLogin: payload };
+    case SET_ALL_TRANSACTION_USER:
+      return { ...state, allTransaction: payload };
+    case SET_TRANSACTION_BY_CATEGORY:
+      return { ...state, transByCategory: payload };
+    case SET_TRANSACTION_BY_DATE:
+      return { ...state, transByDate: payload };
+    case SET_LOADING_TRANSACTION:
+      return { ...state, loadingTransaction: payload };
     default:
       return state;
   }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,8 +9,11 @@ import {
   Image,
   KeyboardAvoidingView,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRegisterUser } from "../store/actionsFaisal";
 
 export default function Register({ navigation }) {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -22,28 +25,15 @@ export default function Register({ navigation }) {
     else if (!email) Alert.alert("Please input your email");
     else if (!password) Alert.alert("Please input your password");
     else {
-      console.log(email, password, fullName);
-      fetch("https://pelit-app.herokuapp.com/register", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.toLowerCase(),
-          password,
-          fullName,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
+      dispatch(fetchRegisterUser(fullName, email, password)).then((message) => {
+        if (message === "Registered Successfully") {
           Alert.alert("Registered has been successfully");
           navigation.navigate("Login");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        } else {
+          Alert.alert(message);
+        }
+        console.log(message, "ini data");
+      });
     }
   }
 
@@ -96,6 +86,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 130,
     height: 130,
+    marginLeft: 90,
   },
   text: {
     fontSize: 22,
