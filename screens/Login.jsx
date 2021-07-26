@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 130,
     height: 130,
+    marginLeft: 90,
   },
   text: {
     fontSize: 22,
@@ -110,23 +111,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonLogin: {
-    paddingRight: 50,
-    paddingLeft: 50,
-    paddingTop: 10,
-    paddingBottom: 10,
     borderRadius: 10,
+    paddingVertical: 10,
     marginTop: 40,
     marginBottom: 20,
     backgroundColor: "#77ACF1",
+    width: 300,
   },
   buttonText: {
     color: "white",
     fontSize: 18,
+    textAlign: "center",
   },
   buttonRegister: {
     borderRadius: 10,
-    paddingHorizontal: 50,
     paddingVertical: 10,
+    width: 300,
     backgroundColor: "#3C8DAD",
   },
 });

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import ModalItem from "./ModalItem";
 
-export default function FieldCard({ item }) {
+export default function FieldCard({ item, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <View>
@@ -48,12 +48,14 @@ export default function FieldCard({ item }) {
               <TouchableOpacity
                 style={[styles.button, styles.buttonEdit]}
                 onPress={() => setModalVisible(!modalVisible)}
+                // onPress={() => navigation.navigate("EditExpense")}
               >
                 <Text style={styles.textButton}>Edit</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.buttonDelete]}
                 onPress={() => setModalVisible(!modalVisible)}
+                // onPress={() => navigation.navigate("MyProfile")}
               >
                 <Text style={styles.textButton}>Delete</Text>
               </TouchableOpacity>

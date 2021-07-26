@@ -34,6 +34,8 @@ export default function Home({ navigation }) {
 
   if (!dataUser || !dataTransByDate) return null;
 
+  console.log();
+
   // console.log(dataUser, "data async");
   // console.log(dataTransByDate, "data trans by date");
   return (
@@ -51,7 +53,10 @@ export default function Home({ navigation }) {
             }}
           >
             <Text style={styles.textTop}>{monthYear.name}</Text>
-            <TouchableOpacity style={styles.buttonAdd}>
+            <TouchableOpacity
+              style={styles.buttonAdd}
+              onPress={() => navigation.navigate("AddExpense")}
+            >
               <Text style={styles.textAdd}>+</Text>
             </TouchableOpacity>
           </View>
@@ -129,11 +134,16 @@ export default function Home({ navigation }) {
             <Text style={styles.textGroupBy}>Category</Text>
           </TouchableOpacity>
         </View>
-        {/* <Text style={styles.textWarning}>You Have No Recorded Transactions</Text> */}
-        {displayCard === "Date" ? (
-          <DateCard></DateCard>
+        {dataUser.data.Transactions.data.length ? (
+          displayCard === "Date" ? (
+            <DateCard></DateCard>
+          ) : (
+            <CategoryCard></CategoryCard>
+          )
         ) : (
-          <CategoryCard></CategoryCard>
+          <Text style={styles.textWarning}>
+            You Have No Recorded Transactions
+          </Text>
         )}
       </ScrollView>
     </View>

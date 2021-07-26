@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 130,
     height: 130,
+    marginLeft: 90,
   },
   text: {
     fontSize: 22,
