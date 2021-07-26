@@ -45,7 +45,7 @@ export function monthYearFormatter(date) {
   let monthName = monthNames[monthIndex];
   let year = date.getFullYear();
 
-  return `${monthName} ${year}`;
+  return { name: `${monthName} ${year}`, numMonth: monthIndex + 1 };
 }
 
 export function monthFormatter(month) {
@@ -85,7 +85,7 @@ export function monthFormatterFromDate(date) {
     "Dec",
   ];
 
-  let index = date.getMonth()
+  let index = date.getMonth();
   let monthName = monthNames[index];
 
   return `${monthName}`;

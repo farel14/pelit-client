@@ -9,12 +9,20 @@ import {
   Image,
   KeyboardAvoidingView,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchLoginUser } from "../store/actionsFaisal";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function Login({ navigation }) {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPasswordl] = useState("");
+  const isLogin = useSelector((state) => state.isLogin);
   const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
+
+  useEffect(() => {
+    dispatch(fetchLoginUser(email, password));
+  }, [email, password, dispatch]);
 
   async function handleLoginButton() {
     if (!email && !password)
@@ -22,34 +30,16 @@ export default function Login({ navigation }) {
     else if (!email) Alert.alert("Please input your email");
     else if (!password) Alert.alert("Please input your password");
     else {
-      try {
-        console.log(email, password);
-        const response = await fetch("https://pelit-app.herokuapp.com/login", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email.replace(" ", ""),
-            password,
-          }),
-        });
-        const result = await response.json();
-        const { data } = result;
-
-        if (result.access_token) {
-          await AsyncStorage.setItem("@dataUser", JSON.stringify(data));
-          navigation.navigate("Home", { dataUser: data });
-        }
-      } catch (err) {
-        console.log(err);
+      if (isLogin) {
+        navigation.navigate("Home");
+      } else {
+        Alert.alert("Wrong Email/Password");
       }
     }
   }
 
   function handleRegisterButton() {
-    navigation.navigate("Register", {});
+    navigation.navigate("Register");
   }
 
   return (
@@ -100,6 +90,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 130,
     height: 130,
+    marginLeft: 90,
   },
   text: {
     fontSize: 22,
@@ -120,23 +111,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonLogin: {
-    paddingRight: 50,
-    paddingLeft: 50,
-    paddingTop: 10,
-    paddingBottom: 10,
     borderRadius: 10,
+    paddingVertical: 10,
     marginTop: 40,
     marginBottom: 20,
     backgroundColor: "#77ACF1",
+    width: 300,
   },
   buttonText: {
     color: "white",
     fontSize: 18,
+    textAlign: "center",
   },
   buttonRegister: {
     borderRadius: 10,
-    paddingHorizontal: 50,
     paddingVertical: 10,
+    width: 300,
     backgroundColor: "#3C8DAD",
   },
 });
