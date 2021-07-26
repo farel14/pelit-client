@@ -1,22 +1,23 @@
 import { createStore, applyMiddleware, compose } from 'redux'
-import { } from './actionTypes.js'
+// import { } from './actionTypes.js'
+import reducer from './reducers'
 import thunk from 'redux-thunk'
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
-const initialState = {
+// const initialState = {
     
-}
+// }
 
-function boardReducer(state = initialState, action) {
+// function reducer(state = initialState, action) {
 
-    return state
-}
+//     return state
+// }
 
 const store = createStore (
-    boardReducer,
-    composeEnhancers(
-        applyMiddleware(thunk)
-    )
+    reducer, applyMiddleware(thunk)
+    // composeEnhancers(
+    //     applyMiddleware(thunk)
+    // )
 )
 
 export default store
