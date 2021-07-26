@@ -23,9 +23,9 @@ export default function Dashboard({ navigation, route }) {
     const loadingProfile = select(state => state.loadingProfile)
 
     useEffect(() => {
-        dispatch(getUserDetails(11))
+        dispatch(getUserDetails(2))
         dispatch(getAllBadges())
-        dispatch(getUserActiveTarget(11))
+        dispatch(getUserActiveTarget(2))
     }, [])
 
     return (
@@ -44,13 +44,13 @@ export default function Dashboard({ navigation, route }) {
     
             {
                 index == 0 ?
-                <View style={styles.pageViewContainer}>
+                <ScrollView contentContainerStyle={styles.pageViewContainer}>
                     <MyProfile user={user} earnedBadges={earnedBadges} allBadges={allBadges} activeTarget={activeTarget}/>
-                </View>            
+                </ScrollView>            
                 :
-                <View style={styles.pageViewContainer}>
+                <ScrollView contentContainerStyle={styles.pageViewContainer}>
                     <ExpenseReport/>
-                </View>
+                </ScrollView>
             }
             </>
         }
