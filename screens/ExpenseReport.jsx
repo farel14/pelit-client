@@ -32,7 +32,7 @@ export default function ExpenseReport({ navigation, route }) {
     const [monthArr, setMonthArr] = useState(["Feb", "Mar", "Apr", "May", "Jun", "Jul"])
     const [expenses, setExpenses] = useState([])
     const [income, setIncome] = useState([])
-    // const [netIncome, setNetIncome] = useState([])
+    const [nettIncome, setNetIncome] = useState([])
     let monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" ];
 
@@ -142,6 +142,15 @@ export default function ExpenseReport({ navigation, route }) {
     }, [monthArr])
 
     useEffect(() => {
+        let nett = []
+        for (let i = 0; i < monthArr.length; i++) {
+            nett.push(income[i] - expenses[i])
+        }
+
+        setNetIncome(nett)
+    }, [income, expenses])
+
+    useEffect(() => {
         setMonthArr(monthList(start,end))
     }, [start, end])
 
@@ -177,12 +186,13 @@ export default function ExpenseReport({ navigation, route }) {
         showModeEnd('date');
     };
 
-    console.log(expenses)
-    console.log(income)
-    console.log(monthArr)
+    console.log(expenses, 'EXP')
+    console.log(income, 'INC')
+    // console.log(monthArr)
+    console.log(nettIncome, 'NETT')
 
     return (
-        // <ScrollView contentContainerStyle={styles.pageScrollContainer}>
+        <ScrollView contentContainerStyle={styles.pageScrollContainer}>
             <View style={styles.pageViewContainer}>
             <View style={{alignItems: 'center'}}>
                 <Text style={{marginTop: 30, color:'white'}}>From {start} to {end}</Text>
@@ -262,10 +272,54 @@ export default function ExpenseReport({ navigation, route }) {
                     :
                     null
                 }
+                <Text style={{color:'white', marginTop: 15}}>Monthly Nett Income</Text>
+                {
+                    nettIncome.length > 0 ?
+                    <BarChart
+                    data={{
+                    labels: monthArr,
+                    datasets: [
+                        {
+                        data: nettIncome
+                        }
+                    ]
+                    }}
+                    width={screenWidth * 0.9} // from react-native
+                    height={200}
+                    yAxisSuffix="k"
+                    yAxisInterval={1} // optional, defaults to 1
+                    chartConfig={{
+                        fillShadowGradient: 'white',
+                        fillShadowGradientOpacity: 1,
+                        backgroundColor: "#e26a00",
+                        backgroundGradientFrom: "#fb8c00",
+                        backgroundGradientTo: "#ffa726",
+                        decimalPlaces: 0, // optional, defaults to 2dp
+                        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                        style: {
+                            borderRadius: 16
+                        },
+                        propsForDots: {
+                            r: "6",
+                            strokeWidth: "2",
+                            stroke: "#ffa726"
+                        }
+                    }}
+                    bezier
+                    style={{
+                    marginVertical: 8,
+                    borderRadius: 16
+                    }}
+                    />
+                    :
+                    null
+                }
+
                 </View>
 
                 </View>
-        // </ScrollView>
+        </ScrollView>
     )
 }
 
@@ -277,6 +331,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
         backgroundColor: "#04009A",
+        marginBottom: 100
     },
     separator: {
         borderBottomColor: 'lightgrey',
