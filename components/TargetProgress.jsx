@@ -1,19 +1,11 @@
 import React, {useState} from "react";
-import { Text, View, Image, StyleSheet } from "react-native"
+import { Text, View, Image, StyleSheet, TextInput, ScrollView, Pressable, Button } from "react-native"
 import ProgressBar from 'react-native-progress/Bar'
 import NumberFormat from 'react-number-format'
-import { dateFormatter } from "../helpers/dateFormatter";
 
-export default function TargetProgress({activeTarget, spendingBetween}) {
-    const endDate = dateFormatter(new Date(activeTarget.endDate))
-    let start = new Date(activeTarget.startDate)
-    let now = new Date()
-    let dateNum = (now.getTime() - start.getTime()) / (1000 * 3600 * 24)
-
-    let totalSpend = +spendingBetween.total * -1
-    const projection = totalSpend/dateNum * 31
-    const progressPercentage = `${totalSpend / activeTarget.monthlyTarget * 100}%`
-    const spendProgress = totalSpend / activeTarget.monthlyTarget
+export default function TargetProgress({navigation, route, activeTarget, spending, projection}) {
+    const spendProgress = spending / activeTarget.monthlyTarget
+    const progressPercentage = `${spending / activeTarget.monthlyTarget * 100}%`
     let projectionPercentage = 0
     let flag = 'under'
 
@@ -27,12 +19,10 @@ export default function TargetProgress({activeTarget, spendingBetween}) {
     
     return (
         <>
-        <Text style={styles.titleText}>Your Monthly Target Progress</Text>
+        <Text style={styles.titleText}>Your Target Progress for July</Text>
         <View style={{marginTop: 10}}>
             <NumberFormat value={activeTarget.monthlyTarget} displayType={'text'} prefix={'Target Rp '} thousandSeparator={true} decimalScale={0} renderText={formattedValue => <Text style={styles.targetText}>{` ${formattedValue}`}</Text>} />
         </View>
-        <Text style={styles.targetTextBold}><Text style={{color:'white'}}>From {dateFormatter(start)} to {endDate} </Text>
-            </Text>
         <View style={styles.container}>
             <Text style={styles.summaryText}>You’ve spent <Text style={spendProgress > 0.5 ? styles.over : styles.under }>{progressPercentage}</Text> of your monthly spending target
             </Text>
@@ -64,9 +54,8 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     targetTextBold: {
-        marginTop: 5,
-        fontSize: 9,
-        fontStyle: 'italic',
+        marginTop: 10,
+        fontSize: 14,
         fontWeight: 'normal',
         textAlign: 'center',
         color: 'white',
@@ -77,6 +66,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         color: 'aqua',
+        marginBottom: 10
     },
     projectionText: {
         marginTop: 10,
