@@ -97,9 +97,9 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
                 <Text style={{color:'white'}}>Total spending: <NumberFormat value={spending} displayType={'text'} thousandSeparator={true} decimalScale={0} prefix={'Rp '} renderText={formattedValue => <Text style={styles.summaryAmountSmall}>{formattedValue}</Text>} /></Text>                    
                 <Text style={{color:'white'}}>End-of-month Projection: <NumberFormat value={projection} displayType={'text'} thousandSeparator={true} decimalScale={0} prefix={'Rp '} renderText={formattedValue => <Text style={styles.summaryAmountSmall}>{formattedValue}</Text>} /></Text>                    
                 
-                <View style={{marginBottom: 40}}/>
+                <View style={{marginBottom: 30}}/>
                 <Button title='Remove Target' onPress={(e) => deleteTarget(e)} color='grey'/>
-                {/* <Button title='Claim Badge' color='grey'/> */}
+                <View style={{marginBottom: 40}}/>
             </View>
             </>
             :
