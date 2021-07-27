@@ -30,11 +30,11 @@ export default function AddExpense({ navigation, route }) {
     const incomeItems = incomeChoices.map(ele => ({ label: ele, value: ele }))
 
     useEffect(() => {
-        // (async () => {
-        //     const dataAsyncUser = await AsyncStorage.getItem('@dataUser')
-        //     setUserId(JSON.parse(dataAsyncUser).data.id)
-        // })()
-        setUserId(29)
+        (async () => {
+            const dataAsyncUser = await AsyncStorage.getItem('@dataUser')
+            setUserId(JSON.parse(dataAsyncUser).data.id)
+        })()
+        // setUserId(29)
 
         if (route.params) {
             const { title: titleParam, total: totalParam, fullDate: dateParam } = route.params.data
