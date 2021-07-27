@@ -17,7 +17,7 @@ export default function FieldCard({ item, navigation }) {
 
   function handleEditItem() {
     setModalVisible(!modalVisible);
-    navigation.navigate("EditExpense");
+    navigation.navigate("EditExpense", { TransactionId: item.id });
   }
 
   function handleDeleteItem() {
