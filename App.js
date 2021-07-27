@@ -13,6 +13,8 @@ import ExpenseReport from "./screens/ExpenseReport.jsx";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import AddRecord from "./screens/AddRecord";
+// import Example from "./screens/Example";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -28,6 +30,8 @@ export default function App() {
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="AddExpense" component={AddExpense} />
           <Stack.Screen name="EditExpense" component={EditExpense} />
+          <Stack.Screen name="Add Record" component={AddRecord} />
+          <Stack.Screen name="MyProfile" component={MyProfile} />
           <Stack.Screen name="My Dashboard" component={Dashboard} />
         </Stack.Navigator>
         {/* </View> */}
