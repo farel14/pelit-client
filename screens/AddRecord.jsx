@@ -6,6 +6,7 @@ import CameraPreview from '../components/CameraPreview'
 import { useDispatch } from 'react-redux'
 import { postOcr } from '../store/actions'
 import * as ImagePicker from 'expo-image-picker';
+let camera
 
 export default function AddRecord({ navigation, route }) {
     const dispatch = useDispatch()
@@ -33,21 +34,22 @@ export default function AddRecord({ navigation, route }) {
         payload.append("dummyText", 'dummy');
 
         // !kirim data ke ocr
-        const result = await dispatch(postOcr(payload))
-        // dispatch(postOcr(capturedImage.uri))
-        if (!result.cancelled) {
-            // console.log('tidak masuk', result)
-            setCapturedImage(result);
-            setIsLoading(true)
-            const processedImage = await postToServer(result)
-            if (processedImage) {
-                // e.preventDefault()
-                console.log('siap-siap sebelum navigate', processedImage)
-                setIsLoading(false)
-                navigation.navigate('AddExpense', {data: processedImage, imageUri: result.uri})
-            }
+        // const result = await dispatch(postOcr(payload))
+
+        setIsLoading(true)
+
+
+        console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)
+
+        const processedImage = await postToServer(capturedImage)
+        if (processedImage) {
+            // e.preventDefault()
+            console.log('siap-siap sebelum navigate', processedImage, capturedImage)
+            setIsLoading(false)
+            navigation.navigate('AddExpense', { data: processedImage, image: capturedImage })
         }
-        
+
+
     }
     const retakePictureHandler = () => {
         setCapturedImage(null)
@@ -64,7 +66,7 @@ export default function AddRecord({ navigation, route }) {
 
 
     async function imagePickerHandler() {
-        console.log('gottem')
+        // console.log('gottem')
         // (async () => {
         if (Platform.OS !== 'web') {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -75,40 +77,41 @@ export default function AddRecord({ navigation, route }) {
         }
         //   })();
 
-        let result = await ImagePicker.launchImageLibraryAsync({
+        const photo = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             // aspect: [4, 3],
             quality: 1,
         });
 
-        console.log(result);
-
-        if (!result.cancelled) {
-            // console.log('tidak masuk', result)
-            setCapturedImage(result);
+        
+        if (!photo.cancelled) {
+            // console.log('tidak masuk', photo)
+            setCapturedImage(photo);
             setIsLoading(true)
-            const processedImage = await postToServer(result)
+            console.log('FOTO SEBELUM DI KIRIM KE POST TO SERVER',photo);
+            
+            const processedImage = await postToServer(photo)
             if (processedImage) {
                 // e.preventDefault()
                 console.log('siap-siap sebelum naviagate', processedImage)
                 setIsLoading(false)
-                navigation.navigate('AddExpense', {data: processedImage, imageUri: result.uri})
+                navigation.navigate('AddExpense', { data: processedImage, imageUri: capturedImage })
             }
         }
     }
 
-    async function postToServer(imgObj) {
+    async function postToServer(photo) {
         // !lanjut ke ocr
         try {
+            // console.log('FOTO SETELAT SAMPE DI KIRIM KE POST TO SERVER', capturedImage);
 
-            // console.log('coba console log', capturedImage.uri)
             const payload = new FormData();
             // payload.append("imageUrl", capturedImage.uri);
             const fileName = 'receiptImage'
             const mimeType = 'image/jpeg'
             // console.log('capturedImage',result)
-            payload.append('receiptImage', { uri: imgObj.uri, name: fileName, type: mimeType })
+            payload.append('receiptImage', { uri: photo.uri, name: fileName, type: mimeType })
             payload.append("dummyText", 'dummy');
 
             return await dispatch(postOcr(payload))
@@ -118,22 +121,7 @@ export default function AddRecord({ navigation, route }) {
         }
     }
 
-    // const pickImage = async () => {
-    //     let result = await ImagePicker.launchImageLibraryAsync({
-    //       mediaTypes: ImagePicker.MediaTypeOptions.All,
-    //       allowsEditing: true,
-    //       aspect: [4, 3],
-    //       quality: 1,
-    //     });
-
-    //     console.log(result);
-
-    //     if (!result.cancelled) {
-    //       setImage(result.uri);
-    //     }
-    //   };
-
-    function toAddExpense(e) {
+    function toAddExpense() {
         // e.preventDefault()
         // console.log('masukkk')
         navigation.navigate('AddExpense')
@@ -142,7 +130,7 @@ export default function AddRecord({ navigation, route }) {
     async function takePictureHandler() {
         if (!camera) return
         const photo = await camera.takePictureAsync()
-        // console.log(photo)
+        console.log(photo)
         setPreviewVisible(true)
         setCapturedImage(photo)
 
@@ -303,5 +291,5 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         padding: 10
-      }
+    }
 })

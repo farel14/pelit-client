@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, TextInput } from "react-native"
+import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native"
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dateFormatter } from "../helpers/dateFormatter";
 import * as ImagePicker from 'expo-image-picker';
@@ -35,13 +35,17 @@ export default function AddExpense({ navigation, route }) {
         //     setUserId(dataAsyncUser.id)
         // }
         // fetchStart()
-        if (route.params.data) {
+        // !dummy
+        setUserId(2)
+
+        if (route.params) {
             const { title: titleParam, total: totalParam, fullDate: dateParam } = route.params.data
-            const imageUri = route.params.imageUri
+            const image = route.params.image
             dateParam ? setDate(new Date(dateParam)) : null
             titleParam ? setName(titleParam) : null
             totalParam ? setAmount(totalParam) : null
-            imageUri ? setReceiptImage(imageUri) : null
+            image ? setReceiptImage(image) : null
+            console.log(receiptImage, 'receiptImage')
         }
         // console.log(route.params)
     }, [])
@@ -112,7 +116,7 @@ export default function AddExpense({ navigation, route }) {
         payload.append("receiptImage", receiptImage);
 
         // console.log(payload)
-        dispatch(postTransaction(payload, userid))
+        dispatch(postTransaction(payload, UserId))
         // navigation.navigate('Home')
     }
 
@@ -172,19 +176,27 @@ export default function AddExpense({ navigation, route }) {
                 />
                 )}
                 <Text>Amount</Text>
-                <View style={{flexDirection: "row"}}>
-                    <Text style={{fontSize: 15, flex: 1, textAlign: 'center'}}>Rp </Text>
-                    <TextInput style={{fontSize: 15, flex: 4, textAlign: 'left'}} onChangeText={setAmount} keyboardType='numeric' />
+                <View style={{ flexDirection: "row" }}>
+                    <Text style={{ fontSize: 15, flex: 1, textAlign: 'center' }}>Rp </Text>
+                    <TextInput style={{ fontSize: 15, flex: 4, textAlign: 'left' }} onChangeText={setAmount} keyboardType='numeric' />
                 </View>
-                    <Text>Receipt Image</Text>
-                {/* upload handler */}
+                <Text>Receipt Image</Text>
                 {receiptImage
-                    ? <Button
-                        onPress={() => setReceiptImage('')}
-                        title="Clear Image"
-                        style={styles.buttonStyle}
-                    />
-                    : <Button
+                    ? (<>
+                    <Text>{JSON.stringify(receiptImage)}</Text>
+                        <Image 
+                        style={styles.image}
+                        source={{
+                            uri: receiptImage.uri
+                        }} />
+                        <Button
+                            onPress={() => setReceiptImage('')}
+                            title="Clear Image"
+                            style={styles.buttonStyle}
+                        />
+                    </>)
+                    :
+                    <Button
                         onPress={uploadImageHandler}
                         title="Upload Image"
                         style={styles.buttonStyle}
@@ -209,5 +221,12 @@ const styles = StyleSheet.create({
     buttonStyle: {
         backgroundColor: 'green',
         color: 'black'
+    }, 
+    image: {
+        // width: 200,
+        // height: 200,
+        flex: 1,
+        marginHorizontal: 4,
+        marginVertical: 4
     }
 })
