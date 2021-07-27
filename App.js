@@ -23,7 +23,7 @@ export default function App() {
       <NavigationContainer>
         {/* <View style={styles.container}>
         <Text>asdasdasdadas</Text> */}
-        <Stack.Navigator initialRouteName="AddRecord">
+        <Stack.Navigator initialRouteName="EditExpense">
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="AddExpense" component={AddExpense} />

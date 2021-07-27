@@ -111,7 +111,7 @@ export default function AddExpense({ navigation, route }) {
         payload.append("type", type);
         payload.append("category", category);
         payload.append("name", name);
-        payload.append("fullDate", date.toSt);
+        payload.append("fullDate", date.toString());
         payload.append("amount", amount);
         payload.append("receiptImage", receiptImage);
 
