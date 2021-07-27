@@ -96,3 +96,25 @@ export function getUserActiveTarget(id) {
         })       
     }
 }
+
+export function addPushToken(pushToken, userId) {
+    console.log(pushToken, userId, 'DI ACTIONS')
+    let id = +userId
+    return function(dispatch) {
+        fetch(`https://pelit-app.herokuapp.com/user/pushtoken/${id}`, {
+        method: "PATCH",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({pushToken})
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('sucess set push token', data)
+        })
+        .catch(err => {
+            console.log('error fetch badge', err)
+        })
+    }
+}
