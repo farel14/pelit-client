@@ -20,6 +20,7 @@ export default function AddExpense({ navigation, route }) {
     const [amount, setAmount] = useState(0)
     const [receiptImage, setReceiptImage] = useState('')
     const [UserId, setUserId] = useState('')
+    const [note, setNote] = useState('')
 
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
@@ -114,6 +115,7 @@ export default function AddExpense({ navigation, route }) {
         payload.append("category", category);
         payload.append("name", name);
         payload.append("fullDate", dateParse);
+        payload.append("note", note);
 
         payload.append("amount", amount);
         payload.append("receiptImage", receiptImage);
@@ -205,6 +207,8 @@ export default function AddExpense({ navigation, route }) {
                         style={styles.buttonStyle}
                     />
                 }
+                <Text>Note</Text>
+                <TextInput style={{ fontSize: 15, flex: 4, textAlign: 'left' }} onChangeText={setNote} />
                 <Button
                     onPress={submitHandler}
                     title="Submit Record"
