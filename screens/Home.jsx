@@ -34,10 +34,6 @@ export default function Home({ navigation }) {
 
   if (!dataUser || !dataTransByDate) return null;
 
-  console.log();
-
-  // console.log(dataUser, "data async");
-  // console.log(dataTransByDate, "data trans by date");
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -66,7 +62,9 @@ export default function Home({ navigation }) {
             }}
           >
             <Text style={styles.textTop}>Hi, {dataUser.data.fullName}!</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("MyProfile")}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("My Dashboard")}
+            >
               <Image
                 style={styles.userProfilePicture}
                 resizeMode="cover"
@@ -136,9 +134,9 @@ export default function Home({ navigation }) {
         </View>
         {dataUser.data.Transactions.data.length ? (
           displayCard === "Date" ? (
-            <DateCard></DateCard>
+            <DateCard navigation={navigation}></DateCard>
           ) : (
-            <CategoryCard></CategoryCard>
+            <CategoryCard navigation={navigation}></CategoryCard>
           )
         ) : (
           <Text style={styles.textWarning}>
