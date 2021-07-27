@@ -33,7 +33,7 @@ export default function DateCard({ navigation }) {
 
   useEffect(() => {
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-  }, [monthYear.numMonth, dataAsyncUser.data, dispatch]);
+  }, [monthYear.numMonth, dataAsyncUser.data, dispatch, dataTransByDate]);
 
   if (!dataAsyncUser || !dataTransByDate.length) return null;
 
@@ -56,7 +56,11 @@ export default function DateCard({ navigation }) {
             <Text style={styles.borderTitleCard}></Text>
 
             {data.items.map((item, index) => (
-              <FieldCard key={index} item={item}></FieldCard>
+              <FieldCard
+                key={index}
+                item={item}
+                navigation={navigation}
+              ></FieldCard>
             ))}
           </View>
         </View>
