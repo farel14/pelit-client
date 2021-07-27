@@ -8,6 +8,7 @@ import { postTransaction, fetchTransaction } from "../store/actions";
 import { dateFormatter } from "../helpers/dateFormatter";
 
 export default function EditExpense({ navigation, route }) {
+    // !handle upload image di edit, butuh upload lagi?
   const dispatch = useDispatch();
   const { TransactionId } = route.params;
   const [type, setType] = useState("");
@@ -48,19 +49,21 @@ export default function EditExpense({ navigation, route }) {
   }));
   const incomeItems = incomeChoices.map((ele) => ({ label: ele, value: ele }));
 
-  useEffect(() => {
-    async function fetchStart() {
-      await dispatch(fetchTransaction(TransactionId));
-
-      setType(transaction.type);
-      setCategory(transaction.category);
-      setName(transaction.name);
-      setDate(new Date(transaction.fullDate));
-      setAmount(transaction.amount);
-      // setReceiptImage(transaction.type)
-    }
-    fetchStart();
-  }, []);
+        async function fetchStart() {
+            // await dispatch(fetchTransaction(2))
+            await dispatch(fetchTransaction(TransactionId))
+            // console.log(transaction)
+            setType(transaction.type)
+            setCategory(transaction.category)
+            setName(transaction.name)
+            setDate(new Date(transaction.date))
+            setAmount(transaction.amount)
+            setUserId(transaction.UserId)
+            setReceiptImage(transaction.receiptImage)
+            setIsLoading(false)
+        }
+        fetchStart()
+    }, [])
 
   const dateHandler = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -77,14 +80,31 @@ export default function EditExpense({ navigation, route }) {
     showMode("date");
   };
 
-  // imagekit here
+    async function submitHandler(e) {
+        // data diubah jadi form
+        // const data = { type, category, name, date, amount, receiptImage }
+        // console.log(data)
+        const dateParse = date.toString()
+        const dateArr = date.split('-')
 
-  async function submitHandler(e) {
-    // data diubah jadi form
-    const data = { type, category, name, date, amount, receiptImage };
-    dispatch(postTransaction(data));
-    navigation.navigate("Home");
+        const payload = new FormData();
+        payload.append("type", type);
+        payload.append("category", category);
+        payload.append("name", name);
+        payload.append("fullDate", dateParse);
+
+        payload.append("year", dateArr[0]);
+        payload.append("month", dateArr[1]);
+        payload.append("date", dateArr[2].substring(0,2));
+
+        payload.append("amount", amount);
+        payload.append("receiptImage", receiptImage);
+      
+      dispatch(postTransaction(payload, UserId))
+        navigation.navigate('Home')
   }
+      
+          if (isLoading) return (<View><Text>Loading screen here</Text></View>)
 
   return (
     <>

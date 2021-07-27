@@ -107,11 +107,18 @@ export default function AddExpense({ navigation, route }) {
         // data diubah jadi form
         // const data = { type, category, name, date, amount, receiptImage }
         // console.log(data)
+        const dateParse = date.toString()
+        const dateArr = date.split('-')
+
         const payload = new FormData();
         payload.append("type", type);
         payload.append("category", category);
         payload.append("name", name);
-        payload.append("fullDate", date.toString());
+        payload.append("fullDate", dateParse);
+
+        payload.append("year", dateArr[0]);
+        payload.append("month", dateArr[1]);
+        payload.append("date", dateArr[2].substring(0, 2));
         payload.append("amount", amount);
         payload.append("receiptImage", receiptImage);
 
@@ -183,12 +190,12 @@ export default function AddExpense({ navigation, route }) {
                 <Text>Receipt Image</Text>
                 {receiptImage
                     ? (<>
-                    {/* <Text>{JSON.stringify(receiptImage)}</Text> */}
-                        <Image 
-                        style={styles.image}
-                        source={{
-                            uri: receiptImage.uri
-                        }} />
+                        {/* <Text>{JSON.stringify(receiptImage)}</Text> */}
+                        <Image
+                            style={styles.image}
+                            source={{
+                                uri: receiptImage.uri
+                            }} />
                         <Button
                             onPress={() => setReceiptImage('')}
                             title="Clear Image"
@@ -221,7 +228,7 @@ const styles = StyleSheet.create({
     buttonStyle: {
         backgroundColor: 'green',
         color: 'black'
-    }, 
+    },
     image: {
         // width: 200,
         // height: 200,
