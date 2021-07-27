@@ -183,7 +183,7 @@ export default function AddExpense({ navigation, route }) {
                 <Text>Receipt Image</Text>
                 {receiptImage
                     ? (<>
-                    <Text>{JSON.stringify(receiptImage)}</Text>
+                    {/* <Text>{JSON.stringify(receiptImage)}</Text> */}
                         <Image 
                         style={styles.image}
                         source={{

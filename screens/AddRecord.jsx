@@ -39,12 +39,13 @@ export default function AddRecord({ navigation, route }) {
         setIsLoading(true)
 
 
-        console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)
+        // console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)
 
         const processedImage = await postToServer(capturedImage)
         if (processedImage) {
             // e.preventDefault()
-            console.log('siap-siap sebelum navigate', processedImage, capturedImage)
+            console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)
+            console.log('siap-siap sebelum navigate', processedImage)
             setIsLoading(false)
             navigation.navigate('AddExpense', { data: processedImage, image: capturedImage })
         }
@@ -89,14 +90,14 @@ export default function AddRecord({ navigation, route }) {
             // console.log('tidak masuk', photo)
             setCapturedImage(photo);
             setIsLoading(true)
-            console.log('FOTO SEBELUM DI KIRIM KE POST TO SERVER',photo);
             
             const processedImage = await postToServer(photo)
             if (processedImage) {
                 // e.preventDefault()
+                console.log('CAPTURED IMAGE',photo);
                 console.log('siap-siap sebelum naviagate', processedImage)
                 setIsLoading(false)
-                navigation.navigate('AddExpense', { data: processedImage, imageUri: capturedImage })
+                navigation.navigate('AddExpense', { data: processedImage, image: photo })
             }
         }
     }
