@@ -8,18 +8,40 @@ export function setTransaction(payload) {
     }
 }
 
-export function postTransaction(payload) {
+export function postTransaction(payload, UserId) {
     return async (dispatch) => {
         try {
-            let res = await fetch('http://localhost:3000/transactions', {
-                method: 'POST', // or 'PUT'
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                body: JSON.stringify(payload),
+            // console.log(payload, 'dari action')
+            let res = await fetch(`https://pelit-app.herokuapp.com/transactions/${UserId}`, {
+                method: 'POST',
+                // headers: {
+                //     'Content-Type': 'multipart/form-data',
+                // },
+                // body: JSON.stringify(payload),
+                body: payload
             })
             res = await res.json()
             console.log('Success:', res);
+        } catch (error) {
+            console.error('Error:', error)
+        }
+    }
+}
+export function postOcr(payload) {
+    return async (dispatch) => {
+        try {
+            // console.log(payload, 'dari action')
+            let res = await fetch('https://pelit-app.herokuapp.com/ocr', {
+                method: 'POST',
+                // headers: {
+                //     'Content-Type': 'multipart/form-data',
+                // },
+                // body: JSON.stringify(payload),
+                body: payload
+            })
+            res = await res.json()
+            console.log('Success:', res);
+            return res
         } catch (error) {
             console.error('Error:', error)
         }
@@ -29,7 +51,7 @@ export function postTransaction(payload) {
 export function fetchTransaction(TransactionId) {
     return async (dispatch) => {
         try {
-            let res = await fetch(`http://localhost:3000/transactions/expense/${TransactionId}`, {
+            let res = await fetch(`https://pelit-app.herokuapp.com/transactions/expense/${TransactionId}`, {
                 method: 'GET', // or 'PUT'
                 // headers: {
                 //     'Content-Type': 'multipart/form-data',
