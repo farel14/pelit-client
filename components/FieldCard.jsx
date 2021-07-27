@@ -8,9 +8,23 @@ import {
   Modal,
 } from "react-native";
 import ModalItem from "./ModalItem";
+import { fetchDeleteTransaction } from "../store/actionsFaisal";
+import { useDispatch } from "react-redux";
 
 export default function FieldCard({ item, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
+  const dispatch = useDispatch();
+
+  function handleEditItem() {
+    setModalVisible(!modalVisible);
+    navigation.navigate("EditExpense");
+  }
+
+  function handleDeleteItem() {
+    setModalVisible(!modalVisible);
+    dispatch(fetchDeleteTransaction(item.id));
+  }
+
   return (
     <View>
       <View
@@ -47,14 +61,15 @@ export default function FieldCard({ item, navigation }) {
             <View style={{ flexDirection: "row" }}>
               <TouchableOpacity
                 style={[styles.button, styles.buttonEdit]}
-                onPress={() => setModalVisible(!modalVisible)}
-                // onPress={() => navigation.navigate("EditExpense")}
+                // onPress={() => setModalVisible(!modalVisible)}
+                // onPress={() => )}
+                onPress={handleEditItem}
               >
                 <Text style={styles.textButton}>Edit</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.buttonDelete]}
-                onPress={() => setModalVisible(!modalVisible)}
+                onPress={handleDeleteItem}
                 // onPress={() => navigation.navigate("MyProfile")}
               >
                 <Text style={styles.textButton}>Delete</Text>

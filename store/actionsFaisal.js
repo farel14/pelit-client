@@ -135,3 +135,23 @@ export function fetchTransactionByCategory(month, data) {
     }
   };
 }
+
+export function fetchDeleteTransaction(id) {
+  console.log(id, "ini transaction id");
+  return async (dispatch) => {
+    try {
+      dispatch(setLoadingTransaction(true));
+      const response = await fetch(
+        `https://pelit-app.herokuapp.com/transactions/${id}`,
+        { method: "delete" }
+      );
+      const result = await response.json();
+      console.log(result, "ini delete");
+      return result;
+    } catch (err) {
+      console.log("error di fetch transaction by date", err);
+    } finally {
+      dispatch(setLoadingTransaction(false));
+    }
+  };
+}
