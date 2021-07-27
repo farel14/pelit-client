@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function EditExpense({ navigation, route }) {
   // !handle upload image di edit, butuh upload lagi?
   const dispatch = useDispatch();
-  // const {TransactionId} = route.params
+  // const { TransactionId } = route.params;
   const [type, setType] = useState("");
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
@@ -19,66 +19,10 @@ export default function EditExpense({ navigation, route }) {
   const [amount, setAmount] = useState(0);
   const [receiptImage, setReceiptImage] = useState("");
   const [UserId, setUserId] = useState("");
-  const [dataAsyncUser, setDataAsyncUser] = useState("");
-
-  async function getItem() {
-    const dataAsyncUser = await AsyncStorage.getItem("@dataUser");
-    setDataAsyncUser(JSON.parse(dataAsyncUser));
-  }
-  useEffect(() => {
-    getItem();
-  }, []);
 
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  const expenseChoices = [
-    "Housing",
-    "Transportation",
-    "Food & Beverage",
-    "Utilities",
-    "Insurance",
-    "Medical & Healthcare",
-    "Saving, Investing, & Debt Payments",
-    "Personal Spending",
-    "Other Expense",
-  ];
-  const incomeChoices = [
-    "Salary",
-    "Wages",
-    "Commission",
-    "Interest",
-    "Investments",
-    "Gifts",
-    "Allowance",
-    "Other Income",
-  ];
-  const expenseItems = expenseChoices.map((ele) => ({
-    label: ele,
-    value: ele,
-  }));
-  const incomeItems = incomeChoices.map((ele) => ({ label: ele, value: ele }));
-
-  useEffect(() => {
-    if (dataUser.access_token) {
-      async function fetchStart() {
-        await dispatch(fetchTransaction(+dataUser.data.id)); //2
-        await dispatch(fetchTransaction(+dataUser.data.id));
-        const transaction = useSelector((state) => state.transaction);
-        // console.log(transaction)
-        setType(transaction.type);
-        setCategory(transaction.category);
-        setName(transaction.name);
-        setDate(transaction.date);
-        setAmount(transaction.amount);
-        setUserId(transaction.UserId);
-        setReceiptImage(transaction.receiptImage);
-        setIsLoading(false);
-      }
-      fetchStart();
-    }
-  }, []);
 
   const expenseChoices = [
     "Housing",
@@ -131,7 +75,7 @@ export default function EditExpense({ navigation, route }) {
       }
       fetchStart();
     }
-  }, []);
+  }, [dataUser]);
 
   const dateHandler = (event, selectedDate) => {
     const currentDate = selectedDate || date;
