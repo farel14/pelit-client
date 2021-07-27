@@ -108,7 +108,6 @@ export default function AddExpense({ navigation, route }) {
         // const data = { type, category, name, date, amount, receiptImage }
         // console.log(data)
         const dateParse = date.toString()
-        const dateArr = date.split('-')
 
         const payload = new FormData();
         payload.append("type", type);
@@ -116,9 +115,6 @@ export default function AddExpense({ navigation, route }) {
         payload.append("name", name);
         payload.append("fullDate", dateParse);
 
-        payload.append("year", dateArr[0]);
-        payload.append("month", dateArr[1]);
-        payload.append("date", dateArr[2].substring(0, 2));
         payload.append("amount", amount);
         payload.append("receiptImage", receiptImage);
 
