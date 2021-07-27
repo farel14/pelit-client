@@ -6,6 +6,7 @@ import CameraPreview from '../components/CameraPreview'
 import { useDispatch } from 'react-redux'
 import { postOcr } from '../store/actions'
 import * as ImagePicker from 'expo-image-picker';
+import tesseract from '../helpers/tesseract'
 let camera
 
 export default function AddRecord({ navigation, route }) {
@@ -36,21 +37,20 @@ export default function AddRecord({ navigation, route }) {
         // !kirim data ke ocr
         // const result = await dispatch(postOcr(payload))
 
+        
+        tesseract(capturedImage.uri)
         setIsLoading(true)
 
 
         // console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)
 
-        const processedImage = await postToServer(capturedImage)
+/*         const processedImage = await postToServer(capturedImage)
         if (processedImage) {
-            // e.preventDefault()
             console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)
             console.log('siap-siap sebelum navigate', processedImage)
             setIsLoading(false)
             navigation.navigate('AddExpense', { data: processedImage, image: capturedImage })
-        }
-
-
+        } */
     }
     const retakePictureHandler = () => {
         setCapturedImage(null)

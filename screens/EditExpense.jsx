@@ -18,6 +18,7 @@ export default function EditExpense({ navigation, route }) {
     const [amount, setAmount] = useState(0)
     const [receiptImage, setReceiptImage] = useState('')
     const [UserId, setUserId] = useState('')
+    const transaction = useSelector(state => state.transaction)
 
 
     const [mode, setMode] = useState('date');
@@ -32,14 +33,13 @@ export default function EditExpense({ navigation, route }) {
     useEffect(() => {
 
         async function fetchStart() {
-            await dispatch(fetchTransaction(2))
+            // await dispatch(fetchTransaction(2))
             await dispatch(fetchTransaction(TransactionId))
-            const transaction = useSelector(state => state.transaction)
             // console.log(transaction)
             setType(transaction.type)
             setCategory(transaction.category)
             setName(transaction.name)
-            setDate(transaction.date)
+            setDate(new Date(transaction.date))
             setAmount(transaction.amount)
             setUserId(transaction.UserId)
             setReceiptImage(transaction.receiptImage)
@@ -70,11 +70,19 @@ export default function EditExpense({ navigation, route }) {
         // data diubah jadi form
         // const data = { type, category, name, date, amount, receiptImage }
         // console.log(data)
+        const dateParse = date.toString()
+        const dateArr = date.split('-')
+
         const payload = new FormData();
         payload.append("type", type);
         payload.append("category", category);
         payload.append("name", name);
-        payload.append("fullDate", date.toString());
+        payload.append("fullDate", dateParse);
+
+        payload.append("year", dateArr[0]);
+        payload.append("month", dateArr[1]);
+        payload.append("date", dateArr[2].substring(0,2));
+
         payload.append("amount", amount);
         payload.append("receiptImage", receiptImage);
 
