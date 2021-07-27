@@ -12,7 +12,7 @@ export function postTransaction(payload, UserId) {
     return async (dispatch) => {
         try {
             // console.log(payload, 'dari action')
-            let res = await fetch(`http://localhost:3000/transactions/${UserId}`, {
+            let res = await fetch(`https://pelit-app.herokuapp.com/transactions/${UserId}`, {
                 method: 'POST',
                 // headers: {
                 //     'Content-Type': 'multipart/form-data',
@@ -31,7 +31,7 @@ export function postOcr(payload) {
     return async (dispatch) => {
         try {
             // console.log(payload, 'dari action')
-            let res = await fetch('http://192.168.100.9:3000/ocr', {
+            let res = await fetch('https://pelit-app.herokuapp.com/ocr', {
                 method: 'POST',
                 // headers: {
                 //     'Content-Type': 'multipart/form-data',
