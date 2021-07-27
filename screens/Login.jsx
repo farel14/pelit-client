@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef  } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,10 +8,23 @@ import {
   TextInput,
   Image,
   KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import { fetchLoginUser } from "../store/actionsFaisal";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { addPushToken } from "../store/actionsGaluh"
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
@@ -19,10 +32,97 @@ export default function Login({ navigation }) {
   const [password, setPasswordl] = useState("");
   const isLogin = useSelector((state) => state.isLogin);
   const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  const [user, setUser] = useState(0)
+
+  useEffect(() => {
+    if (user.data) {
+      //  console.log(user.data.id)  
+       sendPushNotification(expoPushToken)   
+       dispatch(addPushToken(expoPushToken, user.data.id));
+    }
+  }, [user])
 
   useEffect(() => {
     dispatch(fetchLoginUser(email, password));
   }, [email, password, dispatch]);
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  async function getUserId() {
+    let userSync = await AsyncStorage.getItem("@dataUser")
+    setUser(JSON.parse(userSync))
+  }
+
+  async function sendPushNotification(expoPushToken) {
+    const message = {
+      to: expoPushToken,
+      sound: 'default',
+      title: `Pelit App - Welcome Back ${user.data.firstName}!`,
+      body: 'Track, Record, and Manage Your Finance'
+    };
+  
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+  
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  
+    return token;
+  }
 
   async function handleLoginButton() {
     if (!email && !password)
@@ -31,6 +131,7 @@ export default function Login({ navigation }) {
     else if (!password) Alert.alert("Please input your password");
     else {
       if (isLogin) {
+        getUserId()
         navigation.navigate("Home");
       } else {
         Alert.alert("Wrong Email/Password");
