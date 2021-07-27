@@ -13,10 +13,13 @@ export default function EditExpense({ navigation, route }) {
   const { TransactionId } = route.params;
   const [type, setType] = useState("");
   const [category, setCategory] = useState("");
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
   const [amount, setAmount] = useState(0);
   const [receiptImage, setReceiptImage] = useState("");
+
+  const [UserId, setUserId] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const transaction = useSelector((state) => state.transaction);
 
   const [mode, setMode] = useState("date");
@@ -52,12 +55,13 @@ export default function EditExpense({ navigation, route }) {
   useEffect(() => {
 
     async function fetchStart() {
+      setIsLoading(true)
       // await dispatch(fetchTransaction(2))
       await dispatch(fetchTransaction(TransactionId))
       // console.log(transaction)
       setType(transaction.type)
       setCategory(transaction.category)
-      setName(transaction.name)
+      setTitle(transaction.title)
       setDate(new Date(transaction.fullDate))
       setAmount(transaction.amount)
       setUserId(transaction.UserId)
@@ -84,20 +88,17 @@ export default function EditExpense({ navigation, route }) {
 
   async function submitHandler(e) {
     // data diubah jadi form
-    // const data = { type, category, name, date, amount, receiptImage }
+    // const data = { type, category, title, date, amount, receiptImage }
     // console.log(data)
-    const dateParse = date.toString()
-    const dateArr = date.split('-')
+
+    const dateParse = date.toLocaleDateString('id-ID')
 
     const payload = new FormData();
     payload.append("type", type);
     payload.append("category", category);
-    payload.append("name", name);
+    payload.append("title", title);
     payload.append("fullDate", dateParse);
-
-    payload.append("year", dateArr[0]);
-    payload.append("month", dateArr[1]);
-    payload.append("date", dateArr[2].substring(0, 2));
+    payload.append("note", note);
 
     payload.append("amount", amount);
     payload.append("receiptImage", receiptImage);
@@ -127,6 +128,7 @@ export default function EditExpense({ navigation, route }) {
           // onValueChange={(value) => setType(value)}
           placeholder={{ label: "Pick a type" }}
           onValueChange={setType}
+          selectedValue={type}
           items={[
             { label: "Expense", value: "Expense" },
             { label: "Income", value: "Income" },
@@ -145,9 +147,11 @@ export default function EditExpense({ navigation, route }) {
             // ? (incomeItems)
             // : [{ label: 'Pick a category first', value: '' }]
           }
+          selectedValue={category}
+
         />
         <Text>RecordName</Text>
-        <TextInput onChangeText={setName} />
+        <TextInput onChangeText={setTitle} />
         <Text>Date</Text>
         <Text>{dateFormatter(date)}</Text>
         <Button onPress={showDatepicker} title="Pick a date" />
@@ -162,7 +166,10 @@ export default function EditExpense({ navigation, route }) {
           />
         )}
         <Text>Amount</Text>
-        <TextInput onChangeText={setAmount} keyboardType="numeric" />
+        <TextInput onChangeText={setAmount}
+          keyboardType="numeric"
+          selectedValue={amount}
+        />
         <Text>Receipt Image</Text>
         {/* upload handler */}
         <Button

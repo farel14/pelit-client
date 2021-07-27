@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native"
-// import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dateFormatter } from "../helpers/dateFormatter";
 import * as ImagePicker from 'expo-image-picker';
-
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from "react";
@@ -15,7 +14,7 @@ export default function AddExpense({ navigation, route }) {
     const dispatch = useDispatch()
     const [type, setType] = useState('')
     const [category, setCategory] = useState('')
-    const [name, setName] = useState('')
+    const [title, setTitle] = useState('')
     const [date, setDate] = useState(new Date())
     const [amount, setAmount] = useState(0)
     const [receiptImage, setReceiptImage] = useState('')
@@ -31,29 +30,25 @@ export default function AddExpense({ navigation, route }) {
     const incomeItems = incomeChoices.map(ele => ({ label: ele, value: ele }))
 
     useEffect(() => {
-        // async function fetchStart() {
+        // (async () => {
         //     const dataAsyncUser = await AsyncStorage.getItem('@dataUser')
-        //     setUserId(dataAsyncUser.id)
-        // }
-        // fetchStart()
-        // !dummy
-        setUserId(2)
+        //     setUserId(JSON.parse(dataAsyncUser).data.id)
+        // })()
+        setUserId(29)
 
         if (route.params) {
             const { title: titleParam, total: totalParam, fullDate: dateParam } = route.params.data
             const image = route.params.image
             dateParam ? setDate(new Date(dateParam)) : null
-            titleParam ? setName(titleParam) : null
+            titleParam ? setTitle(titleParam) : null
             totalParam ? setAmount(totalParam) : null
             image ? setReceiptImage(image) : null
-            console.log(receiptImage, 'receiptImage')
+            // console.log(receiptImage, 'receiptImage')
         }
         // console.log(route.params)
     }, [])
 
     async function uploadImageHandler() {
-        console.log('gottem')
-        // (async () => {
         if (Platform.OS !== 'web') {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== 'granted') {
@@ -61,28 +56,19 @@ export default function AddExpense({ navigation, route }) {
                 return
             }
         }
-        //   })();
 
-        let result = await ImagePicker.launchImageLibraryAsync({
+        const photo = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             // aspect: [4, 3],
             quality: 1,
         });
 
-        console.log(result);
+        console.log(photo);
 
-        if (!result.cancelled) {
-            // console.log('tidak masuk', result)
-            setReceiptImage(result);
-            // setIsLoading(true)
-            // const processedImage = await postToServer(result)
-            // if (processedImage) {
-            //     // e.preventDefault()
-            //     console.log('siap-siap sebelum naviagate', processedImage)
-            //     setIsLoading(false)
-            //     navigation.navigate('AddExpense', {data: processedImage, imageUri: result.uri})
-            // }
+        if (!photo.cancelled) {
+            setReceiptImage(photo);
+            // console.log(photo.uri)
         }
     }
 
@@ -102,27 +88,29 @@ export default function AddExpense({ navigation, route }) {
         showMode('date');
     };
 
-    // imagekit here
-
     async function submitHandler(e) {
         // data diubah jadi form
-        // const data = { type, category, name, date, amount, receiptImage }
+        // const data = { type, category, title, date, amount, receiptImage }
         // console.log(data)
-        const dateParse = date.toString()
+        const dateParse = date.toLocaleDateString('id-ID')
 
         const payload = new FormData();
         payload.append("type", type);
         payload.append("category", category);
-        payload.append("name", name);
+        payload.append("title", title);
         payload.append("fullDate", dateParse);
         payload.append("note", note);
 
         payload.append("amount", amount);
-        payload.append("receiptImage", receiptImage);
-
-        // console.log(payload)
-        dispatch(postTransaction(payload, UserId))
-        // navigation.navigate('Home')
+        const mimeType = 'image/jpeg'
+        const fileName = 'receiptImage'
+        if (receiptImage) {
+            payload.append('receiptImage', {uri: receiptImage.uri, name: fileName, type: mimeType})
+        }
+        // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
+        console.log(payload)
+        await dispatch(postTransaction({payload, UserId}))
+        navigation.navigate('Home')
     }
 
     return (
@@ -167,7 +155,7 @@ export default function AddExpense({ navigation, route }) {
                     }
                 />
                 <Text>RecordName</Text>
-                <TextInput onChangeText={setName} />
+                <TextInput onChangeText={setTitle} />
                 <Text>Date</Text>
                 <Text>{dateFormatter(date)}</Text>
                 <Button onPress={showDatepicker} title="Pick a date" />

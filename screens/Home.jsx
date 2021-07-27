@@ -51,7 +51,7 @@ export default function Home({ navigation }) {
             <Text style={styles.textTop}>{monthYear.name}</Text>
             <TouchableOpacity
               style={styles.buttonAdd}
-              onPress={() => navigation.navigate("AddExpense")}
+              onPress={() => navigation.navigate("Add Record")}
             >
               <Text style={styles.textAdd}>+</Text>
             </TouchableOpacity>

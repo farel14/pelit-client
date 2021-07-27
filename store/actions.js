@@ -8,20 +8,24 @@ export function setTransaction(payload) {
     }
 }
 
-export function postTransaction(payload, UserId) {
+export function postTransaction({payload, UserId}) {
     return async (dispatch) => {
         try {
-            // console.log(payload, 'dari action')
+            console.log(payload, UserId)
+            // let res = await fetch(`http://8.21.9.76:3000/transactions/${UserId}`, {
             let res = await fetch(`https://pelit-app.herokuapp.com/transactions/${UserId}`, {
                 method: 'POST',
+                body: payload,
                 // headers: {
-                //     'Content-Type': 'multipart/form-data',
-                // },
-                // body: JSON.stringify(payload),
-                body: payload
+                //     "Content-Type": "multipart/form-data",
+                //     "Accept": "application/json"
+                // }
             })
+            // res = await res.text()
+            // console.log(res)
             res = await res.json()
             console.log('Success:', res);
+            // return true
         } catch (error) {
             console.error('Error:', error)
         }
@@ -33,15 +37,11 @@ export function postOcr(payload) {
             // console.log(payload, 'dari action')
             let res = await fetch('https://pelit-app.herokuapp.com/ocr', {
                 method: 'POST',
-                // headers: {
-                //     'Content-Type': 'multipart/form-data',
-                // },
-                // body: JSON.stringify(payload),
                 body: payload
             })
             res = await res.json()
             console.log('Success:', res);
-            return res
+            // return res
         } catch (error) {
             console.error('Error:', error)
         }

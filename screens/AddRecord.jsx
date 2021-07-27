@@ -6,7 +6,6 @@ import CameraPreview from '../components/CameraPreview'
 import { useDispatch } from 'react-redux'
 import { postOcr } from '../store/actions'
 import * as ImagePicker from 'expo-image-picker';
-import tesseract from '../helpers/tesseract'
 let camera
 
 export default function AddRecord({ navigation, route }) {
@@ -36,21 +35,18 @@ export default function AddRecord({ navigation, route }) {
 
         // !kirim data ke ocr
         // const result = await dispatch(postOcr(payload))
-
-        
-        tesseract(capturedImage.uri)
         setIsLoading(true)
 
 
         // console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)
 
-/*         const processedImage = await postToServer(capturedImage)
+        const processedImage = await postToServer(capturedImage)
         if (processedImage) {
-            console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)
+            console.log('SEBELUM DIKIRIM KE SERVER DARI STATE', capturedImage)
             console.log('siap-siap sebelum navigate', processedImage)
             setIsLoading(false)
             navigation.navigate('AddExpense', { data: processedImage, image: capturedImage })
-        } */
+        }
     }
     const retakePictureHandler = () => {
         setCapturedImage(null)
@@ -85,16 +81,16 @@ export default function AddRecord({ navigation, route }) {
             quality: 1,
         });
 
-        
+
         if (!photo.cancelled) {
             // console.log('tidak masuk', photo)
             setCapturedImage(photo);
             setIsLoading(true)
-            
+
             const processedImage = await postToServer(photo)
             if (processedImage) {
                 // e.preventDefault()
-                console.log('CAPTURED IMAGE',photo);
+                console.log('CAPTURED IMAGE', photo);
                 console.log('siap-siap sebelum naviagate', processedImage)
                 setIsLoading(false)
                 navigation.navigate('AddExpense', { data: processedImage, image: photo })
@@ -130,7 +126,7 @@ export default function AddRecord({ navigation, route }) {
 
     async function takePictureHandler() {
         if (!camera) return
-        const photo = await camera.takePictureAsync({quality: 0.5})
+        const photo = await camera.takePictureAsync({ quality: 0.5 })
         console.log(photo)
         setPreviewVisible(true)
         setCapturedImage(photo)
