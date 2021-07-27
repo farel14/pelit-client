@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,11 +9,15 @@ import {
   Image,
   KeyboardAvoidingView,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRegisterUser } from "../store/actionsFaisal";
 
-export default function Register() {
+export default function Register({ navigation }) {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const keyboardVerticalOffset = Platform.OS === "android" ? -25 : 0;
 
   function handleRegisterButton() {
     if (!email && !password)
@@ -21,58 +25,53 @@ export default function Register() {
     else if (!email) Alert.alert("Please input your email");
     else if (!password) Alert.alert("Please input your password");
     else {
-      console.log(email, password, fullName);
-      fetch("https://pelit-app.herokuapp.com/register", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          fullName,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      dispatch(fetchRegisterUser(fullName, email, password)).then((message) => {
+        if (message === "Registered Successfully") {
+          Alert.alert("Registered has been successfully");
+          navigation.navigate("Login");
+        } else {
+          Alert.alert(message);
+        }
+        console.log(message, "ini data");
+      });
     }
   }
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={{
-          uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
-        }}
-      />
-      <Text style={styles.text}>Full Name</Text>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(e) => setFullName(e)}
-      ></TextInput>
-      <Text style={styles.text}>Email</Text>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(e) => setEmail(e)}
-      ></TextInput>
-      <Text style={styles.text}>Password</Text>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(e) => setPassword(e)}
-      ></TextInput>
-      <TouchableOpacity
-        style={styles.buttonRegister}
-        onPress={handleRegisterButton}
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={keyboardVerticalOffset}
       >
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
+        <Image
+          style={styles.logo}
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
+          }}
+        />
+        <Text style={styles.text}>Full Name</Text>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(e) => setFullName(e)}
+        ></TextInput>
+        <Text style={styles.text}>Email</Text>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(e) => setEmail(e)}
+        ></TextInput>
+        <Text style={styles.text}>Password</Text>
+        <TextInput
+          style={styles.textInput}
+          secureTextEntry={true}
+          onChangeText={(e) => setPassword(e)}
+        ></TextInput>
+        <TouchableOpacity
+          style={styles.buttonRegister}
+          onPress={handleRegisterButton}
+        >
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -87,6 +86,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 130,
     height: 130,
+    marginLeft: 90,
   },
   text: {
     fontSize: 22,

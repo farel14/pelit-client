@@ -130,7 +130,7 @@ export default function AddRecord({ navigation, route }) {
 
     async function takePictureHandler() {
         if (!camera) return
-        const photo = await camera.takePictureAsync()
+        const photo = await camera.takePictureAsync({quality: 0.5})
         console.log(photo)
         setPreviewVisible(true)
         setCapturedImage(photo)

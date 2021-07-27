@@ -10,7 +10,7 @@ import {postTransaction, fetchTransaction} from '../store/actions'
 export default function EditExpense({ navigation, route }) {
     // !handle upload image di edit, butuh upload lagi?
     const dispatch = useDispatch()
-    // const {TransactionId} = route.params
+    const {TransactionId} = route.params
     const [type, setType] = useState('')
     const [category, setCategory] = useState('')
     const [name, setName] = useState('')
@@ -33,16 +33,16 @@ export default function EditExpense({ navigation, route }) {
 
         async function fetchStart() {
             await dispatch(fetchTransaction(2))
-            // await dispatch(fetchTransaction(TransactionId))
+            await dispatch(fetchTransaction(TransactionId))
             const transaction = useSelector(state => state.transaction)
-            console.log(transaction)
+            // console.log(transaction)
             setType(transaction.type)
             setCategory(transaction.category)
             setName(transaction.name)
             setDate(transaction.date)
             setAmount(transaction.amount)
             setUserId(transaction.UserId)
-            // setReceiptImage(transaction.type)
+            setReceiptImage(transaction.receiptImage)
             setIsLoading(false)
         }
         fetchStart()
