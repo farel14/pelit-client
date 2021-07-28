@@ -29,7 +29,7 @@ export default function EditExpense({ navigation, route }) {
     "Utilities",
     "Insurance",
     "Medical & Healthcare",
-    "Saving, Investing, & Debt Payments",
+    "Invest & Debt",
     "Personal Spending",
     "Other Expense",
   ];

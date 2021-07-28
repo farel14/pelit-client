@@ -9,15 +9,19 @@ import {
   Image,
   KeyboardAvoidingView,
   ScrollView,
+  Modal
 } from "react-native";
+import ModalItem from "./ModalItem";
 import { monthYearFormatter, monthFormatter } from "../helpers/dateFormatter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactionByCategory } from "../store/actionsFaisal";
 import FieldCardCategory from "./FieldCardCategory";
+import NumberFormat from 'react-number-format'
 
 export default function CategoryCard({ navigation }) {
+  const [modalVisible, setModalVisible] = useState(false);
   const dispatch = useDispatch();
   const [dataAsyncUser, setDataAsyncUser] = useState("");
   const date = new Date();
@@ -28,6 +32,17 @@ export default function CategoryCard({ navigation }) {
     const dataAsyncUser = await AsyncStorage.getItem("@dataUser");
     setDataAsyncUser(JSON.parse(dataAsyncUser));
   }
+
+  function handleEditItem() {
+    setModalVisible(!modalVisible);
+    navigation.navigate("EditExpense", { TransactionId: item.id });
+  }
+
+  function handleDeleteItem() {
+    setModalVisible(!modalVisible);
+    dispatch(fetchDeleteTransaction(item.id));
+  }
+
   useEffect(() => {
     getItem();
   }, []);
@@ -49,15 +64,21 @@ export default function CategoryCard({ navigation }) {
             <View
               style={{
                 flexDirection: "row",
+                justifyContent: 'space-between',
+                width: 300
               }}
             >
-              <Text style={styles.textDateCard}>{data.category}</Text>
-              <Text style={styles.textTotalCard}>{data.total}</Text>
-            </View>
+              <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+                <Text style={styles.textDateCard}>{data.category}</Text>
+              </TouchableOpacity>
+              <NumberFormat value={data.total} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
+                <Text style={styles.textTotalCard}>{formattedValue}</Text>
+              } />
+            </View> 
             <Text style={styles.borderTitleCard}></Text>
 
             {data.items.map((item, index) => (
-              <FieldCardCategory key={index} item={item}></FieldCardCategory>
+              <FieldCardCategory key={index} data={data} item={item} navigation={navigation}></FieldCardCategory>
             ))}
           </View>
         </View>
@@ -69,30 +90,54 @@ export default function CategoryCard({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#A2DBFA",
+    // backgroundColor: "#A2DBFA",
+    // borderWidth: 5
   },
   cardPerDate: {
+    // borderWidth: 2,
     width: 340,
     backgroundColor: "white",
-    marginTop: 30,
-    borderRadius: 20,
+    marginTop: 10,
+    paddingLeft: 5,
+    borderRadius: 10,
     paddingVertical: 10,
   },
   textDateCard: {
-    width: 200,
-    fontSize: 17,
+    width: 180,
+    fontSize: 15,
     paddingHorizontal: 20,
     fontWeight: "bold",
   },
   textTotalCard: {
-    fontSize: 17,
-    paddingHorizontal: 10,
+    fontSize: 15,
+    textAlign: 'right',
+    // paddingHorizontal: 10,
     fontWeight: "bold",
   },
   borderTitleCard: {
     height: 2,
-    width: 320,
+    width: 300,
     backgroundColor: "black",
     marginHorizontal: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    paddingVertical: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

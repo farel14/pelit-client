@@ -28,7 +28,7 @@ export default function ModalItem({ item }) {
           {item.type}
         </Text>
       </View>
-      <Text style={styles.category}>{item.category}</Text>
+      <Text style={styles.category}>{item.nameDate}</Text>
       <Text style={styles.title}>{item.title}</Text>
       {
         item.type === "Expense" 
@@ -47,6 +47,15 @@ export default function ModalItem({ item }) {
           ]}>{formattedValue}</Text>
         } />
       }
+
+      {/* <Text
+        style={[
+          item.type === "Expense" ? styles.amountExpense : styles.amountIncome,
+          styles.amount,
+        ]}
+      >
+        {item.type === "Expense" ? item.amount : `+${item.amount}`}
+      </Text> */}
     </View>
   );
 }
