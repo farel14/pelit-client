@@ -120,7 +120,7 @@ export default function Home({ navigation }) {
             marginTop: 20
           }}
         >
-          <Text style={[styles.textGroupBy, {color: 'white'}]}>Group By:</Text>
+          <Text style={styles.textGroupBy}>Group By:</Text>
           <TouchableOpacity
             style={
               displayCard === "Date"
@@ -168,7 +168,6 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    color: 'white',
     backgroundColor: "#A2DBFA",
   },
   pageScrollContainer: {
@@ -180,7 +179,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     paddingVertical: 10,
     borderRadius: 30,
-    color: 'white',
   },
   userProfilePicture: {
     width: 30,
@@ -195,7 +193,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     fontSize: 17,
     fontWeight: "bold",
-    color: 'white',
+    color: 'black'
   },
   colTitle: {
     width: 110,
@@ -204,7 +202,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     textAlign: "center",
-    color: 'white',
   },
   colBody: {
     width: 110,
@@ -212,7 +209,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "darkblue",
     textAlign: "center",
-    color: 'white',
   },
   textGroupBy: {
     fontSize: 14,
@@ -259,15 +255,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
     paddingVertical: 12,
-    color: 'white',
-    backgroundColor: "darkblue",
+    backgroundColor: "#A2DBFA",
   },
   pageTitle: {
     flexDirection: "row",
     marginBottom: 15,
     marginTop: 3,
     justifyContent: "space-between",
-    color: "white",
+    // color: "white",
     alignItems: "center",
   },
 });

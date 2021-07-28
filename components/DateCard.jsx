@@ -77,7 +77,7 @@ export default function DateCard({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "darkblue",
+    backgroundColor: "#A2DBFA",
     // borderWidth: 5
   },
   cardPerDate: {
