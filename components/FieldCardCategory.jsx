@@ -21,7 +21,7 @@ import NumberFormat from 'react-number-format'
 import { Avatar } from 'react-native-paper';
 import { Icon, Overlay } from 'react-native-elements'
 
-export default function FieldCardCategory({ item, data }) {
+export default function FieldCardCategory({ item, data, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [icon, setIcon] = useState('')
 

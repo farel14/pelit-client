@@ -74,11 +74,11 @@ export default function CategoryCard({ navigation }) {
               <NumberFormat value={data.total} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
                 <Text style={styles.textTotalCard}>{formattedValue}</Text>
               } />
-            </View>
+            </View> 
             <Text style={styles.borderTitleCard}></Text>
 
             {data.items.map((item, index) => (
-              <FieldCardCategory key={index} data={data} item={item}></FieldCardCategory>
+              <FieldCardCategory key={index} data={data} item={item} navigation={navigation}></FieldCardCategory>
             ))}
           </View>
         </View>
