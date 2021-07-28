@@ -11,90 +11,90 @@ import {
 import ModalItem from "./ModalItem";
 import { fetchDeleteTransaction } from "../store/actionsFaisal";
 import { useDispatch } from "react-redux";
-import NumberFormat from 'react-number-format'
-import { Avatar } from 'react-native-paper';
+import NumberFormat from "react-number-format";
+import { Avatar } from "react-native-paper";
 import { useEffect } from "react";
-import { Icon, Overlay } from 'react-native-elements'
+import { Icon, Overlay } from "react-native-elements";
 
 export default function FieldCard({ item, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [icon, setIcon] = useState('')
+  const [icon, setIcon] = useState("");
   const dispatch = useDispatch();
 
   useEffect(() => {
     switch (item.category) {
-      case 'Food & Beverage':
-        setIcon('food')
+      case "Food & Beverage":
+        setIcon("food");
         return;
-      case 'Housing':
-        setIcon('home')
+      case "Housing":
+        setIcon("home");
         return;
-      case 'Food & Beverage':
-        setIcon('train-car')
-        return; 
-      case 'Transportation':
-        setIcon('train-car')
-        return; 
-      case 'Utilities':
-        setIcon('flash')
+      case "Food & Beverage":
+        setIcon("train-car");
         return;
-      case 'Insurance':
-        setIcon('shield-sun')
+      case "Transportation":
+        setIcon("train-car");
         return;
-      case 'Medical & Healthcare':
-        setIcon('hospital-building')
-        return; 
-      case 'Invest & Debt':
-        setIcon('chart-line')
-        return; 
-      case 'Personal Spending':
-        setIcon('basket')
+      case "Utilities":
+        setIcon("flash");
         return;
-      case 'Other Expense':
-        setIcon('cash-multiple')
+      case "Insurance":
+        setIcon("shield-sun");
         return;
-      case 'Salary':
-        setIcon('currency-usd')
-        return; 
-      case 'Wages':
-        setIcon('train-car')
-        return; 
-      case 'Commission':
-        setIcon('hospital-building')
-        return; 
-      case 'Interest':
-        setIcon('chart-line')
-        return; 
-      case 'Personal Spending':
-        setIcon('basket')
+      case "Medical & Healthcare":
+        setIcon("hospital-building");
         return;
-      case 'Other Expense':
-        setIcon('cash-multiple')
+      case "Invest & Debt":
+        setIcon("chart-line");
         return;
-      case 'Salary':
-        setIcon('office-building')
-        return; 
-      case 'Wages':
-        setIcon('cash-plus')
-        return; 
-      case 'Investments':
-        setIcon('account-cash')
-        return; 
-      case 'Gifts':
-        setIcon('gift')
-        return; 
-      case 'Allowance':
-        setIcon('account-cash')
+      case "Personal Spending":
+        setIcon("basket");
         return;
-      case 'Other Income':
-        setIcon('currency-usd')
+      case "Other Expense":
+        setIcon("cash-multiple");
         return;
-    }  
-  }, [])
+      case "Salary":
+        setIcon("currency-usd");
+        return;
+      case "Wages":
+        setIcon("train-car");
+        return;
+      case "Commission":
+        setIcon("hospital-building");
+        return;
+      case "Interest":
+        setIcon("chart-line");
+        return;
+      case "Personal Spending":
+        setIcon("basket");
+        return;
+      case "Other Expense":
+        setIcon("cash-multiple");
+        return;
+      case "Salary":
+        setIcon("office-building");
+        return;
+      case "Wages":
+        setIcon("cash-plus");
+        return;
+      case "Investments":
+        setIcon("account-cash");
+        return;
+      case "Gifts":
+        setIcon("gift");
+        return;
+      case "Allowance":
+        setIcon("account-cash");
+        return;
+      case "Other Income":
+        setIcon("currency-usd");
+        return;
+    }
+  }, []);
 
   function handleEditItem() {
     setModalVisible(!modalVisible);
-    navigation.navigate("EditExpense", { TransactionId: item.id });
+    navigation.navigate("EditExpense", { item });
   }
 
   function handleDeleteItem() {
@@ -105,33 +105,56 @@ export default function FieldCard({ item, navigation }) {
   return (
     <View>
       <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: 'space-between',
-          width: 320,
-          alignItems: 'center'
-          // borderWidth: 2
-        }}
-      >
         <View
           style={{
             flexDirection: "row",
-            width: 180,
+            justifyContent: "space-between",
+            width: 320,
+            alignItems: "center",
             // borderWidth: 2
           }}
         >
-          <View style={styles.simbolListCard}><Avatar.Icon size={24} icon={icon} style={ item.type == 'Expense' ? styles.iconStyleExpense : styles.iconStyleIncome}/></View>
+          <View
+            style={{
+              flexDirection: "row",
+              width: 180,
+              // borderWidth: 2
+            }}
+          >
+            <View style={styles.simbolListCard}>
+              <Avatar.Icon
+                size={24}
+                icon={icon}
+                style={
+                  item.type == "Expense"
+                    ? styles.iconStyleExpense
+                    : styles.iconStyleIncome
+                }
+              />
+            </View>
             <Text style={styles.textListCard}>{item.category}</Text>
-        </View>
-        <View style={{flexDirection:'row', alignItems: 'center'}}>
-        <NumberFormat value={item.amount} style={styles.textListCard} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
-          <Text style={styles.textListCardNumber}>{formattedValue}</Text>
-        } />
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <NumberFormat
+              value={item.amount}
+              style={styles.textListCard}
+              displayType={"text"}
+              thousandSeparator={true}
+              decimalScale={0}
+              renderText={(formattedValue) => (
+                <Text style={styles.textListCardNumber}>{formattedValue}</Text>
+              )}
+            />
             <Icon
-            name='magnifying-glass' size={10} type='entypo' color={'blue'} underlayColor={'blue'} style={{marginTop: 3}}/>
+              name="magnifying-glass"
+              size={10}
+              type="entypo"
+              color={"blue"}
+              underlayColor={"blue"}
+              style={{ marginTop: 3 }}
+            />
+          </View>
         </View>
-      </View>
       </TouchableOpacity>
 
       <Modal
@@ -180,19 +203,19 @@ const styles = StyleSheet.create({
   simbolListCard: {
     fontSize: 17,
     marginLeft: 20,
-    marginTop: 8
+    marginTop: 8,
   },
   textListCard: {
     fontSize: 15,
     marginVertical: 5,
-    textAlign: 'right',
+    textAlign: "right",
     paddingHorizontal: 10,
   },
   textListCardNumber: {
     fontSize: 15,
     // borderWidth: 2,
     marginVertical: 5,
-    textAlign: 'right',
+    textAlign: "right",
     paddingHorizontal: 10,
   },
   centeredView: {
@@ -238,9 +261,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   iconStyleExpense: {
-    backgroundColor: 'red'
+    backgroundColor: "red",
   },
   iconStyleIncome: {
-    backgroundColor: 'green'
-  }
+    backgroundColor: "green",
+  },
 });

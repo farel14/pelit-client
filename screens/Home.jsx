@@ -10,17 +10,17 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
-  ImageBackground
+  ImageBackground,
 } from "react-native";
 import DateCard from "../components/DateCard";
 import { monthYearFormatter } from "../helpers/dateFormatter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import CategoryCard from "../components/CatogeryCard";
-import NumberFormat from 'react-number-format'
-import { Banner } from 'react-native-paper';
-import { Icon } from 'react-native-elements'
-import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
+import NumberFormat from "react-number-format";
+import { Banner } from "react-native-paper";
+import { Icon } from "react-native-elements";
+import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
 
 export default function Home({ navigation }) {
   const [visible, setVisible] = React.useState(true);
@@ -29,7 +29,7 @@ export default function Home({ navigation }) {
   const [dataUser, setDataUser] = useState("");
   const dataTransByDate = useSelector((state) => state.transByDate);
   const [displayCard, setDisplayCard] = useState("Date");
-  const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
+  const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
@@ -45,132 +45,159 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.pageScrollContainer}>
-      <ImageBackground
-        style={{ flex: 1 }}
-        //We are using online image to set background
-        source={{
-          uri:
-            'https://wallpaperaccess.com/full/126397.jpg',
-        }}
-        //You can also set image from your project folder
-        //require('./images/background_image.jpg')        //
-      >
-      <View style={styles.pageViewContainer}>
-        <View
-          style={styles.pageTitle}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-            }}
-          >
-            <Text style={styles.textTop}>{monthYear.name}</Text>
-            <TouchableOpacity
-              style={styles.buttonAdd}
-              onPress={() => navigation.navigate("AddRecord")}
-            >
-              <Text style={styles.textAdd}>+</Text>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-            }}
-          >
-            <Text style={styles.textTop}>Hi, {dataUser.data.firstName}!</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("My Dashboard")}
-            >
-              <Image
-                style={styles.userProfilePicture}
-                resizeMode="cover"
-                borderRadius={40}
-                source={{ uri: `${dataUser.data.photoProfile}` }}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <Card>
-          <Card.Cover source={{ uri: 'https://st2.depositphotos.com/11133378/45776/v/950/depositphotos_457760054-stock-illustration-accumulating-saving-money-concept-horizontal.jpg' }} style={{height: 150}}/>
-        </Card>
-
-        <View style={styles.cardTitle}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
-          >
-            <Text style={styles.colTitle}>Income</Text>
-            <Text style={styles.colTitle}>Expense</Text>
-            <Text style={styles.colTitle}>Balance</Text>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
-          >
-            <NumberFormat value={dataUser.data.Transactions.totalIncome} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
-              <Text style={styles.colBodyIncome}>{formattedValue}</Text>
-              } />
-              <NumberFormat value={dataUser.data.Transactions.totalExpense} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
-              <Text style={styles.colBodyExpense}>-{formattedValue}</Text>
-              } />
-              <NumberFormat value={dataUser.data.balance} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
-              <Text style={styles.colBody}>{formattedValue}</Text>
-              } />
-          </View>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginTop: 20
+        <ImageBackground
+          style={{ flex: 1 }}
+          //We are using online image to set background
+          source={{
+            uri: "https://wallpaperaccess.com/full/126397.jpg",
           }}
+          //You can also set image from your project folder
+          //require('./images/background_image.jpg')        //
         >
-          <Text style={[styles.textGroupBy, {color: 'white'}]}>Group By:</Text>
-          <TouchableOpacity
-            style={
-              displayCard === "Date"
-                ? styles.buttonActive
-                : styles.buttonInActive
-            }
-            onPress={() => setDisplayCard("Date")}
-          >
-            <Text style={[styles.textGroupBy, {color: 'black'}]}>Date</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={
-              displayCard === "Category"
-                ? styles.buttonActive
-                : styles.buttonInActive
-            }
-            onPress={() => setDisplayCard("Category")}
-          >
-            <Text style={[styles.textGroupBy, {color: 'black'}]}>Category</Text>
-          </TouchableOpacity>
-        </View>
-        {
-          dataUser.data.Transactions.data ? 
-            (dataUser.data.Transactions.data.length ? (
-            displayCard === "Date" ? (
-              <DateCard navigation={navigation}></DateCard>
+          <View style={styles.pageViewContainer}>
+            <View style={styles.pageTitle}>
+              <View
+                style={{
+                  flexDirection: "row",
+                }}
+              >
+                <Text style={styles.textTop}>{monthYear.name}</Text>
+                <TouchableOpacity
+                  style={styles.buttonAdd}
+                  onPress={() => navigation.navigate("AddRecord")}
+                >
+                  <Text style={styles.textAdd}>+</Text>
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                }}
+              >
+                <Text style={styles.textTop}>
+                  Hi, {dataUser.data.firstName}!
+                </Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("My Dashboard")}
+                >
+                  <Image
+                    style={styles.userProfilePicture}
+                    resizeMode="cover"
+                    borderRadius={40}
+                    source={{ uri: `${dataUser.data.photoProfile}` }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <Card>
+              <Card.Cover
+                source={{
+                  uri: "https://st2.depositphotos.com/11133378/45776/v/950/depositphotos_457760054-stock-illustration-accumulating-saving-money-concept-horizontal.jpg",
+                }}
+                style={{ height: 150 }}
+              />
+            </Card>
+
+            <View style={styles.cardTitle}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={styles.colTitle}>Income</Text>
+                <Text style={styles.colTitle}>Expense</Text>
+                <Text style={styles.colTitle}>Balance</Text>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
+                <NumberFormat
+                  value={dataUser.data.Transactions.totalIncome}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  decimalScale={0}
+                  renderText={(formattedValue) => (
+                    <Text style={styles.colBodyIncome}>{formattedValue}</Text>
+                  )}
+                />
+                <NumberFormat
+                  value={dataUser.data.Transactions.totalExpense}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  decimalScale={0}
+                  renderText={(formattedValue) => (
+                    <Text style={styles.colBodyExpense}>-{formattedValue}</Text>
+                  )}
+                />
+                <NumberFormat
+                  value={dataUser.data.balance}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  decimalScale={0}
+                  renderText={(formattedValue) => (
+                    <Text style={styles.colBody}>{formattedValue}</Text>
+                  )}
+                />
+              </View>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: 20,
+              }}
+            >
+              <Text style={[styles.textGroupBy, { color: "white" }]}>
+                Group By:
+              </Text>
+              <TouchableOpacity
+                style={
+                  displayCard === "Date"
+                    ? styles.buttonActive
+                    : styles.buttonInActive
+                }
+                onPress={() => setDisplayCard("Date")}
+              >
+                <Text style={[styles.textGroupBy, { color: "black" }]}>
+                  Date
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={
+                  displayCard === "Category"
+                    ? styles.buttonActive
+                    : styles.buttonInActive
+                }
+                onPress={() => setDisplayCard("Category")}
+              >
+                <Text style={[styles.textGroupBy, { color: "black" }]}>
+                  Category
+                </Text>
+              </TouchableOpacity>
+            </View>
+            {dataUser.data.Transactions.data ? (
+              dataUser.data.Transactions.data.length ? (
+                displayCard === "Date" ? (
+                  <DateCard navigation={navigation}></DateCard>
+                ) : (
+                  <CategoryCard navigation={navigation}></CategoryCard>
+                )
+              ) : (
+                <Text style={styles.textWarning}>
+                  You Have No Recorded Transactions
+                </Text>
+              )
             ) : (
-              <CategoryCard navigation={navigation}></CategoryCard>
-            )
-          ) : (
-            <Text style={styles.textWarning}>
-              You Have No Recorded Transactions
-            </Text>
-          ))
-          :
-          <ActivityIndicator size="large" color="#00ff00" />
-        }
-        </View>
+              <ActivityIndicator size="large" color="#00ff00" />
+            )}
+          </View>
         </ImageBackground>
       </ScrollView>
     </View>
@@ -205,7 +232,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     fontSize: 17,
     fontWeight: "bold",
-    color: 'white'
+    color: "white",
   },
   colTitle: {
     width: 110,
@@ -214,7 +241,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     textAlign: "center",
-    color: 'white'
+    color: "white",
   },
   colBody: {
     width: 110,
@@ -267,13 +294,13 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 30,
     borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderColor: "black",
   },
   textAdd: {
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
     color: "white",
     textAlign: "center",
   },
