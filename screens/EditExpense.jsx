@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, Button, StyleSheet, TextInput } from "react-native";
+import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 import RNPickerSelect from "react-native-picker-select";
@@ -11,18 +11,17 @@ export default function EditExpense({ navigation, route }) {
   // !handle upload image di edit, butuh upload lagi?
   const dispatch = useDispatch();
   // const { id } = route.params.item;
-  const [type, setType] = useState(route.params.item.type);
-  const [category, setCategory] = useState(route.params.item.category);
-  const [title, setTitle] = useState(route.params.item.title);
+  const [type, setType] = useState("");
+  const [category, setCategory] = useState("");
+  const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
-  const [amount, setAmount] = useState(route.params.item.amount);
-  const [receiptImage, setReceiptImage] = useState(
-    route.params.item.receiptImage
-  );
+  const [amount, setAmount] = useState(0);
+  let [receiptImage, setReceiptImage] = useState("");
 
   const [UserId, setUserId] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const transaction = useSelector((state) => state.transaction);
+  // const loadingtransaction = useSelector((state) => state.loadingTransaction);
 
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
@@ -55,22 +54,19 @@ export default function EditExpense({ navigation, route }) {
   const incomeItems = incomeChoices.map((ele) => ({ label: ele, value: ele }));
 
   useEffect(() => {
-    async function fetchStart() {
-      setIsLoading(true);
-      // await dispatch(fetchTransaction(2))
-      await dispatch(fetchTransaction(route.params.item.id));
-      // console.log(transaction)
-      setType(transaction.type);
-      setCategory(transaction.category);
-      setTitle(transaction.title);
-      setDate(new Date(transaction.fullDate));
-      setAmount(transaction.amount);
-      setUserId(transaction.UserId);
-      setReceiptImage(transaction.receiptImage);
-      setIsLoading(false);
-    }
-    fetchStart();
+    // await dispatch(fetchTransaction(2))
+    dispatch(fetchTransaction(route.params.item.id));
   }, []);
+
+  useEffect(() => {
+    setType(transaction.type);
+    setCategory(transaction.category);
+    setTitle(transaction.title);
+    setDate(new Date(transaction.fullDate));
+    setAmount(transaction.amount);
+    setUserId(transaction.UserId);
+    setReceiptImage(transaction.receiptImage);
+  }, [transaction]);
 
   const dateHandler = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -108,12 +104,16 @@ export default function EditExpense({ navigation, route }) {
     navigation.navigate("Home");
   }
 
-  if (isLoading)
+  if (isLoading || !amount)
     return (
       <View>
         <Text>Loading screen here</Text>
       </View>
     );
+
+  if (!receiptImage)
+    receiptImage =
+      "https://upload.wikimedia.org/wikipedia/commons/0/0a/No-image-available.png";
 
   return (
     <>
@@ -157,8 +157,8 @@ export default function EditExpense({ navigation, route }) {
           }
           selectedValue={category}
         />
-        <Text>RecordName</Text>
-        <TextInput onChangeText={setTitle} />
+        <Text>Title</Text>
+        <TextInput onChangeText={(value) => setTitle(value)} value={title} />
         <Text>Date</Text>
         <Text>{dateFormatter(date)}</Text>
         <Button onPress={showDatepicker} title="Pick a date" />
@@ -169,17 +169,23 @@ export default function EditExpense({ navigation, route }) {
             mode={mode}
             is24Hour={true}
             display="default"
-            onChange={(value) => dateHandler(value)}
+            onChange={dateHandler}
           />
         )}
         <Text>Amount</Text>
         <TextInput
           onChangeText={(value) => setAmount(value)}
           keyboardType="numeric"
-          selectedValue={amount}
+          value={`${amount}`}
         />
         <Text>Receipt Image</Text>
         {/* upload handler */}
+        <Image
+          style={styles.receiptImage}
+          source={{
+            uri: `${receiptImage}`,
+          }}
+        />
         <Button
           onPress={submitHandler}
           title="Submit Record"
@@ -199,5 +205,9 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     backgroundColor: "green",
+  },
+  receiptImage: {
+    width: 50,
+    height: 50,
   },
 });
