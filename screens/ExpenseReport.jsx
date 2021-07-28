@@ -136,7 +136,7 @@ export default function ExpenseReport({ navigation, route }) {
 
           setExpenses(monthExp);
           return fetch(
-            `https://pelit-app.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Income`
+            `http://192.168.100.9:3000/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Income`
           );
         })
         .then((response) => response.json())

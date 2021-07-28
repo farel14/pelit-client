@@ -64,7 +64,7 @@ export default function AddExpense({ navigation, route }) {
             quality: 1,
         });
 
-        console.log(photo);
+        // console.log(photo);
 
         if (!photo.cancelled) {
             setReceiptImage(photo);
@@ -92,7 +92,8 @@ export default function AddExpense({ navigation, route }) {
         // data diubah jadi form
         // const data = { type, category, title, date, amount, receiptImage }
         // console.log(data)
-        const dateParse = date.toLocaleDateString('id-ID')
+        const dateParse = date.toLocaleDateString('id-ID').split('/').join('-')
+
 
         const payload = new FormData();
         payload.append("type", type);
@@ -105,32 +106,20 @@ export default function AddExpense({ navigation, route }) {
         const mimeType = 'image/jpeg'
         const fileName = 'receiptImage'
         if (receiptImage) {
-            payload.append('receiptImage', {uri: receiptImage.uri, name: fileName, type: mimeType})
+            payload.append('receiptImage', { uri: receiptImage.uri, name: fileName, type: mimeType })
         }
         // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
-        console.log(payload)
-        await dispatch(postTransaction({payload, UserId}))
+        // console.log(payload)
+        await dispatch(postTransaction({ payload, UserId }))
         navigation.navigate('Home')
     }
 
     return (
         <>
-            <View style={styles.test}>
-                {/* <Text>{JSON.stringify(navigation?.data)}</Text> */}
-                {/* <View>
-                    <Button onPress={showDatepicker} title="Show date picker!" />
-                </View>
-                <View>
-                    <Button onPress={showTimepicker} title="Show time picker!" />
-                </View> */}
-                {/* <Button
-                    title="Type"
-                    disabled
-                    onPress={() => Alert.alert('Cannot press this one')}
-                /> */}
+            <View style={styles.container}>
                 <Text>Type</Text>
                 <RNPickerSelect
-                    // onValueChange={(value) => setType(value)}
+                    style={{inputAndroid: { color: 'black' }}}
                     placeholder={{ label: 'Pick a type' }}
                     onValueChange={setType}
                     items={[
@@ -140,17 +129,17 @@ export default function AddExpense({ navigation, route }) {
                 />
                 <Text>Category</Text>
                 <RNPickerSelect
-                    // onValueChange={(value) => setCategory(value)}
+                    style={{inputAndroid: { color: 'black' }}}
                     placeholder={{ label: 'Pick a type first' }}
                     onValueChange={setCategory}
                     items={
                         type === 'Expense'
                             ? (expenseItems)
                             : (
-                                // type === 'Income'
-                                incomeItems
-                                // ? (incomeItems)
-                                // : [{ label: 'Pick a category first', value: '' }]
+                                type === 'Income'
+                                    // incomeItems
+                                    ? (incomeItems)
+                                    : [{ label: 'Pick a category first', value: '' }]
                             )
                     }
                 />
@@ -208,7 +197,7 @@ export default function AddExpense({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-    test: {
+    container: {
         flex: 1,
         backgroundColor: '#61dafb',
         color: 'black'
@@ -223,5 +212,8 @@ const styles = StyleSheet.create({
         flex: 1,
         marginHorizontal: 4,
         marginVertical: 4
+    },
+    picker: {
+        
     }
 })

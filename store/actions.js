@@ -1,5 +1,6 @@
 import { } from './actionTypesGaluh.js'
 import { SET_TRANSACTION } from './actionTypes.js'
+import axios from 'axios'
 
 export function setTransaction(payload) {
     return {
@@ -8,12 +9,21 @@ export function setTransaction(payload) {
     }
 }
 
-export function postTransaction({payload, UserId}) {
+export function postTransaction({ payload, UserId }) {
     return async (dispatch) => {
         try {
-            console.log(payload, UserId)
+            // console.log(payload, UserId)
             // let res = await fetch(`http://8.21.9.76:3000/transactions/${UserId}`, {
-            let res = await fetch(`https://pelit-app.herokuapp.com/transactions/${UserId}`, {
+            // const { data } = await axios({
+            //     method: "POST",
+            //     url: `http://192.168.100.9:3000/transactions/${UserId}`,
+            //     data: payload,
+            //     // headers: {
+            //     //         "Content-Type": "multipart/form-data",
+            //     //         "Accept": "application/json"
+            //     //     },
+            // })
+            let res = await fetch(`http://192.168.100.9:3000/transactions/${UserId}`, {
                 method: 'POST',
                 body: payload,
                 // headers: {
@@ -24,7 +34,8 @@ export function postTransaction({payload, UserId}) {
             // res = await res.text()
             // console.log(res)
             res = await res.json()
-            console.log('Success:', res);
+            // console.log('Success:', res);
+            console.log('succcesss', res)
             // return true
         } catch (error) {
             console.error('Error:', error)
@@ -35,13 +46,13 @@ export function postOcr(payload) {
     return async (dispatch) => {
         try {
             // console.log(payload, 'dari action')
-            let res = await fetch('https://pelit-app.herokuapp.com/ocr', {
+            let res = await fetch('http://192.168.100.9:3000/ocr', {
                 method: 'POST',
                 body: payload
             })
             res = await res.json()
             console.log('Success:', res);
-            // return res
+            return res
         } catch (error) {
             console.error('Error:', error)
         }
@@ -51,7 +62,7 @@ export function postOcr(payload) {
 export function fetchTransaction(TransactionId) {
     return async (dispatch) => {
         try {
-            let res = await fetch(`https://pelit-app.herokuapp.com/transactions/expense/${TransactionId}`, {
+            let res = await fetch(`http://192.168.100.9:3000/transactions/expense/${TransactionId}`, {
                 method: 'GET', // or 'PUT'
                 // headers: {
                 //     'Content-Type': 'multipart/form-data',

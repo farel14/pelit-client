@@ -36,7 +36,7 @@ export default function CategoryCard({ navigation }) {
     dispatch(
       fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
     );
-  }, [monthYear.numMonth, dataAsyncUser.data, dispatch]);
+  }, [dataTransByCategory]);
 
   if (!dataAsyncUser || !dataTransByCategory.length) return null;
 

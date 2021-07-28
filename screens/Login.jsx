@@ -48,7 +48,7 @@ export default function Login({ navigation }) {
 
   useEffect(() => {
     dispatch(fetchLoginUser(email, password));
-  }, [email, password, dispatch]);
+  }, [email, password]);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
