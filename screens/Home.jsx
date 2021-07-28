@@ -9,19 +9,25 @@ import {
   Image,
   ScrollView,
   Pressable,
+  ActivityIndicator
 } from "react-native";
 import DateCard from "../components/DateCard";
 import { monthYearFormatter } from "../helpers/dateFormatter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import CategoryCard from "../components/CatogeryCard";
+import NumberFormat from 'react-number-format'
+import { Banner } from 'react-native-paper';
+import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 
 export default function Home({ navigation }) {
+  const [visible, setVisible] = React.useState(true);
   const date = new Date();
   const monthYear = monthYearFormatter(date);
   const [dataUser, setDataUser] = useState("");
   const dataTransByDate = useSelector((state) => state.transByDate);
   const [displayCard, setDisplayCard] = useState("Date");
+  const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
@@ -36,12 +42,10 @@ export default function Home({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.pageScrollContainer}>
+      <View style={styles.pageViewContainer}>
         <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
+          style={styles.pageTitle}
         >
           <View
             style={{
@@ -61,7 +65,7 @@ export default function Home({ navigation }) {
               flexDirection: "row",
             }}
           >
-            <Text style={styles.textTop}>Hi, {dataUser.data.fullName}!</Text>
+            <Text style={styles.textTop}>Hi, {dataUser.data.firstName}!</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("My Dashboard")}
             >
@@ -74,6 +78,10 @@ export default function Home({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
+
+        <Card>
+          <Card.Cover source={{ uri: 'https://st2.depositphotos.com/11133378/45776/v/950/depositphotos_457760054-stock-illustration-accumulating-saving-money-concept-horizontal.jpg' }} style={{height: 150}}/>
+        </Card>
 
         <View style={styles.cardTitle}>
           <View
@@ -93,13 +101,15 @@ export default function Home({ navigation }) {
               justifyContent: "center",
             }}
           >
-            <Text style={styles.colBody}>
-              +{dataUser.data.Transactions.totalIncome}
-            </Text>
-            <Text style={styles.colBody}>
-              -{dataUser.data.Transactions.totalExpense}
-            </Text>
-            <Text style={styles.colBody}>{dataUser.data.balance}</Text>
+            <NumberFormat value={dataUser.data.Transactions.totalIncome} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
+              <Text style={styles.colBody}>{formattedValue}</Text>
+              } />
+              <NumberFormat value={dataUser.data.Transactions.totalExpense} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
+              <Text style={styles.colBody}>-{formattedValue}</Text>
+              } />
+              <NumberFormat value={dataUser.data.balance} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
+              <Text style={styles.colBody}>{formattedValue}</Text>
+              } />
           </View>
         </View>
 
@@ -107,10 +117,10 @@ export default function Home({ navigation }) {
           style={{
             flexDirection: "row",
             justifyContent: "center",
-            marginTop: 20,
+            marginTop: 20
           }}
         >
-          <Text style={styles.textGroupBy}>Group By:</Text>
+          <Text style={[styles.textGroupBy, {color: 'white'}]}>Group By:</Text>
           <TouchableOpacity
             style={
               displayCard === "Date"
@@ -132,17 +142,24 @@ export default function Home({ navigation }) {
             <Text style={styles.textGroupBy}>Category</Text>
           </TouchableOpacity>
         </View>
-        {dataUser.data.Transactions.data.length ? (
-          displayCard === "Date" ? (
-            <DateCard navigation={navigation}></DateCard>
+        {
+          dataUser.data.Transactions.data ? 
+            (dataUser.data.Transactions.data.length ? (
+            displayCard === "Date" ? (
+              <DateCard navigation={navigation}></DateCard>
+            ) : (
+              <CategoryCard navigation={navigation}></CategoryCard>
+            )
           ) : (
-            <CategoryCard navigation={navigation}></CategoryCard>
-          )
-        ) : (
-          <Text style={styles.textWarning}>
-            You Have No Recorded Transactions
-          </Text>
-        )}
+            <Text style={styles.textWarning}>
+              You Have No Recorded Transactions
+            </Text>
+          ))
+          :
+          <ActivityIndicator size="large" color="#00ff00" />
+        }
+        
+        </View>
       </ScrollView>
     </View>
   );
@@ -151,14 +168,19 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    color: 'white',
     backgroundColor: "#A2DBFA",
   },
+  pageScrollContainer: {
+    flexGrow: 1,
+  },
   cardTitle: {
-    backgroundColor: "green",
+    // backgroundColor: "green",
     marginTop: 10,
-    marginHorizontal: 10,
+    marginHorizontal: 5,
     paddingVertical: 10,
     borderRadius: 30,
+    color: 'white',
   },
   userProfilePicture: {
     width: 30,
@@ -173,22 +195,28 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     fontSize: 17,
     fontWeight: "bold",
+    color: 'white',
   },
   colTitle: {
     width: 110,
-    color: "white",
+    marginHorizontal: 7,
+    color: "black",
     fontWeight: "bold",
     fontSize: 18,
     textAlign: "center",
+    color: 'white',
   },
   colBody: {
     width: 110,
+    marginHorizontal: 7,
     fontSize: 15,
-    color: "white",
+    color: "darkblue",
     textAlign: "center",
+    color: 'white',
   },
   textGroupBy: {
-    fontSize: 18,
+    fontSize: 14,
+    color: 'black'
   },
   buttonInActive: {
     marginLeft: 10,
@@ -217,11 +245,29 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 30,
     borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderColor: "black",
   },
   textAdd: {
     fontSize: 20,
+    textAlign: 'center',
     color: "white",
     textAlign: "center",
+  },
+  pageViewContainer: {
+    flex: 1,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    color: 'white',
+    backgroundColor: "darkblue",
+  },
+  pageTitle: {
+    flexDirection: "row",
+    marginBottom: 15,
+    marginTop: 3,
+    justifyContent: "space-between",
+    color: "white",
+    alignItems: "center",
   },
 });

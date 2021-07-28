@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactionByDate } from "../store/actionsFaisal";
 import FieldCard from "./FieldCard";
+import NumberFormat from 'react-number-format'
 
 export default function DateCard({ navigation }) {
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ export default function DateCard({ navigation }) {
 
   if (!dataAsyncUser || !dataTransByDate.length) return null;
 
-  dataTransByDate = dataTransByDate.sort((a, b) => a.date - b.date);
+  // dataTransByDate = dataTransByDate.sort((a, b) => a.date - b.date);
 
   return (
     <View style={styles.container}>
@@ -48,10 +49,14 @@ export default function DateCard({ navigation }) {
             <View
               style={{
                 flexDirection: "row",
+                justifyContent: 'space-between',
+                width: 300
               }}
             >
               <Text style={styles.textDateCard}>{data.nameDate}</Text>
-              <Text style={styles.textTotalCard}>{data.total}</Text>
+              <NumberFormat value={data.total} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
+                <Text style={styles.textTotalCard}>{formattedValue}</Text>
+              } />
             </View>
             <Text style={styles.borderTitleCard}></Text>
 
@@ -72,29 +77,33 @@ export default function DateCard({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#A2DBFA",
+    backgroundColor: "darkblue",
+    // borderWidth: 5
   },
   cardPerDate: {
+    // borderWidth: 2,
     width: 340,
     backgroundColor: "white",
-    marginTop: 30,
-    borderRadius: 20,
+    marginTop: 10,
+    paddingLeft: 5,
+    borderRadius: 10,
     paddingVertical: 10,
   },
   textDateCard: {
-    width: 200,
+    width: 180,
     fontSize: 17,
     paddingHorizontal: 20,
     fontWeight: "bold",
   },
   textTotalCard: {
     fontSize: 17,
-    paddingHorizontal: 10,
+    textAlign: 'right',
+    // paddingHorizontal: 10,
     fontWeight: "bold",
   },
   borderTitleCard: {
     height: 2,
-    width: 320,
+    width: 300,
     backgroundColor: "black",
     marginHorizontal: 10,
   },

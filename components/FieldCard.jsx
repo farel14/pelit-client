@@ -6,14 +6,91 @@ import {
   Alert,
   TouchableOpacity,
   Modal,
+  Image,
 } from "react-native";
 import ModalItem from "./ModalItem";
 import { fetchDeleteTransaction } from "../store/actionsFaisal";
 import { useDispatch } from "react-redux";
+import NumberFormat from 'react-number-format'
+import { Avatar } from 'react-native-paper';
+import { useEffect } from "react";
+
 
 export default function FieldCard({ item, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
+  const [icon, setIcon] = useState('')
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    switch (item.category) {
+      case 'Food & Beverage':
+        setIcon('food')
+        return;
+      case 'Housing':
+        setIcon('home')
+        return;
+      case 'Food & Beverage':
+        setIcon('train-car')
+        return; 
+      case 'Transportation':
+        setIcon('train-car')
+        return; 
+      case 'Utilities':
+        setIcon('flash')
+        return;
+      case 'Insurance':
+        setIcon('shield-sun')
+        return;
+      case 'Medical & Healthcare':
+        setIcon('hospital-building')
+        return; 
+      case 'Invest & Debt':
+        setIcon('chart-line')
+        return; 
+      case 'Personal Spending':
+        setIcon('basket')
+        return;
+      case 'Other Expense':
+        setIcon('cash-multiple')
+        return;
+      case 'Salary':
+        setIcon('currency-usd')
+        return; 
+      case 'Wages':
+        setIcon('train-car')
+        return; 
+      case 'Commission':
+        setIcon('hospital-building')
+        return; 
+      case 'Interest':
+        setIcon('chart-line')
+        return; 
+      case 'Personal Spending':
+        setIcon('basket')
+        return;
+      case 'Other Expense':
+        setIcon('cash-multiple')
+        return;
+      case 'Salary':
+        setIcon('office-building')
+        return; 
+      case 'Wages':
+        setIcon('cash-plus')
+        return; 
+      case 'Investments':
+        setIcon('account-cash')
+        return; 
+      case 'Gifts':
+        setIcon('gift')
+        return; 
+      case 'Allowance':
+        setIcon('account-cash')
+        return;
+      case 'Other Income':
+        setIcon('currency-usd')
+        return;
+    }  
+  }, [])
 
   function handleEditItem() {
     setModalVisible(!modalVisible);
@@ -30,20 +107,27 @@ export default function FieldCard({ item, navigation }) {
       <View
         style={{
           flexDirection: "row",
+          justifyContent: 'space-between',
+          width: 310,
+          // borderWidth: 2
         }}
       >
         <View
           style={{
             flexDirection: "row",
-            width: 200,
+            width: 180,
+            // borderWidth: 2
           }}
         >
-          <Text style={styles.simbolListCard}>-</Text>
+          <View style={styles.simbolListCard}><Avatar.Icon size={24} icon={icon} style={ item.type == 'Expense' ? styles.iconStyleExpense : styles.iconStyleIncome}/></View>
+          {/* <Text style={styles.simbolListCard}>-</Text> */}
           <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
             <Text style={styles.textListCard}>{item.category}</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.textListCard}>{item.amount}</Text>
+        <NumberFormat value={item.amount} style={styles.textListCard} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
+          <Text style={styles.textListCardNumber}>{formattedValue}</Text>
+        } />
       </View>
 
       <Modal
@@ -92,9 +176,19 @@ const styles = StyleSheet.create({
   simbolListCard: {
     fontSize: 17,
     marginLeft: 20,
+    marginTop: 8
   },
   textListCard: {
     fontSize: 15,
+    marginVertical: 5,
+    textAlign: 'right',
+    paddingHorizontal: 10,
+  },
+  textListCardNumber: {
+    fontSize: 15,
+    // borderWidth: 2,
+    marginVertical: 5,
+    textAlign: 'right',
     paddingHorizontal: 10,
   },
   centeredView: {
@@ -140,4 +234,10 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
   },
+  iconStyleExpense: {
+    backgroundColor: 'red'
+  },
+  iconStyleIncome: {
+    backgroundColor: 'green'
+  }
 });

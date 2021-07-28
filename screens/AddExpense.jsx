@@ -24,7 +24,7 @@ export default function AddExpense({ navigation, route }) {
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
 
-    const expenseChoices = ['Housing', 'Transportation', 'Food & Beverage', 'Utilities', 'Insurance', 'Medical & Healthcare', 'Saving, Investing, & Debt Payments', 'Personal Spending', 'Other Expense']
+    const expenseChoices = ['Housing', 'Transportation', 'Food & Beverage', 'Utilities', 'Insurance', 'Medical & Healthcare', 'Invest & Debt', 'Personal Spending', 'Other Expense']
     const incomeChoices = ['Salary', 'Wages', 'Commission', 'Interest', 'Investments', 'Gifts', 'Allowance', 'Other Income']
     const expenseItems = expenseChoices.map(ele => ({ label: ele, value: ele }))
     const incomeItems = incomeChoices.map(ele => ({ label: ele, value: ele }))
