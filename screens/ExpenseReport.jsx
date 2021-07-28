@@ -271,7 +271,7 @@ export default function ExpenseReport({ navigation, route }) {
   // console.log(monthArr, 'MONTHARR')
   // console.log(start, end)
 
-  console.log(dateStart, 'START', dateEnd, 'END')
+  // console.log(dateStart, 'START', dateEnd, 'END')
 
   return (
     <ScrollView contentContainerStyle={styles.pageScrollContainer}>
