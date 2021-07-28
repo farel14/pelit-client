@@ -8,15 +8,20 @@ import { postTransaction, fetchTransaction } from "../store/actions";
 import { dateFormatter } from "../helpers/dateFormatter";
 
 export default function EditExpense({ navigation, route }) {
-    // !handle upload image di edit, butuh upload lagi?
+  // !handle upload image di edit, butuh upload lagi?
   const dispatch = useDispatch();
-  const { TransactionId } = route.params;
-  const [type, setType] = useState("");
-  const [category, setCategory] = useState("");
-  const [name, setName] = useState("");
+  // const { id } = route.params.item;
+  const [type, setType] = useState(route.params.item.type);
+  const [category, setCategory] = useState(route.params.item.category);
+  const [title, setTitle] = useState(route.params.item.title);
   const [date, setDate] = useState(new Date());
-  const [amount, setAmount] = useState(0);
-  const [receiptImage, setReceiptImage] = useState("");
+  const [amount, setAmount] = useState(route.params.item.amount);
+  const [receiptImage, setReceiptImage] = useState(
+    route.params.item.receiptImage
+  );
+
+  const [UserId, setUserId] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const transaction = useSelector((state) => state.transaction);
 
   const [mode, setMode] = useState("date");
@@ -29,7 +34,7 @@ export default function EditExpense({ navigation, route }) {
     "Utilities",
     "Insurance",
     "Medical & Healthcare",
-    "Invest & Debt",
+    "Saving, Investing, & Debt Payments",
     "Personal Spending",
     "Other Expense",
   ];
@@ -49,21 +54,23 @@ export default function EditExpense({ navigation, route }) {
   }));
   const incomeItems = incomeChoices.map((ele) => ({ label: ele, value: ele }));
 
-        async function fetchStart() {
-            // await dispatch(fetchTransaction(2))
-            await dispatch(fetchTransaction(TransactionId))
-            // console.log(transaction)
-            setType(transaction.type)
-            setCategory(transaction.category)
-            setName(transaction.name)
-            setDate(new Date(transaction.date))
-            setAmount(transaction.amount)
-            setUserId(transaction.UserId)
-            setReceiptImage(transaction.receiptImage)
-            setIsLoading(false)
-        }
-        fetchStart()
-    }, [])
+  useEffect(() => {
+    async function fetchStart() {
+      setIsLoading(true);
+      // await dispatch(fetchTransaction(2))
+      await dispatch(fetchTransaction(route.params.item.id));
+      // console.log(transaction)
+      setType(transaction.type);
+      setCategory(transaction.category);
+      setTitle(transaction.title);
+      setDate(new Date(transaction.fullDate));
+      setAmount(transaction.amount);
+      setUserId(transaction.UserId);
+      setReceiptImage(transaction.receiptImage);
+      setIsLoading(false);
+    }
+    fetchStart();
+  }, []);
 
   const dateHandler = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -80,31 +87,33 @@ export default function EditExpense({ navigation, route }) {
     showMode("date");
   };
 
-    async function submitHandler(e) {
-        // data diubah jadi form
-        // const data = { type, category, name, date, amount, receiptImage }
-        // console.log(data)
-        const dateParse = date.toString()
-        const dateArr = date.split('-')
+  async function submitHandler(e) {
+    // data diubah jadi form
+    // const data = { type, category, title, date, amount, receiptImage }
+    // console.log(data)
 
-        const payload = new FormData();
-        payload.append("type", type);
-        payload.append("category", category);
-        payload.append("name", name);
-        payload.append("fullDate", dateParse);
+    const dateParse = date.toLocaleDateString("id-ID");
 
-        payload.append("year", dateArr[0]);
-        payload.append("month", dateArr[1]);
-        payload.append("date", dateArr[2].substring(0,2));
+    const payload = new FormData();
+    payload.append("type", type);
+    payload.append("category", category);
+    payload.append("title", title);
+    payload.append("fullDate", dateParse);
+    payload.append("note", note);
 
-        payload.append("amount", amount);
-        payload.append("receiptImage", receiptImage);
-      
-      dispatch(postTransaction(payload, UserId))
-        navigation.navigate('Home')
+    payload.append("amount", amount);
+    payload.append("receiptImage", receiptImage);
+
+    dispatch(postTransaction(payload, UserId));
+    navigation.navigate("Home");
   }
-      
-          if (isLoading) return (<View><Text>Loading screen here</Text></View>)
+
+  if (isLoading)
+    return (
+      <View>
+        <Text>Loading screen here</Text>
+      </View>
+    );
 
   return (
     <>
@@ -124,7 +133,9 @@ export default function EditExpense({ navigation, route }) {
         <RNPickerSelect
           // onValueChange={(value) => setType(value)}
           placeholder={{ label: "Pick a type" }}
-          onValueChange={setType}
+          onValueChange={(value) => setType(value)}
+          value={type}
+          selectedValue={type}
           items={[
             { label: "Expense", value: "Expense" },
             { label: "Income", value: "Income" },
@@ -134,7 +145,8 @@ export default function EditExpense({ navigation, route }) {
         <RNPickerSelect
           // onValueChange={(value) => setCategory(value)}
           placeholder={{ label: "Pick a type first" }}
-          onValueChange={setCategory}
+          onValueChange={(value) => setCategory(value)}
+          value={category}
           items={
             type === "Expense"
               ? expenseItems
@@ -143,9 +155,10 @@ export default function EditExpense({ navigation, route }) {
             // ? (incomeItems)
             // : [{ label: 'Pick a category first', value: '' }]
           }
+          selectedValue={category}
         />
         <Text>RecordName</Text>
-        <TextInput onChangeText={setName} />
+        <TextInput onChangeText={setTitle} />
         <Text>Date</Text>
         <Text>{dateFormatter(date)}</Text>
         <Button onPress={showDatepicker} title="Pick a date" />
@@ -156,17 +169,21 @@ export default function EditExpense({ navigation, route }) {
             mode={mode}
             is24Hour={true}
             display="default"
-            onChange={dateHandler}
+            onChange={(value) => dateHandler(value)}
           />
         )}
         <Text>Amount</Text>
-        <TextInput onChangeText={setAmount} keyboardType="numeric" />
+        <TextInput
+          onChangeText={(value) => setAmount(value)}
+          keyboardType="numeric"
+          selectedValue={amount}
+        />
         <Text>Receipt Image</Text>
         {/* upload handler */}
         <Button
           onPress={submitHandler}
           title="Submit Record"
-          color="white"
+          color="black"
           style={styles.buttonStyle}
         />
       </View>
@@ -177,7 +194,7 @@ export default function EditExpense({ navigation, route }) {
 const styles = StyleSheet.create({
   test: {
     flex: 1,
-    backgroundColor: "blue",
+    backgroundColor: "#fff",
     color: "black",
   },
   buttonStyle: {
