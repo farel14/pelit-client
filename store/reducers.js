@@ -1,10 +1,13 @@
-import { SET_TRANSACTION } from "./actionTypes.js";
+import {
+  SET_TRANSACTION,
+  SET_LOADING_FETCH_TRANSACTION,
+} from "./actionTypes.js";
 import {
   SET_USER,
   SET_BADGES,
   SET_ACTIVE_TARGET,
   TOGGLE_LOADER_PROFILE,
-  SET_SPEND_BETWEEN
+  SET_SPEND_BETWEEN,
 } from "./actionTypesGaluh.js";
 import {
   SET_ALL_TRANSACTION_USER,
@@ -43,7 +46,7 @@ function reducer(state = initialState, action) {
     case TOGGLE_LOADER_PROFILE:
       return { ...state, loadingProfile: payload };
     case SET_SPEND_BETWEEN:
-      return { ...state, spendingBetween: payload };  
+      return { ...state, spendingBetween: payload };
     case SET_IS_LOGIN:
       return { ...state, isLogin: payload };
     case SET_ALL_TRANSACTION_USER:
@@ -53,6 +56,8 @@ function reducer(state = initialState, action) {
     case SET_TRANSACTION_BY_DATE:
       return { ...state, transByDate: payload };
     case SET_LOADING_TRANSACTION:
+      return { ...state, loadingTransaction: payload };
+    case SET_LOADING_FETCH_TRANSACTION:
       return { ...state, loadingTransaction: payload };
     default:
       return state;
