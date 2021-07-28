@@ -63,7 +63,7 @@ export default function App() {
           <Stack.Screen name="EditExpense" component={EditExpense} />
           <Stack.Screen name="MyProfile" component={MyProfile} />
           <Stack.Screen name="My Dashboard" component={Dashboard} />
-          <Stack.Screen name="Add Record" component={AddRecord} />
+          <Stack.Screen name="AddRecord" component={AddRecord} />
         </Stack.Navigator>
       </NavigationContainer>
       {/* {
