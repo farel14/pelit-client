@@ -8,6 +8,8 @@ import { getUserActiveTarget } from '../store/actionsGaluh'
 import {Picker} from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+const Separator = () => <View style={styles.separator} />;
+
 export default function SpendSummary({ navigation, route, allSpending, user }) {
     // console.log(user)
     const userId = user.id
@@ -81,34 +83,45 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
     };
 
     function changeTargetAmount(text) {
-        setTargetAmount(text)
+        if (text.isNaN || text.includes('.') || text.includes(',')) {
+            alert('Please input round numbers only')
+        } else {
+            setTargetAmount(text)
+        }
+        // let newText = text.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
       }
 
     function setTarget(e) {
         e.preventDefault()
-        setModalVisible(!modalVisible)
-        let newTarget = {}
-        newTarget.startDate = dateStart
-        newTarget.endDate = dateEnd
-        newTarget.monthlyTarget = targetAmount
+        if (targetAmount == '') {
+            alert('Please add your target savings amount')
+        } else if (new Date(dateEnd) < new Date()) {
+            alert('Can not set target in the past')
+        } else {
+            setModalVisible(!modalVisible)
+            let newTarget = {}
+            newTarget.startDate = dateStart
+            newTarget.endDate = dateEnd
+            newTarget.monthlyTarget = targetAmount
 
-        fetch(`https://pelit-app.herokuapp.com/target/all/${userId}`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newTarget)
-        })
-        .then(data => {
-            alert('Success adding target!')
-            // console.log('SUCCESS', data)
-            dispatch(getUserActiveTarget(userId))
-        })
-        .catch(err => {
-            // console.log(err)
-            alert('Can not set target')
-        })
+            fetch(`https://pelit-app.herokuapp.com/target/all/${userId}`, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newTarget)
+            })
+            .then(data => {
+                alert('Success adding target!')
+                // console.log('SUCCESS', data)
+                dispatch(getUserActiveTarget(userId))
+            })
+            .catch(err => {
+                // console.log(err)
+                alert('Can not set target')
+            })            
+        }
     }
 
     function deleteTarget(e) {
@@ -140,6 +153,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
                 :
                 null
             }
+            <Separator />
             <View style={styles.container}>
                 <Text style={styles.summaryText}>Summary for the Month of {month}</Text>
                 <View style={{marginBottom: 15}}/>
@@ -152,6 +166,8 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
             </View>
             </>
             :
+            <>
+            <Separator />
             <View style={styles.container}>
             <Text style={styles.summaryText}>Total spend This Month</Text>
             <NumberFormat value={spending} displayType={'text'} thousandSeparator={true} decimalScale={0} prefix={'Rp '} renderText={formattedValue => <Text style={styles.summaryAmount}>{formattedValue}</Text>} />
@@ -161,7 +177,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
             <View style={{marginBottom: 40}}/>
             <Pressable
                     onPress={() => setModalVisible(!modalVisible)}
-                    style={[styles.button, styles.shadowProp]}>
+                    style={[styles.buttonSetTarget, styles.shadowProp]}>
                     <Text style={styles.buttonText}>Set spending target and earn badges!
                     </Text>
             </Pressable> 
@@ -187,8 +203,8 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
                         value={targetAmount}>
                         </TextInput>
 
-                        <Text style={styles.formTitle}>Set Period</Text>
-                        <Text style={{marginTop: 5, color:'black'}}>From {start} to {end}</Text>
+                        <Text style={styles.formTitle}>Set Start Date (30 Days Period)</Text>
+                        <Text style={{marginTop: 2, color:'black', fontSize: 13, fontStyle: 'italic'}}>From {start} to {end}</Text>
                         <View style={{marginTop: 10, flexDirection: 'row', justifyContent: 'space-between'}}>
                             <Pressable
                             style={styles.seeBadges}
@@ -212,7 +228,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
                     <View style={{marginTop: 10, flexDirection: 'row', justifyContent: 'space-between'}}>
 
                         <Pressable
-                            style={[styles.buttonModalClose, styles.buttonClose]}
+                            style={[styles.buttonModalClose]}
                             onPress={() => setModalVisible(!modalVisible)}
                             >
                             <Text style={styles.textStyle}>Close</Text>
@@ -232,6 +248,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
             </Modal>     
 
         </View>
+        </>
         }
     </ScrollView>
     )
@@ -239,10 +256,10 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
 
 const styles = StyleSheet.create({
     separator: {
-        marginVertical: 7,
-        borderBottomColor: 'lightgrey',
+        marginTop: 15,
+        borderBottomColor: "lightgrey",
         borderBottomWidth: StyleSheet.hairlineWidth,
-    },  
+    }, 
     container: {
         flex: 1,
         marginTop: 20,
@@ -263,25 +280,33 @@ const styles = StyleSheet.create({
         width: '70%',
         borderRadius: 10,
         marginBottom: 100,
+        backgroundColor: 'darkgray',
+        elevation: 10
+    },
+    buttonSetTarget: {
+        width: '70%',
+        borderRadius: 10,
+        marginBottom: 100,
         backgroundColor: 'maroon',
         elevation: 10
     },
     buttonModalSubmit: {
         marginTop: 10,
-        borderRadius: 20,
+        borderRadius: 10,
         padding: 10,
         marginBottom: 10,
         elevation: 2,
         backgroundColor: 'maroon',
       },
-      buttonModalClose: {
+    buttonModalClose: {
         marginTop: 10,
-        borderRadius: 20,
+        borderRadius: 10,
         padding: 10,
         marginBottom: 10,
         marginRight: 10,
-        elevation: 2
-      },
+        elevation: 2,
+        backgroundColor: 'gray',
+    },
     buttonText: {
         paddingHorizontal: 7,
         paddingVertical: 5,
@@ -298,6 +323,7 @@ const styles = StyleSheet.create({
     },
     nameForm: {
         marginVertical: 10,
+        marginBottom: 20,
         width: '80%',
         height: 40,
         color: 'black',
@@ -321,7 +347,7 @@ const styles = StyleSheet.create({
         width: 300,
         backgroundColor: "lightblue",
         borderRadius: 20,
-        padding: 15,
+        padding: 10,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -334,7 +360,7 @@ const styles = StyleSheet.create({
     },
     formTitle: {
         color: 'black',
-        fontSize: 18, 
+        fontSize: 16, 
         fontWeight: 'bold',
         padding: 5, 
         borderBottomColor: 'lightgrey', 
@@ -345,9 +371,13 @@ const styles = StyleSheet.create({
     textStyleSubmit: {
         color: 'white'
     },
+    textStyle: {
+        color: 'white'
+    },
     seeBadges: {
-        backgroundColor: "green",
+        backgroundColor: "darkblue",
         marginHorizontal: 5,
+        borderRadius: 20,
         padding: 10,
         marginBottom: 10,
         alignItems: 'center'
