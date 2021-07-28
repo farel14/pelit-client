@@ -26,8 +26,8 @@ export default function DateCard({ navigation }) {
   let dataTransByDate = useSelector((state) => state.transByDate);
 
   async function getItem() {
-    const dataAsyncUser = await AsyncStorage.getItem("@dataUser");
-    setDataAsyncUser(JSON.parse(dataAsyncUser));
+    const dataAsync = await AsyncStorage.getItem("@dataUser");
+    setDataAsyncUser(JSON.parse(dataAsync));
   }
   useEffect(() => {
     getItem();
@@ -35,7 +35,8 @@ export default function DateCard({ navigation }) {
 
   useEffect(() => {
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-  }, [monthYear.numMonth, dataAsyncUser.data, dispatch]);
+    console.log(dataAsyncUser)
+  }, [dataAsyncUser]);
 
   if (!dataAsyncUser || !dataTransByDate.length) return null;
 

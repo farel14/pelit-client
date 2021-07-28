@@ -98,7 +98,7 @@ export default function FieldCardCategory({ item, data, navigation }) {
 
   function handleEditItem() {
     setModalVisible(!modalVisible);
-    navigation.navigate("EditExpense", { TransactionId: item.id });
+    navigation.navigate("Edit Expense", { TransactionId: item.id });
   }
 
   function handleDeleteItem() {
@@ -159,7 +159,7 @@ export default function FieldCardCategory({ item, data, navigation }) {
                 <TouchableOpacity
                   style={[styles.button, styles.buttonDelete]}
                   onPress={handleDeleteItem}
-                  // onPress={() => navigation.navigate("MyProfile")}
+                  // onPress={() => navigation.navigate("My Profile")}
                 >
                   <Text style={styles.textButton}>Delete</Text>
                 </TouchableOpacity>

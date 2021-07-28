@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, Image, ScrollView, KeyboardAvoidingView} from "react-native";
+import { View, Text, Button, StyleSheet, Image, ScrollView, KeyboardAvoidingView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dateFormatter } from "../helpers/dateFormatter";
 import * as ImagePicker from "expo-image-picker";
@@ -39,25 +39,25 @@ export default function AddExpense({ navigation, route }) {
   ];
 
   const expenseChoices = [
-    {label: 'Housing', value: 'Housing'},
-    {label: 'Transportation', value: 'Transportation'},
-    {label: 'Food & Beverage', value: 'Food & Beverage'},
-    {label: 'Utilities', value: 'Utilities'},
-    {label: 'Insurance', value: 'Insurance'},
-    {label: 'Medical & Healthcare', value: 'Medical & Healthcare'},
-    {label: 'Invest & Debt', value: 'Invest & Debt'},
-    {label: 'Personal Spending', value: 'Personal Spending'},
-    {label: 'Other Expense', value: 'Other Expense'},
+    { label: 'Housing', value: 'Housing' },
+    { label: 'Transportation', value: 'Transportation' },
+    { label: 'Food & Beverage', value: 'Food & Beverage' },
+    { label: 'Utilities', value: 'Utilities' },
+    { label: 'Insurance', value: 'Insurance' },
+    { label: 'Medical & Healthcare', value: 'Medical & Healthcare' },
+    { label: 'Invest & Debt', value: 'Invest & Debt' },
+    { label: 'Personal Spending', value: 'Personal Spending' },
+    { label: 'Other Expense', value: 'Other Expense' },
   ];
   const incomeChoices = [
-    {label: 'Salary', value: 'Salary'},
-    {label: 'Wages', value: 'Wages'},
-    {label: 'Commission', value: 'Commission'},
-    {label: 'Interest', value: 'Interest'},
-    {label: 'Investments', value: 'Investments'},
-    {label: 'Gifts', value: 'Gifts'},
-    {label: 'Allowance', value: 'Allowance'},
-    {label: 'Other Income', value: 'Other Income'},
+    { label: 'Salary', value: 'Salary' },
+    { label: 'Wages', value: 'Wages' },
+    { label: 'Commission', value: 'Commission' },
+    { label: 'Interest', value: 'Interest' },
+    { label: 'Investments', value: 'Investments' },
+    { label: 'Gifts', value: 'Gifts' },
+    { label: 'Allowance', value: 'Allowance' },
+    { label: 'Other Income', value: 'Other Income' },
   ];
 
   const expenseItems = expenseChoices.map((ele) => ({
@@ -131,7 +131,8 @@ export default function AddExpense({ navigation, route }) {
   };
 
   async function submitHandler() {
-    const dateParse = date.toLocaleDateString("id-ID");
+    let dateParse = date.toLocaleDateString("id-ID").split("/");
+    dateParse = `20${dateParse[2]}-${dateParse[0]}-${dateParse[1]}`;
 
     const payload = new FormData();
     payload.append("type", type);

@@ -80,7 +80,7 @@ export default function AddExpense({ navigation, route }) {
             //     // e.preventDefault()
             //     console.log('siap-siap sebelum naviagate', processedImage)
             //     setIsLoading(false)
-            //     navigation.navigate('AddExpense', {data: processedImage, imageUri: result.uri})
+            //     navigation.navigate('Add Expense', {data: processedImage, imageUri: result.uri})
             // }
         }
     }

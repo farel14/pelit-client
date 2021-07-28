@@ -57,8 +57,30 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <Navigator />
-
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home" screenOptions={{
+        headerStyle: {
+          backgroundColor: 'beige'}, headerTitleAlign: 'center', headerTitleStyle: {
+            color: 'black',
+          },
+          headerLeft: () => (
+            // <Text style={{marginLeft: 2}}>a</Text>
+            <View style={{marginLeft: 5}}>
+              <Icon
+            name='menu' style={{marginLeft: 15}} onPress={toggleDrawer}/>
+            </View>
+          ),
+        }}>
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
+          <Stack.Screen name="Home" component={Home} options={{ title: 'Home'}} />
+          <Stack.Screen name="Add Expense" component={AddExpense} />
+          <Stack.Screen name="Edit Expense" component={EditExpense} />
+          <Stack.Screen name="My Profile" component={MyProfile} />
+          <Stack.Screen name="My Dashboard" component={Dashboard} />
+          <Stack.Screen name="Add Record" component={AddRecord} />
+        </Stack.Navigator>
+      </NavigationContainer>
       {/* {
         drawer ?
         <View style={{zIndex: 5, flex: 1}}>

@@ -57,7 +57,7 @@ export default function AddRecord({ navigation, route }) {
       console.log("SEBELUM DIKIRIM KE SERVER DARI STATE", capturedImage);
       console.log("siap-siap sebelum navigate", processedImage);
       setIsLoading(false);
-      navigation.navigate("AddExpense", {
+      navigation.navigate("Add Expense", {
         data: processedImage,
         image: capturedImage,
       });
@@ -97,17 +97,17 @@ export default function AddRecord({ navigation, route }) {
     });
 
     if (!photo.cancelled) {
-      // console.log('tidak masuk', photo)
+      console.log('imagePicker photo', photo)
       setCapturedImage(photo);
       setIsLoading(true);
 
       const processedImage = await postToServer(photo);
       if (processedImage) {
         // e.preventDefault()
-        console.log("CAPTURED IMAGE", photo);
+        // console.log("CAPTURED IMAGE", photo);
         console.log("siap-siap sebelum naviagate", processedImage);
         setIsLoading(false);
-        navigation.navigate("AddExpense", {
+        navigation.navigate("Add Expense", {
           data: processedImage,
           image: photo,
         });
@@ -125,15 +125,15 @@ export default function AddRecord({ navigation, route }) {
       const fileName = "receiptImage";
       const mimeType = "image/jpeg";
       // console.log('capturedImage',result)
-      console.log(photo, "ini photo post to server");
       payload.append("receiptImage", {
         uri: photo.uri,
         name: fileName,
         type: mimeType,
       });
-      payload.append("dummyText", "dummy");
+      console.log(payload, "ini photo post to server");
+      // payload.append("dummyText", "dummy");
       const data = await dispatch(postOcr(payload));
-      console.log(data);
+      console.log('INI DATAAAAAAAA DARI OCR',data);
 
       return await dispatch(postOcr(payload));
     } catch (error) {
@@ -145,13 +145,13 @@ export default function AddRecord({ navigation, route }) {
   function toAddExpense() {
     // e.preventDefault()
     // console.log('masukkk')
-    navigation.navigate("AddExpense");
+    navigation.navigate("Add Expense");
   }
 
   async function takePictureHandler() {
     if (!camera) return;
-    const photo = await camera.takePictureAsync({ quality: 0.5 });
-    console.log(photo);
+    const photo = await camera.takePictureAsync({ quality: 0.1 });
+    console.log(photo, 'foto mentah');
     setPreviewVisible(true);
     setCapturedImage(photo);
   }

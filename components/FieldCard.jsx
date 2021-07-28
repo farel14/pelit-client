@@ -94,7 +94,7 @@ export default function FieldCard({ item, navigation }) {
 
   function handleEditItem() {
     setModalVisible(!modalVisible);
-    navigation.navigate("EditExpense", { item });
+    navigation.navigate("Edit Expense", { item });
   }
 
   function handleDeleteItem() {

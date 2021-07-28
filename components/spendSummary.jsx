@@ -104,29 +104,28 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
             newTarget.endDate = dateEnd
             newTarget.monthlyTarget = targetAmount
 
-            fetch(`https://pelit-app.herokuapp.com/target/all/${userId}`, {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newTarget)
-            })
-            .then(data => {
-                alert('Success adding target!')
-                // console.log('SUCCESS', data)
-                dispatch(getUserActiveTarget(userId))
-            })
-            .catch(err => {
-                // console.log(err)
-                alert('Can not set target')
-            })            
-        }
+        fetch(`http://3.83.144.143:3000/target/all/${userId}`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newTarget)
+        })
+        .then(data => {
+            alert('Success adding target!')
+            // console.log('SUCCESS', data)
+            dispatch(getUserActiveTarget(userId))
+        })
+        .catch(err => {
+            // console.log(err)
+            alert('Can not set target')
+        })
     }
 
     function deleteTarget(e) {
         e.preventDefault()
-        fetch(`https://pelit-app.herokuapp.com/target/status/${userId}`, {
+        fetch(`http://3.83.144.143:3000/target/status/${userId}`, {
             method: "PATCH"
           })
           .then(data => {
