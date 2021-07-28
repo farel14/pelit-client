@@ -92,7 +92,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
         newTarget.endDate = dateEnd
         newTarget.monthlyTarget = targetAmount
 
-        fetch(`https://pelit-app.herokuapp.com/target/all/${userId}`, {
+        fetch(`http://3.83.144.143:3000/target/all/${userId}`, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -113,7 +113,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
 
     function deleteTarget(e) {
         e.preventDefault()
-        fetch(`https://pelit-app.herokuapp.com/target/status/${userId}`, {
+        fetch(`http://3.83.144.143:3000/target/status/${userId}`, {
             method: "PATCH"
           })
           .then(data => {

@@ -59,11 +59,11 @@ export default function App() {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="Home" component={Home} options={{ title: 'Home'}} />
-          <Stack.Screen name="AddExpense" component={AddExpense} />
-          <Stack.Screen name="EditExpense" component={EditExpense} />
-          <Stack.Screen name="MyProfile" component={MyProfile} />
+          <Stack.Screen name="Add Expense" component={AddExpense} />
+          <Stack.Screen name="Edit Expense" component={EditExpense} />
+          <Stack.Screen name="My Profile" component={MyProfile} />
           <Stack.Screen name="My Dashboard" component={Dashboard} />
-          <Stack.Screen name="AddRecord" component={AddRecord} />
+          <Stack.Screen name="Add Record" component={AddRecord} />
         </Stack.Navigator>
       </NavigationContainer>
       {/* {

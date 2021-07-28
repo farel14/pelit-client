@@ -1,4 +1,4 @@
-import {} from "./actionTypesGaluh.js";
+import { } from "./actionTypesGaluh.js";
 import { SET_TRANSACTION } from "./actionTypes.js";
 import { SET_LOADING_FETCH_TRANSACTION } from "./actionTypes.js";
 
@@ -16,21 +16,22 @@ export function setLoadingFeTransaction(payload) {
   };
 }
 
-export function postTransaction(payload, UserId) {
+export function postTransaction({payload, UserId}) {
   return async (dispatch) => {
     try {
-      // console.log(payload, 'dari action')
+      console.log(payload, UserId, 'masuk actions')
       let res = await fetch(
-        `https://pelit-app.herokuapp.com/transactions/${UserId}`,
+        `http://3.83.144.143:3000/transactions/${UserId}`,
         {
           method: "POST",
-          // headers: {
-          //     'Content-Type': 'multipart/form-data',
-          // },
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
           // body: JSON.stringify(payload),
           body: payload,
         }
       );
+      // res = await res.json();
       res = await res.json();
       console.log("Success:", res);
     } catch (error) {
@@ -41,12 +42,12 @@ export function postTransaction(payload, UserId) {
 export function postOcr(payload) {
   return async (dispatch) => {
     try {
-      // console.log(payload, 'dari action')
-      let res = await fetch("https://pelit-app.herokuapp.com/ocr", {
+      console.log(payload, 'SEBELUM POST OCR')
+      let res = await fetch("http://3.83.144.143:3000/ocr", {
         method: "POST",
-        // headers: {
-        //     'Content-Type': 'multipart/form-data',
-        // },
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
         // body: JSON.stringify(payload),
         body: payload,
       });
@@ -64,7 +65,7 @@ export function fetchTransaction(TransactionId) {
     try {
       dispatch(setLoadingFeTransaction(true));
       let res = await fetch(
-        `https://pelit-app.herokuapp.com/transactions/expense/${TransactionId}`,
+        `http://3.83.144.143:3000/transactions/expense/${TransactionId}`,
         {
           method: "GET", // or 'PUT'
           // headers: {

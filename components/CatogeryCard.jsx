@@ -35,7 +35,7 @@ export default function CategoryCard({ navigation }) {
 
   function handleEditItem() {
     setModalVisible(!modalVisible);
-    navigation.navigate("EditExpense", { TransactionId: item.id });
+    navigation.navigate("Edit Expense", { TransactionId: item.id });
   }
 
   function handleDeleteItem() {
