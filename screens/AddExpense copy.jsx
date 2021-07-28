@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, Image, ScrollView, KeyboardAvoidingView} from "react-native";
+import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dateFormatter } from "../helpers/dateFormatter";
 import * as ImagePicker from "expo-image-picker";
@@ -11,15 +11,17 @@ import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { postTransaction } from "../store/actions";
 import { useForm, Controller } from "react-hook-form";
-import { Provider, TextInput } from "react-native-paper";
-import DropDown from "react-native-paper-dropdown";
 
 export default function AddExpense({ navigation, route }) {
-  const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
-  const [typeDropDown, setTypeDropDown] = useState(false);
-  const [categoryDropDown, setCategoryDropDown] = useState(false);
+    const { register, setValue, handleSubmit, control, reset, formState: { errors } } = useForm({
+    defaultValues: {
+        firstName: '',
+        lastName: ''
+    }
+    });
+
   const dispatch = useDispatch();
-  const [type, setType] = useState("Expense");
+  const [type, setType] = useState("");
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
@@ -31,36 +33,27 @@ export default function AddExpense({ navigation, route }) {
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
-  const genderList = [
-    { label: "Male", value: "male" },
-
-    { label: "Female", value: "female" },
-
-    { label: "Others", value: "others" },
-  ];
-
   const expenseChoices = [
-    {label: 'Housing', value: 'Housing'},
-    {label: 'Transportation', value: 'Transportation'},
-    {label: 'Food & Beverage', value: 'Food & Beverage'},
-    {label: 'Utilities', value: 'Utilities'},
-    {label: 'Insurance', value: 'Insurance'},
-    {label: 'Medical & Healthcare', value: 'Medical & Healthcare'},
-    {label: 'Invest & Debt', value: 'Invest & Debt'},
-    {label: 'Personal Spending', value: 'Personal Spending'},
-    {label: 'Other Expense', value: 'Other Expense'},
+    "Housing",
+    "Transportation",
+    "Food & Beverage",
+    "Utilities",
+    "Insurance",
+    "Medical & Healthcare",
+    "Invest & Debt",
+    "Personal Spending",
+    "Other Expense",
   ];
   const incomeChoices = [
-    {label: 'Salary', value: 'Salary'},
-    {label: 'Wages', value: 'Wages'},
-    {label: 'Commission', value: 'Commission'},
-    {label: 'Interest', value: 'Interest'},
-    {label: 'Investments', value: 'Investments'},
-    {label: 'Gifts', value: 'Gifts'},
-    {label: 'Allowance', value: 'Allowance'},
-    {label: 'Other Income', value: 'Other Income'},
+    "Salary",
+    "Wages",
+    "Commission",
+    "Interest",
+    "Investments",
+    "Gifts",
+    "Allowance",
+    "Other Income",
   ];
-
   const expenseItems = expenseChoices.map((ele) => ({
     label: ele,
     value: ele,
@@ -159,68 +152,56 @@ export default function AddExpense({ navigation, route }) {
 
   return (
     <>
-    <Provider>
-      <ScrollView contentContainerStyle={styles.container}>
-      <KeyboardAvoidingView
-        behavior="position"
-        keyboardVerticalOffset={keyboardVerticalOffset}
-      >
-      <View style={{marginTop: 20}}>
-        <DropDown
-          label={"Record Type*"}
-          mode={"outlined"}
-          value={type}
-          setValue={setType}
-          list={[{label: 'Expense', value: 'Expense'},{label: 'Income', value: 'Income'}]}
-          visible={typeDropDown}
-          showDropDown={() => setTypeDropDown(true)}
-          onDismiss={() => setTypeDropDown(false)}
-          inputProps={{
-            right: <TextInput.Icon name={"menu-down"} />,
-          }}
-        />
+      <View style={styles.container}>
+      <Controller
+        control={control}
+        render={({field: { onChange, onBlur, value }}) => (
+          <TextInput
+            style={styles.input}
+            onBlur={onBlur}
+            onChangeText={value => onChange(value)}
+            value={value}
+          />
+        )}
+        name="firstName"
+        rules={{ required: true }}
+      />
+        <View>
+          {/* <Text style={styles.type}>Type</Text> */}
+          <View style={styles.selectType}>
+            <Picker
+              placeholder={{ label: "Pick a type" }}
+              onValueChange={setType}
+            >
+              <Picker.Item
+                style={styles.pickerItem}
+                label="Expense"
+                value="Expense"
+              />
+              <Picker.Item
+                style={styles.pickerItem}
+                label="Income"
+                value="Income"
+              />
+            </Picker>
+          </View>
         </View>
-
-        <View style={{marginTop: 20}}>
-        <DropDown
-          label={"Category*"}
-          mode={"outlined"}
-          value={category}
-          setValue={setCategory}
-          list={
+        <Text style={styles.type}>Category</Text>
+        <RNPickerSelect
+          placeholder={{ label: "Pick a type first" }}
+          onValueChange={setCategory}
+          items={
             type === "Expense"
-              ? expenseChoices
-              : incomeChoices
+              ? expenseItems
+              : incomeItems
           }
-          visible={categoryDropDown}
-          showDropDown={() => setCategoryDropDown(true)}
-          onDismiss={() => setCategoryDropDown(false)}
-          inputProps={{
-            right: <TextInput.Icon name={"menu-down"} />,
-          }}
-            />
-        </View>
-
-        <View style={{marginTop: 20}}>
-        <TextInput
-        label="Record Title*"
-        value={title}
-        onChangeText={text => setTitle(text)}
         />
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.type}>Record name</Text>
+          <TextInput onChangeText={setTitle} style={styles.recordName} />
         </View>
-        
-        <View style={{marginTop: 20}}>
-        <TextInput
-        label="Amount*"
-        value={amount}
-        keyboardType="numeric"
-        onChangeText={text => setAmount(text)}
-        />
-        </View>
-
-        
-        <View style={{ marginRight: 30, flexDirection: "row", justifyContent:'space-between', alignItems: 'center'}}>
-          <Text style={styles.typeDate}>Transaction Date*</Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.type}>Date</Text>
           <Text>{dateFormatter(date)}</Text>
         </View>
         <Button onPress={showDatepicker} title="Pick a date" />
@@ -234,8 +215,7 @@ export default function AddExpense({ navigation, route }) {
             onChange={dateHandler}
           />
         )}
-
-        {/* <Text>Amount</Text>
+        <Text>Amount</Text>
         <View style={{ flexDirection: "row" }}>
           <Text style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
             Rp{" "}
@@ -245,10 +225,8 @@ export default function AddExpense({ navigation, route }) {
             onChangeText={setAmount}
             keyboardType="numeric"
           />
-        </View> */}
-
-        <View style={{marginTop: 20}}>
-        <Text style={{marginBottom: 10, fontWeight: 'bold'}}>Receipt Image</Text>
+        </View>
+        <Text>Receipt Image</Text>
         {receiptImage ? (
           <>
             <Image
@@ -270,34 +248,18 @@ export default function AddExpense({ navigation, route }) {
             style={styles.buttonStyle}
           />
         )}
-        </View>
-
-        <View style={{marginTop: 20}}>
+        <Text>Note</Text>
         <TextInput
-        label="Notes"
-        value={note}
-        onChangeText={text => setNote(text)}
-        />
-        </View>
-
-        {/* <Text>Note</Text> */}
-        {/* <TextInput
-          label="Amount"
-          style={{ fontSize: 15, height: 200, flex: 4, textAlign: "left" }}
-          value={note}
+          style={{ fontSize: 15, flex: 4, textAlign: "left" }}
           onChangeText={setNote}
-        /> */}
-
-        <View style={{marginTop: 20}}/>
-        <Button
+        />
+        <input type="submit" />
+        {/* <Button
           onPress={submitHandler}
-          color={'green'}
           title="Submit Record"
           style={styles.buttonStyle}
-        />
-        </KeyboardAvoidingView>
-      </ScrollView>
-      </Provider>
+        /> */}
+      </View>
     </>
   );
 }
@@ -315,17 +277,6 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     width: 100,
     color: "white",
-    textAlign: "center",
-    borderRadius: 5,
-    height: 22,
-  },
-  typeDate: {
-    marginTop: 20,
-    // backgroundColor: "black",
-    fontWeight: 'bold',
-    marginBottom: 10,
-    // width: '80%',
-    color: "black",
     textAlign: "center",
     borderRadius: 5,
     height: 22,
