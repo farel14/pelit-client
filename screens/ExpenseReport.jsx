@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   dateFormatter,
   monthYearFormatterReport,
@@ -13,6 +13,8 @@ import {
   Dimensions,
   Pressable,
   ActivityIndicator,
+  ImageBackground,
+  Modal
 } from "react-native";
 import {
   LineChart,
@@ -25,6 +27,8 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { monthList } from "../helpers/dateBetween.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import RNPickerSelect from 'react-native-picker-select'
+import {Picker} from '@react-native-picker/picker';
 
 const Separator = () => <View style={styles.separator} />;
 
@@ -46,9 +50,13 @@ export default function ExpenseReport({ navigation, route }) {
     "Jul",
   ]);
   const [dateEnd, setDateEnd] = useState(new Date(endOfMonth));
+  const [value, setValue] = useState(new Date("0"));
   const [dateStart, setDateStart] = useState(
-    new Date(new Date(endOfMonth).setDate(new Date(endOfMonth).getDate() - 180))
+    new Date(new Date(endOfMonth).setDate(new Date(endOfMonth).getDate() - 150))
   );
+  const [modalVisible, setModalVisible] = useState(false);
+  const [pickerStart, setPickerStart] = useState('2')
+  const [pickerEnd, setPickerEnd] = useState('6')
   const [modeStart, setModeStart] = useState("date");
   const [modeEnd, setModeEnd] = useState("date");
   const [showStart, setShowStart] = useState(false);
@@ -61,6 +69,8 @@ export default function ExpenseReport({ navigation, route }) {
   const [chart2, setChart2] = useState(false);
   const [nettIncomeChart, setNettIncomeChart] = useState(false);
   const [dataUser, setDataUser] = useState("");
+  const pickerRef = useRef();
+  const [selectedLanguage, setSelectedLanguage] = useState();
   let monthNames = [
     "Jan",
     "Feb",
@@ -76,6 +86,14 @@ export default function ExpenseReport({ navigation, route }) {
     "Dec",
   ];
 
+  function open() {
+    pickerRef.current.focus();
+  }
+  
+  function close() {
+    pickerRef.current.blur();
+  }
+  
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
     setDataUser(JSON.parse(dataUser));
@@ -128,7 +146,7 @@ export default function ExpenseReport({ navigation, route }) {
               }
             }
             if (flag == true) {
-              monthExp.push((expense * -1) / 1000);
+              monthExp.push((expense * -1) / 1000000);
             } else {
               monthExp.push(0);
             }
@@ -177,7 +195,7 @@ export default function ExpenseReport({ navigation, route }) {
               }
             }
             if (flag == true) {
-              monthInc.push(income / 1000);
+              monthInc.push(income / 1000000);
             } else {
               monthInc.push(0);
             }
@@ -207,18 +225,22 @@ export default function ExpenseReport({ navigation, route }) {
     setMonthArr(monthList(start, end));
   }, [start, end]);
 
-  const onChangeStart = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowStart(Platform.OS === "Android");
-    setDateStart(currentDate);
-    setStart(monthYearFormatterReport(currentDate));
+  const onChangeStart = (selectedDate) => {
+    let month = +selectedDate
+    setDateStart(new Date(2021,month,1));
+    setPickerStart(selectedDate)
+    setStart(monthYearFormatterReport(new Date(2021,month,1)));
   };
 
-  const onChangeEnd = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowEnd(Platform.OS === "Android");
-    setDateEnd(currentDate);
-    setEnd(monthYearFormatterReport(currentDate));
+  const onChangeEnd = (selectedDate) => {
+    if (+selectedDate <= +pickerStart) {
+      alert('End date can not be earlier than start date')
+    } else {
+      let month = +selectedDate
+      setDateEnd(new Date(2021,month + 1, 0));
+      setPickerEnd(selectedDate)
+      setEnd(monthYearFormatterReport(new Date(2021,month + 1, 0)))  
+    }
   };
 
   const showModeStart = (currentMode) => {
@@ -249,71 +271,99 @@ export default function ExpenseReport({ navigation, route }) {
   // console.log(monthArr, 'MONTHARR')
   // console.log(start, end)
 
+  // console.log(dateStart, 'START', dateEnd, 'END')
+
   return (
     <ScrollView contentContainerStyle={styles.pageScrollContainer}>
+      <ImageBackground
+        style={{ flex: 1 }}
+        //We are using online image to set background
+        source={{
+          uri:
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZiUTun3fuJmLmAJfTGM7Hl32p5Wt9zVV7Ww&usqp=CAU',
+        }}
+      >
+        
       <View style={styles.pageViewContainer}>
         <View style={{ alignItems: "center" }}>
-          <Text style={{ marginTop: 30, color: "white" }}>
-            From {start} to {end}
-          </Text>
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Pressable style={styles.seeBadges} onPress={showDatepickerStart}>
-              <Text style={styles.seeBadgesText}>Change Start date</Text>
-            </Pressable>
-            <Pressable style={styles.seeBadges} onPress={showDatepickerEnd}>
-              <Text style={styles.seeBadgesText}>Change End date</Text>
-            </Pressable>
+          <View style={{ marginTop: 25}}></View>
+
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+            <Text style={styles.dash}>From</Text>
+              <Picker style={styles.picker}
+                dropdownIconColor={'black'}
+                ref={pickerRef}
+                mode={'dropdown'}
+                selectedValue={pickerStart}
+                onValueChange={(itemValue) =>
+                  onChangeStart(itemValue)
+                }>
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'January' value= '0' />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'February' value= '1'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'March' value= '2'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'April' value= '3' />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'May' value= '4' />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'June' value= '5'   />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'July' value= '6'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'August' value= '7'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'September' value= '8' />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'October' value= '9'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'November' value= '10'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'December' value= '11'  />
+              </Picker>
+
+              <Text style={styles.dash}>To</Text>
+              <Picker style={styles.picker}
+                dropdownIconColor={'black'}
+                ref={pickerRef}
+                mode={'dropdown'}
+                selectedValue={pickerEnd}
+                onValueChange={(itemValue) =>
+                  onChangeEnd(itemValue)
+                }>
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'January' value= '0' />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'February' value= '1'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'March' value= '2'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'April' value= '3' />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'May' value= '4' />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'June' value= '5'   />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'July' value= '6'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'August' value= '7'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'September' value= '8' />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'October' value= '9'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'November' value= '10'  />
+                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'December' value= '11'  />
+              </Picker>
           </View>
-          {showStart && (
-            <DateTimePicker
-              testID="dateTimePickerStart"
-              value={dateStart}
-              mode={modeStart}
-              is24Hour={true}
-              display="default"
-              onChange={onChangeStart}
-            />
-          )}
-          {showEnd && (
-            <DateTimePicker
-              testID="dateTimePickerEnd"
-              value={dateEnd}
-              mode={modeEnd}
-              is24Hour={true}
-              display="default"
-              onChange={onChangeEnd}
-            />
-          )}
+        </View>
         </View>
 
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ color: "white" }}>Monthly Expense</Text>
-          {expenses.length > 0 ? (
+          <Text style={{ color: "white", marginTop: 30 }}>
+            Monthly Nett Income (Income - Expense)
+          </Text>
+          {nettIncome.length > 0 ? (
             <LineChart
               data={{
                 labels: monthArr,
                 datasets: [
                   {
-                    data: expenses,
+                    data: nettIncome,
                   },
                 ],
               }}
               width={screenWidth * 0.9} // from react-native
               height={200}
-              yAxisSuffix="k"
+              yAxisSuffix="Mn"
               yAxisInterval={1} // optional, defaults to 1
               chartConfig={{
+                fillShadowGradient: "white",
+                fillShadowGradientOpacity: 1,
                 backgroundColor: "#e26a00",
-                backgroundGradientFrom: "#fb8c00",
-                backgroundGradientTo: "#ffa726",
+                backgroundGradientFrom: "#5854f0",
+                backgroundGradientTo: "#0041ab",
                 decimalPlaces: 0, // optional, defaults to 2dp
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                color: (opacity = 1) => `rgba(0,0,0, ${opacity})`,
                 labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                 style: {
                   borderRadius: 16,
@@ -322,6 +372,10 @@ export default function ExpenseReport({ navigation, route }) {
                   r: "6",
                   strokeWidth: "2",
                   stroke: "#ffa726",
+                },
+                propsForBackgroundLines: {
+                  strokeWidth: "0.2",
+                  stroke: "black",
                 },
               }}
               bezier
@@ -333,39 +387,41 @@ export default function ExpenseReport({ navigation, route }) {
           ) : (
             <ActivityIndicator size="large" color="#00ff00" />
           )}
-          <Text style={{ color: "white", marginTop: 20 }}>
-            Monthly Nett Income
-          </Text>
-          {nettIncome.length > 0 ? (
+          <View style={{ marginTop: 20 }}>
+          <Text style={{ color: "white" }}>Monthly Expense</Text>
+          {expenses.length > 0 ? (
             <BarChart
               data={{
                 labels: monthArr,
                 datasets: [
                   {
-                    data: nettIncome,
+                    data: expenses,
                   },
                 ],
               }}
+              withDots={false}
+              marginTop={"15"}
+              showValuesOnTopOfBars={true}
               width={screenWidth * 0.9} // from react-native
               height={200}
-              yAxisSuffix="k"
+              yAxisSuffix="Mn"
               yAxisInterval={1} // optional, defaults to 1
               chartConfig={{
                 fillShadowGradient: "white",
                 fillShadowGradientOpacity: 1,
                 backgroundColor: "#e26a00",
-                backgroundGradientFrom: "#fb8c00",
-                backgroundGradientTo: "#ffa726",
+                backgroundGradientFrom: "#5854f0",
+                backgroundGradientTo: "#0041ab",
                 decimalPlaces: 0, // optional, defaults to 2dp
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                color: (opacity = 1) => `rgba(255, 167, 38, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(225, 225, 225, ${opacity})`,
                 style: {
                   borderRadius: 16,
                 },
-                propsForDots: {
-                  r: "6",
-                  strokeWidth: "2",
-                  stroke: "#ffa726",
+                propsForBackgroundLines: {
+                  r: "0",
+                  strokeWidth: "0.2",
+                  stroke: "black",
                 },
               }}
               bezier
@@ -379,6 +435,7 @@ export default function ExpenseReport({ navigation, route }) {
           )}
         </View>
       </View>
+      </ImageBackground>
     </ScrollView>
   );
 }
@@ -390,7 +447,7 @@ const styles = StyleSheet.create({
   pageViewContainer: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: "#04009A",
+    // backgroundColor: "#04009A",
     marginBottom: 100,
   },
   separator: {
@@ -408,5 +465,43 @@ const styles = StyleSheet.create({
     alignItems: "center",
     fontSize: 9,
     color: "black",
+  },
+  picker: {
+    marginTop: 10,
+    fontSize: 10,
+    // alignItems: 'center',
+    width: 130,
+    color: 'black',
+    marginBottom: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    alignItems: 'center',
+    paddingLeft: 15,
+    width: 350,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    backgroundColor: "lightyellow",
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  dash: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color:'black'
   },
 });
