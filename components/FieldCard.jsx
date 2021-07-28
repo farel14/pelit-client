@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 import NumberFormat from 'react-number-format'
 import { Avatar } from 'react-native-paper';
 import { useEffect } from "react";
-
+import { Icon, Overlay } from 'react-native-elements'
 
 export default function FieldCard({ item, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -104,11 +104,13 @@ export default function FieldCard({ item, navigation }) {
 
   return (
     <View>
+      <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
       <View
         style={{
           flexDirection: "row",
           justifyContent: 'space-between',
-          width: 310,
+          width: 320,
+          alignItems: 'center'
           // borderWidth: 2
         }}
       >
@@ -120,15 +122,17 @@ export default function FieldCard({ item, navigation }) {
           }}
         >
           <View style={styles.simbolListCard}><Avatar.Icon size={24} icon={icon} style={ item.type == 'Expense' ? styles.iconStyleExpense : styles.iconStyleIncome}/></View>
-          {/* <Text style={styles.simbolListCard}>-</Text> */}
-          <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
             <Text style={styles.textListCard}>{item.category}</Text>
-          </TouchableOpacity>
         </View>
+        <View style={{flexDirection:'row', alignItems: 'center'}}>
         <NumberFormat value={item.amount} style={styles.textListCard} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
           <Text style={styles.textListCardNumber}>{formattedValue}</Text>
         } />
+            <Icon
+            name='magnifying-glass' size={10} type='entypo' color={'blue'} underlayColor={'blue'} style={{marginTop: 3}}/>
+        </View>
       </View>
+      </TouchableOpacity>
 
       <Modal
         animationType="slide"
@@ -211,7 +215,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: 300,
-    height: 200,
   },
   button: {
     marginTop: 15,

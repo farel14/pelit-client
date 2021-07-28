@@ -9,7 +9,8 @@ import {
   Image,
   ScrollView,
   Pressable,
-  ActivityIndicator
+  ActivityIndicator,
+  ImageBackground
 } from "react-native";
 import DateCard from "../components/DateCard";
 import { monthYearFormatter } from "../helpers/dateFormatter";
@@ -18,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CategoryCard from "../components/CatogeryCard";
 import NumberFormat from 'react-number-format'
 import { Banner } from 'react-native-paper';
+import { Icon } from 'react-native-elements'
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 
 export default function Home({ navigation }) {
@@ -43,6 +45,16 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.pageScrollContainer}>
+      <ImageBackground
+        style={{ flex: 1 }}
+        //We are using online image to set background
+        source={{
+          uri:
+            'https://wallpaperaccess.com/full/126397.jpg',
+        }}
+        //You can also set image from your project folder
+        //require('./images/background_image.jpg')        //
+      >
       <View style={styles.pageViewContainer}>
         <View
           style={styles.pageTitle}
@@ -102,10 +114,10 @@ export default function Home({ navigation }) {
             }}
           >
             <NumberFormat value={dataUser.data.Transactions.totalIncome} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
-              <Text style={styles.colBody}>{formattedValue}</Text>
+              <Text style={styles.colBodyIncome}>{formattedValue}</Text>
               } />
               <NumberFormat value={dataUser.data.Transactions.totalExpense} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
-              <Text style={styles.colBody}>-{formattedValue}</Text>
+              <Text style={styles.colBodyExpense}>-{formattedValue}</Text>
               } />
               <NumberFormat value={dataUser.data.balance} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
               <Text style={styles.colBody}>{formattedValue}</Text>
@@ -120,7 +132,7 @@ export default function Home({ navigation }) {
             marginTop: 20
           }}
         >
-          <Text style={styles.textGroupBy}>Group By:</Text>
+          <Text style={[styles.textGroupBy, {color: 'white'}]}>Group By:</Text>
           <TouchableOpacity
             style={
               displayCard === "Date"
@@ -129,7 +141,7 @@ export default function Home({ navigation }) {
             }
             onPress={() => setDisplayCard("Date")}
           >
-            <Text style={styles.textGroupBy}>Date</Text>
+            <Text style={[styles.textGroupBy, {color: 'black'}]}>Date</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={
@@ -139,7 +151,7 @@ export default function Home({ navigation }) {
             }
             onPress={() => setDisplayCard("Category")}
           >
-            <Text style={styles.textGroupBy}>Category</Text>
+            <Text style={[styles.textGroupBy, {color: 'black'}]}>Category</Text>
           </TouchableOpacity>
         </View>
         {
@@ -158,8 +170,8 @@ export default function Home({ navigation }) {
           :
           <ActivityIndicator size="large" color="#00ff00" />
         }
-        
         </View>
+        </ImageBackground>
       </ScrollView>
     </View>
   );
@@ -168,7 +180,7 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#A2DBFA",
+    // backgroundColor: "#A2DBFA",
   },
   pageScrollContainer: {
     flexGrow: 1,
@@ -193,7 +205,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     fontSize: 17,
     fontWeight: "bold",
-    color: 'black'
+    color: 'white'
   },
   colTitle: {
     width: 110,
@@ -202,17 +214,31 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     textAlign: "center",
+    color: 'white'
   },
   colBody: {
     width: 110,
     marginHorizontal: 7,
     fontSize: 15,
-    color: "darkblue",
+    color: "white",
+    textAlign: "center",
+  },
+  colBodyExpense: {
+    width: 110,
+    marginHorizontal: 7,
+    fontSize: 15,
+    color: "gold",
+    textAlign: "center",
+  },
+  colBodyIncome: {
+    width: 110,
+    marginHorizontal: 7,
+    fontSize: 15,
+    color: "lightgreen",
     textAlign: "center",
   },
   textGroupBy: {
     fontSize: 14,
-    color: 'black'
   },
   buttonInActive: {
     marginLeft: 10,
@@ -255,7 +281,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
     paddingVertical: 12,
-    backgroundColor: "#A2DBFA",
+    // backgroundColor: "#A2DBFA",
   },
   pageTitle: {
     flexDirection: "row",

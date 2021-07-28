@@ -77,7 +77,7 @@ export default function DateCard({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#A2DBFA",
+    // backgroundColor: "#A2DBFA",
     // borderWidth: 5
   },
   cardPerDate: {
@@ -91,12 +91,12 @@ const styles = StyleSheet.create({
   },
   textDateCard: {
     width: 180,
-    fontSize: 17,
+    fontSize: 15,
     paddingHorizontal: 20,
     fontWeight: "bold",
   },
   textTotalCard: {
-    fontSize: 17,
+    fontSize: 15,
     textAlign: 'right',
     // paddingHorizontal: 10,
     fontWeight: "bold",
