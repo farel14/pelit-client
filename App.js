@@ -11,13 +11,20 @@ import Dashboard from "./screens/Dashboard.jsx";
 import MyProfile from "./screens/MyProfile.jsx";
 import SideMenu from "./components/SideMenu.jsx";
 import ExpenseReport from "./screens/ExpenseReport.jsx";
-import { StyleSheet, Text, View, Button, Image} from "react-native";
+import Navigator from "./Navigator.js"
+import { StyleSheet, Text, View, Button, Image, Pressable} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AddRecord from "./screens/AddRecord";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Drawer from 'react-native-drawer'
 import { Icon, Overlay } from 'react-native-elements'
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { NavigationActions } from 'react-navigation'
+import { StackActions } from '@react-navigation/native';
+import { useDispatch, useSelector } from "react-redux";
+import { setIsLogin, setAllTransactionUser } from "./store/actionsFaisal"
 
 const drawerStyles = {
   drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3, flex:0.2},
@@ -36,6 +43,14 @@ export default function App() {
 
   function toggleDrawer() {
     setDrawer(!drawer)
+  }
+
+  async function logout(navigation) {
+    // const dispatch = useDispatch();
+    await AsyncStorage.removeItem('@dataUser')
+    // dispatch(setIsLogin(false));
+    // dispatch(setAllTransactionUser({}));
+    navigation.navigate('Login')
   }
 
   console.log(drawer)

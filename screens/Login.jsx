@@ -8,7 +8,8 @@ import {
   TextInput,
   Image,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  ActivityIndicator
 } from "react-native";
 import { fetchLoginUser } from "../store/actionsFaisal";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +18,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { addPushToken } from "../store/actionsGaluh"
+import { setErrorLogin } from "../store/actionsFaisal"
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -31,12 +33,16 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPasswordl] = useState("");
   const isLogin = useSelector((state) => state.isLogin);
+  const loading = useSelector((state) => state.loadingTransaction);
+  const errorLogin = useSelector((state) => state.errorLogin);
   const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
   const [user, setUser] = useState(0)
+
+  // console.log(email, password, 'EMAIL', 'PASSWORD')
 
   useEffect(() => {
     if (user.data) {
@@ -46,9 +52,9 @@ export default function Login({ navigation }) {
     }
   }, [user])
 
-  useEffect(() => {
-    dispatch(fetchLoginUser(email, password));
-  }, [email, password, dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchLoginUser(email, password));
+  // }, [email, password, dispatch]);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
@@ -124,60 +130,73 @@ export default function Login({ navigation }) {
     return token;
   }
 
+  // console.log(isLogin, 'ISLOGIN')
   async function handleLoginButton() {
     if (!email && !password)
       Alert.alert("Please input your email and password");
     else if (!email) Alert.alert("Please input your email");
     else if (!password) Alert.alert("Please input your password");
     else {
-      if (isLogin) {
-        getUserId()
-        navigation.navigate("Home");
-      } else {
-        Alert.alert("Wrong Email/Password");
-      }
+      dispatch(fetchLoginUser(email, password));
     }
   }
+
+  useEffect(() => {
+    if (isLogin) {
+      getUserId()
+      navigation.navigate("Home");
+    } 
+  }, [isLogin, errorLogin]);
 
   function handleRegisterButton() {
     navigation.navigate("Register");
   }
 
   return (
-    <View style={styles.container}>
-      <KeyboardAvoidingView
-        behavior="position"
-        keyboardVerticalOffset={keyboardVerticalOffset}
-      >
-        <Image
-          style={styles.logo}
-          source={{
-            uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
-          }}
-        />
+    <>
+      {
+        loading ? 
+        <View style={styles.containerLoading}>
+          <Text style={{color:'white', marginBottom: 10, fontSize: 16}}>Arranging Stuff ...</Text>
+          <ActivityIndicator size="large" color="#00ff00" />
+        </View>
+        :
+        <View style={styles.container}>
+          <KeyboardAvoidingView
+          behavior="position"
+          keyboardVerticalOffset={keyboardVerticalOffset}
+        >
+          <Image
+            style={styles.logo}
+            source={{
+              uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
+            }}
+          />
 
-        <Text style={styles.text}>Email</Text>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={(e) => setEmail(e)}
-        ></TextInput>
-        <Text style={styles.text}>Password</Text>
-        <TextInput
-          secureTextEntry={true}
-          style={styles.textInput}
-          onChangeText={(e) => setPasswordl(e)}
-        ></TextInput>
-      </KeyboardAvoidingView>
-      <TouchableOpacity style={styles.buttonLogin} onPress={handleLoginButton}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buttonRegister}
-        onPress={handleRegisterButton}
-      >
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
-    </View>
+          <Text style={styles.text}>Email</Text>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={(e) => setEmail(e)}
+          ></TextInput>
+          <Text style={styles.text}>Password</Text>
+          <TextInput
+            secureTextEntry={true}
+            style={styles.textInput}
+            onChangeText={(e) => setPasswordl(e)}
+          ></TextInput>
+        </KeyboardAvoidingView>
+        <TouchableOpacity style={styles.buttonLogin} onPress={handleLoginButton}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonRegister}
+          onPress={handleRegisterButton}
+        >
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+        </View>
+      }
+    </>
   );
 }
 
@@ -185,6 +204,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#04009A",
+    alignItems: "center",
+    paddingTop: 50,
+  },
+  containerLoading: {
+    flex: 1,
+    backgroundColor: "#04009A",
+    justifyContent: 'center',
     alignItems: "center",
     paddingTop: 50,
   },

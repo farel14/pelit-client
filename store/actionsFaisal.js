@@ -4,12 +4,23 @@ import {
   SET_TRANSACTION_BY_DATE,
   SET_LOADING_TRANSACTION,
   SET_IS_LOGIN,
+  SET_ERROR_LOGIN,
 } from "./actionTypesFaisal";
+import {
+Alert
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function setIsLogin(input) {
   return {
     type: SET_IS_LOGIN,
+    payload: input,
+  };
+}
+
+export function setErrorLogin(input) {
+  return {
+    type: SET_ERROR_LOGIN,
     payload: input,
   };
 }
@@ -42,8 +53,10 @@ export function setLoadingTransaction(input) {
   };
 }
 
-export function fetchLoginUser(email, password) {
+export function fetchLoginUser(email, password) {  
+  let result = {}
   return async (dispatch) => {
+    dispatch(setLoadingTransaction(true))
     try {
       const response = await fetch("http://3.83.144.143:3000/login", {
         method: "POST",
@@ -56,17 +69,21 @@ export function fetchLoginUser(email, password) {
           password,
         }),
       });
-      const result = await response.json();
+      result = await response.json();
 
       if (result.access_token) {
         await AsyncStorage.setItem("@dataUser", JSON.stringify(result));
         dispatch(setIsLogin(true));
         dispatch(setAllTransactionUser(result.data));
-      } else {
+        dispatch(setLoadingTransaction(false))
+      } else if (result.message = 'Wrong Email/Password') {
+        dispatch(setLoadingTransaction(false))
+        console.log(result)
+        Alert.alert("Wrong email/password");
         dispatch(setIsLogin(false));
       }
     } catch (err) {
-      console.log("error di fetch login", err);
+      console.log(err)
     }
   };
 }

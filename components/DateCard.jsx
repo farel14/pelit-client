@@ -8,6 +8,7 @@ import {
   Image,
   Modal,
   Pressable,
+  ActivityIndicator
 } from "react-native";
 import { monthYearFormatter, monthFormatter } from "../helpers/dateFormatter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -37,13 +38,17 @@ export default function DateCard({ navigation }) {
     console.log(dataAsyncUser)
   }, [dataAsyncUser]);
 
-
   if (!dataAsyncUser || !dataTransByDate.length) return null;
 
   // dataTransByDate = dataTransByDate.sort((a, b) => a.date - b.date);
 
+  console.log(dataTransByDate, 'data')
   return (
-    <View style={styles.container}>
+    <>
+    {
+      dataTransByDate !== {}
+      ?
+      <View style={styles.container}>
       {/* <Text style={styles.textWarning}>You Have No Recorded Transactions</Text> */}
       {dataTransByDate.map((data, index) => (
         <View style={{ alignItems: "center" }} key={index}>
@@ -73,6 +78,10 @@ export default function DateCard({ navigation }) {
         </View>
       ))}
     </View>
+      :
+      <ActivityIndicator size="large" color="#00ff00" />
+    }
+   </>
   );
 }
 

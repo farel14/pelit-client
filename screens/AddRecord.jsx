@@ -232,7 +232,8 @@ export default function AddRecord({ navigation, route }) {
           <TouchableOpacity
             onPress={startCameraHandler}
             style={{
-              width: 130,
+              width:230,
+              marginBottom: 10,
               borderRadius: 4,
               backgroundColor: "#14274e",
               flexDirection: "row",
@@ -244,6 +245,7 @@ export default function AddRecord({ navigation, route }) {
             <Text
               style={{
                 color: "#fff",
+                fontSize: 18,
                 fontWeight: "bold",
                 textAlign: "center",
               }}
@@ -252,10 +254,12 @@ export default function AddRecord({ navigation, route }) {
             </Text>
             {/* <Button onPress={testFetch} title='test for post'  style={{marginBottom:5}}/> */}
           </TouchableOpacity>
+
           <TouchableOpacity
             onPress={imagePickerHandler}
             style={{
-              width: 130,
+              width:230,
+              marginBottom: 10,
               borderRadius: 4,
               backgroundColor: "#14274e",
               flexDirection: "row",
@@ -268,6 +272,7 @@ export default function AddRecord({ navigation, route }) {
             <Text
               style={{
                 color: "#fff",
+                fontSize: 18,
                 fontWeight: "bold",
                 textAlign: "center",
               }}
@@ -278,8 +283,9 @@ export default function AddRecord({ navigation, route }) {
           <TouchableOpacity
             onPress={toAddExpense}
             style={{
-              width: 130,
-              borderRadius: 4,
+              width:230,
+              padding: 10,
+              height: 200,
               backgroundColor: "#14274e",
               flexDirection: "row",
               justifyContent: "center",
@@ -291,6 +297,8 @@ export default function AddRecord({ navigation, route }) {
             <Text
               style={{
                 color: "#fff",
+                padding: 10,
+                fontSize: 18,
                 fontWeight: "bold",
                 textAlign: "center",
               }}
