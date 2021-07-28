@@ -150,8 +150,8 @@ export default function AddRecord({ navigation, route }) {
 
   async function takePictureHandler() {
     if (!camera) return;
-    const photo = await camera.takePictureAsync({ quality: 0.5 });
-    console.log(photo);
+    const photo = await camera.takePictureAsync({ quality: 0.1 });
+    console.log(photo, 'foto mentah');
     setPreviewVisible(true);
     setCapturedImage(photo);
   }

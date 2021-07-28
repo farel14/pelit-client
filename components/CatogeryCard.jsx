@@ -29,8 +29,8 @@ export default function CategoryCard({ navigation }) {
   let dataTransByCategory = useSelector((state) => state.transByCategory);
 
   async function getItem() {
-    const dataAsyncUser = await AsyncStorage.getItem("@dataUser");
-    setDataAsyncUser(JSON.parse(dataAsyncUser));
+    const dataAsync = await AsyncStorage.getItem("@dataUser");
+    setDataAsyncUser(JSON.parse(dataAsync));
   }
 
   function handleEditItem() {
@@ -51,7 +51,7 @@ export default function CategoryCard({ navigation }) {
     dispatch(
       fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
     );
-  }, [monthYear.numMonth, dataAsyncUser.data, dispatch]);
+  }, [dataAsyncUser]);
 
   if (!dataAsyncUser || !dataTransByCategory.length) return null;
 
