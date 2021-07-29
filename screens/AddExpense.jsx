@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { dateFormatter } from "../helpers/dateFormatter";
+import { dateFormatter, monthYearFormatter } from "../helpers/dateFormatter";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import { useSelector, useDispatch } from "react-redux";
@@ -23,6 +23,7 @@ import DropDown from "../helpers/react-native-paper-dropdown";
 import {
   fetchTransactionByDate,
   fetchTransactionByCategory,
+  fetchLoginUser,
 } from "../store/actionsFaisal";
 
 export default function AddExpense({ navigation, route }) {
@@ -37,6 +38,7 @@ export default function AddExpense({ navigation, route }) {
   const [amount, setAmount] = useState("");
   const [receiptImage, setReceiptImage] = useState("");
   const [UserId, setUserId] = useState("");
+  const [dataUser, setDataUser] = useState("");
   const [note, setNote] = useState("");
 
   const [mode, setMode] = useState("date");
@@ -84,6 +86,7 @@ export default function AddExpense({ navigation, route }) {
     (async () => {
       const dataAsyncUser = await AsyncStorage.getItem("@dataUser");
       setUserId(JSON.parse(dataAsyncUser).data.id);
+      setDataUser(JSON.parse(dataAsyncUser));
     })();
     // setUserId(29)
 
@@ -168,8 +171,10 @@ export default function AddExpense({ navigation, route }) {
     // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
     console.log(payload, "ini di submit handler");
     await dispatch(postTransaction({ payload, UserId }));
-    dispatch(fetchTransactionByDate(monthYear.numMonth, UserId));
-    dispatch(fetchTransactionByCategory(monthYear.numMonth, UserId));
+    console.log(monthYear.numMonth, UserId, "ini di add expense");
+    dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
+    dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
+    dispatch(fetchLoginUser(dataUser.email, dataUser.password));
     navigation.navigate("Home");
   }
 

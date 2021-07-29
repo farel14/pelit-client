@@ -122,8 +122,10 @@ export default function FieldCard({ item, navigation }) {
   function handleDeleteItem() {
     setModalVisible(!modalVisible);
     dispatch(fetchDeleteTransaction(item.id));
-    dispdispatch(fetchTransactionByDate(monthYear.numMonth, UserId));
-    dispatch(fetchTransactionByCategory(monthYear.numMonth, UserId));
+    dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
+    dispatch(
+      fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
+    );
   }
 
   return (

@@ -35,7 +35,6 @@ export default function DateCard({ navigation }) {
 
   useEffect(() => {
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-    // dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
   }, [dataAsyncUser]);
 
   if (!dataAsyncUser || !dataTransByDate.length) return null;

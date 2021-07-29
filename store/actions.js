@@ -52,6 +52,8 @@ export function postOcr(payload) {
         // body: JSON.stringify(payload),
         body: payload,
       });
+
+      res = await res.text();
       res = await res.json();
       console.log("Success:", res);
       return res;
