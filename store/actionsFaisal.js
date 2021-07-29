@@ -54,6 +54,7 @@ export function setLoadingTransaction(input) {
 }
 
 export function fetchLoginUser(email, password) {  
+  console.log('MASUK LOGIN')
   let result = {}
   return async (dispatch) => {
     dispatch(setLoadingTransaction(true))
@@ -72,17 +73,22 @@ export function fetchLoginUser(email, password) {
       result = await response.json();
 
       if (result.access_token) {
+        console.log('BERHASIL')
         await AsyncStorage.setItem("@dataUser", JSON.stringify(result));
         dispatch(setIsLogin(true));
         dispatch(setAllTransactionUser(result.data));
         dispatch(setLoadingTransaction(false))
       } else if (result.message = 'Wrong Email/Password') {
+        console.log('SALAH PASSWORD')
         dispatch(setLoadingTransaction(false))
         console.log(result)
         Alert.alert("Wrong email/password");
         dispatch(setIsLogin(false));
+      } else {
+        console.log('MASIH LOADING')
       }
     } catch (err) {
+      console.log('ERROR')
       console.log(err)
     }
   };

@@ -17,8 +17,8 @@ import NumberFormat from 'react-number-format'
 
 export default function ModalItem({ item }) {
   return (
-    <View>
-      <View style={{ width: 100, marginLeft: 27 }}>
+    <View style={{alignItems: 'center'}}>
+      <View style={{ width: 100 }}>
         <Text
           style={[
             item.type === "Expense" ? styles.typeExpense : styles.typeIncome,
