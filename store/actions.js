@@ -18,21 +18,22 @@ export function setLoadingFeTransaction(payload) {
 
 export function postTransaction(payload, UserId) {
   return async (dispatch) => {
+    console.log(payload, "ini payload di action");
     try {
       // console.log(payload, 'dari action')
       let res = await fetch(
         `https://pelit-app.herokuapp.com/transactions/${UserId}`,
         {
           method: "POST",
-          // headers: {
-          //     'Content-Type': 'multipart/form-data',
-          // },
-          // body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: JSON.stringify(payload),
           body: payload,
         }
       );
-      res = await res.json();
-      console.log("Success:", res);
+      res = await res.text();
+      console.log("Success: di actions", res);
     } catch (error) {
       console.error("Error:", error);
     }

@@ -1,5 +1,13 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, Image, ScrollView, KeyboardAvoidingView} from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dateFormatter } from "../helpers/dateFormatter";
 import * as ImagePicker from "expo-image-picker";
@@ -40,25 +48,25 @@ export default function AddExpense({ navigation, route }) {
   ];
 
   const expenseChoices = [
-    {label: 'Housing', value: 'Housing'},
-    {label: 'Transportation', value: 'Transportation'},
-    {label: 'Food & Beverage', value: 'Food & Beverage'},
-    {label: 'Utilities', value: 'Utilities'},
-    {label: 'Insurance', value: 'Insurance'},
-    {label: 'Medical & Healthcare', value: 'Medical & Healthcare'},
-    {label: 'Invest & Debt', value: 'Invest & Debt'},
-    {label: 'Personal Spending', value: 'Personal Spending'},
-    {label: 'Other Expense', value: 'Other Expense'},
+    { label: "Housing", value: "Housing" },
+    { label: "Transportation", value: "Transportation" },
+    { label: "Food & Beverage", value: "Food & Beverage" },
+    { label: "Utilities", value: "Utilities" },
+    { label: "Insurance", value: "Insurance" },
+    { label: "Medical & Healthcare", value: "Medical & Healthcare" },
+    { label: "Invest & Debt", value: "Invest & Debt" },
+    { label: "Personal Spending", value: "Personal Spending" },
+    { label: "Other Expense", value: "Other Expense" },
   ];
   const incomeChoices = [
-    {label: 'Salary', value: 'Salary'},
-    {label: 'Wages', value: 'Wages'},
-    {label: 'Commission', value: 'Commission'},
-    {label: 'Interest', value: 'Interest'},
-    {label: 'Investments', value: 'Investments'},
-    {label: 'Gifts', value: 'Gifts'},
-    {label: 'Allowance', value: 'Allowance'},
-    {label: 'Other Income', value: 'Other Income'},
+    { label: "Salary", value: "Salary" },
+    { label: "Wages", value: "Wages" },
+    { label: "Commission", value: "Commission" },
+    { label: "Interest", value: "Interest" },
+    { label: "Investments", value: "Investments" },
+    { label: "Gifts", value: "Gifts" },
+    { label: "Allowance", value: "Allowance" },
+    { label: "Other Income", value: "Other Income" },
   ];
 
   const expenseItems = expenseChoices.map((ele) => ({
@@ -132,7 +140,8 @@ export default function AddExpense({ navigation, route }) {
   };
 
   async function submitHandler() {
-    const dateParse = date.toLocaleDateString("id-ID");
+    let dateParse = date.toLocaleDateString("id-ID").split("/");
+    dateParse = `20${dateParse[2]}-${dateParse[0]}-${dateParse[1]}`;
 
     const payload = new FormData();
     payload.append("type", type);
@@ -159,83 +168,88 @@ export default function AddExpense({ navigation, route }) {
 
   return (
     <>
-    <Provider>
-      <ScrollView contentContainerStyle={styles.container}>
-      <KeyboardAvoidingView
-        behavior="position"
-        keyboardVerticalOffset={keyboardVerticalOffset}
-      >
-      <View style={{marginTop: 20}}>
-        <DropDown
-          label={"Record Type*"}
-          mode={"outlined"}
-          value={type}
-          setValue={setType}
-          list={[{label: 'Expense', value: 'Expense'},{label: 'Income', value: 'Income'}]}
-          visible={typeDropDown}
-          showDropDown={() => setTypeDropDown(true)}
-          onDismiss={() => setTypeDropDown(false)}
-          inputProps={{
-            right: <TextInput.Icon name={"menu-down"} />,
-          }}
-        />
-        </View>
+      <Provider>
+        <ScrollView contentContainerStyle={styles.container}>
+          <KeyboardAvoidingView
+            behavior="position"
+            keyboardVerticalOffset={keyboardVerticalOffset}
+          >
+            <View style={{ marginTop: 20 }}>
+              <DropDown
+                label={"Record Type*"}
+                mode={"outlined"}
+                value={type}
+                setValue={setType}
+                list={[
+                  { label: "Expense", value: "Expense" },
+                  { label: "Income", value: "Income" },
+                ]}
+                visible={typeDropDown}
+                showDropDown={() => setTypeDropDown(true)}
+                onDismiss={() => setTypeDropDown(false)}
+                inputProps={{
+                  right: <TextInput.Icon name={"menu-down"} />,
+                }}
+              />
+            </View>
 
-        <View style={{marginTop: 20}}>
-        <DropDown
-          label={"Category*"}
-          mode={"outlined"}
-          value={category}
-          setValue={setCategory}
-          list={
-            type === "Expense"
-              ? expenseChoices
-              : incomeChoices
-          }
-          visible={categoryDropDown}
-          showDropDown={() => setCategoryDropDown(true)}
-          onDismiss={() => setCategoryDropDown(false)}
-          inputProps={{
-            right: <TextInput.Icon name={"menu-down"} />,
-          }}
-            />
-        </View>
+            <View style={{ marginTop: 20 }}>
+              <DropDown
+                label={"Category*"}
+                mode={"outlined"}
+                value={category}
+                setValue={setCategory}
+                list={type === "Expense" ? expenseChoices : incomeChoices}
+                visible={categoryDropDown}
+                showDropDown={() => setCategoryDropDown(true)}
+                onDismiss={() => setCategoryDropDown(false)}
+                inputProps={{
+                  right: <TextInput.Icon name={"menu-down"} />,
+                }}
+              />
+            </View>
 
-        <View style={{marginTop: 20}}>
-        <TextInput
-        label="Record Title*"
-        value={title}
-        onChangeText={text => setTitle(text)}
-        />
-        </View>
-        
-        <View style={{marginTop: 20}}>
-        <TextInput
-        label="Amount*"
-        value={amount}
-        keyboardType="numeric"
-        onChangeText={text => setAmount(text)}
-        />
-        </View>
+            <View style={{ marginTop: 20 }}>
+              <TextInput
+                label="Record Title*"
+                value={title}
+                onChangeText={(text) => setTitle(text)}
+              />
+            </View>
 
-        
-        <View style={{ marginRight: 30, flexDirection: "row", justifyContent:'space-between', alignItems: 'center'}}>
-          <Text style={styles.typeDate}>Transaction Date*</Text>
-          <Text>{dateFormatter(date)}</Text>
-        </View>
-        <Button onPress={showDatepicker} title="Pick a date" />
-        {show && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            display="default"
-            onChange={dateHandler}
-          />
-        )}
+            <View style={{ marginTop: 20 }}>
+              <TextInput
+                label="Amount*"
+                value={amount}
+                keyboardType="numeric"
+                onChangeText={(text) => setAmount(text)}
+              />
+            </View>
 
-        {/* <Text>Amount</Text>
+            <View
+              style={{
+                marginRight: 30,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.typeDate}>Transaction Date*</Text>
+              <Text>{dateFormatter(date)}</Text>
+            </View>
+            <Button onPress={showDatepicker} title="Pick a date" />
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={dateHandler}
+              />
+            )}
+
+            {/* <Text>Amount</Text>
         <View style={{ flexDirection: "row" }}>
           <Text style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
             Rp{" "}
@@ -247,56 +261,58 @@ export default function AddExpense({ navigation, route }) {
           />
         </View> */}
 
-        <View style={{marginTop: 20}}>
-        <Text style={{marginBottom: 10, fontWeight: 'bold'}}>Receipt Image</Text>
-        {receiptImage ? (
-          <>
-            <Image
-              style={styles.image}
-              source={{
-                uri: receiptImage.uri,
-              }}
-            />
-            <Button
-              onPress={() => setReceiptImage("")}
-              title="Clear Image"
-              style={styles.buttonStyle}
-            />
-          </>
-        ) : (
-          <Button
-            onPress={uploadImageHandler}
-            title="Upload Image"
-            style={styles.buttonStyle}
-          />
-        )}
-        </View>
+            <View style={{ marginTop: 20 }}>
+              <Text style={{ marginBottom: 10, fontWeight: "bold" }}>
+                Receipt Image
+              </Text>
+              {receiptImage ? (
+                <>
+                  <Image
+                    style={styles.image}
+                    source={{
+                      uri: receiptImage.uri,
+                    }}
+                  />
+                  <Button
+                    onPress={() => setReceiptImage("")}
+                    title="Clear Image"
+                    style={styles.buttonStyle}
+                  />
+                </>
+              ) : (
+                <Button
+                  onPress={uploadImageHandler}
+                  title="Upload Image"
+                  style={styles.buttonStyle}
+                />
+              )}
+            </View>
 
-        <View style={{marginTop: 20}}>
-        <TextInput
-        label="Notes"
-        value={note}
-        onChangeText={text => setNote(text)}
-        />
-        </View>
+            <View style={{ marginTop: 20 }}>
+              <TextInput
+                label="Notes"
+                value={note}
+                onChangeText={(text) => setNote(text)}
+              />
+            </View>
 
-        {/* <Text>Note</Text> */}
-        {/* <TextInput
+            {/* <Text>Note</Text> */}
+            {/* <TextInput
           label="Amount"
           style={{ fontSize: 15, height: 200, flex: 4, textAlign: "left" }}
           value={note}
           onChangeText={setNote}
         /> */}
 
-        <View style={{marginTop: 20}}/>
-        <Button
-          onPress={submitHandler}
-          color={'green'}
-          title="Submit Record"
-          style={styles.buttonStyle}
-        />
-        </KeyboardAvoidingView>
-      </ScrollView>
+            <View style={{ marginTop: 20 }} />
+            <Button
+              onPress={submitHandler}
+              color={"green"}
+              title="Submit Record"
+              style={styles.buttonStyle}
+            />
+          </KeyboardAvoidingView>
+        </ScrollView>
       </Provider>
     </>
   );
@@ -322,7 +338,7 @@ const styles = StyleSheet.create({
   typeDate: {
     marginTop: 20,
     // backgroundColor: "black",
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
     // width: '80%',
     color: "black",
