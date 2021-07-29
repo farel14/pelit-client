@@ -57,7 +57,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      {/* <NavigationContainer>
         <Stack.Navigator initialRouteName="Home" screenOptions={{
         headerStyle: {
           backgroundColor: 'beige'}, headerTitleAlign: 'center', headerTitleStyle: {
@@ -80,32 +80,8 @@ export default function App() {
           <Stack.Screen name="My Dashboard" component={Dashboard} />
           <Stack.Screen name="Add Record" component={AddRecord} />
         </Stack.Navigator>
-      </NavigationContainer>
-      {/* {
-        drawer ?
-        <View style={{zIndex: 5, flex: 1}}>
-          <Text>Hello from Overlay!</Text>
-          <Drawer
-            style={{flex:1}}
-            open={drawer}
-            type="overlay"
-            content={<SideMenu />}
-            tapToClose={true}
-            openDrawerOffset={0.2} // 20% gap on the right side of drawer
-            panCloseMask={0.2}
-            closedDrawerOffset={-3}
-            styles={drawerStyles}
-            tweenHandler={(ratio) => ({
-              main: { opacity:(2-ratio)/2 }
-            })}
-            >
-            </Drawer>
-        </View>
-        <Overlay isVisible={drawer} onPress={toggleDrawer}>
-         </Overlay>
-      :
-      null
-      } */}
+      </NavigationContainer> */}
+      <Navigator />
     </Provider>
   );
 }
