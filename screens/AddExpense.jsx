@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dateFormatter } from "../helpers/dateFormatter";
@@ -20,6 +21,7 @@ import { postTransaction } from "../store/actions";
 import { useForm, Controller } from "react-hook-form";
 import { Provider, TextInput } from "react-native-paper";
 import DropDown from "../helpers/react-native-paper-dropdown";
+import { monthYearFormatter } from "../helpers/dateFormatter";
 import {
   fetchTransactionByDate,
   fetchTransactionByCategory,
@@ -41,6 +43,7 @@ export default function AddExpense({ navigation, route }) {
 
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const newDate = new Date();
   const monthYear = monthYearFormatter(newDate);
 
@@ -146,7 +149,7 @@ export default function AddExpense({ navigation, route }) {
 
   async function submitHandler() {
     let dateParse = date.toLocaleDateString("id-ID").split("/");
-    dateParse = `20${dateParse[2]}-${dateParse[0]}-${dateParse[1]}`;
+    dateParse = `${dateParse[2]}-${dateParse[0]}-${dateParse[1]}`;
 
     const payload = new FormData();
     payload.append("type", type);
@@ -167,11 +170,20 @@ export default function AddExpense({ navigation, route }) {
     }
     // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
     console.log(payload, "ini di submit handler");
+    setIsLoading(true)
+
     await dispatch(postTransaction({ payload, UserId }));
     dispatch(fetchTransactionByDate(monthYear.numMonth, UserId));
     dispatch(fetchTransactionByCategory(monthYear.numMonth, UserId));
     navigation.navigate("Home");
   }
+
+  if (isLoading)
+    return (
+      <View style={[styles.container, styles.horizontal, styles.loading]}>
+        <ActivityIndicator size="large" color="#00ff00"/>
+      </View>
+    );
 
   return (
     <>
@@ -256,7 +268,7 @@ export default function AddExpense({ navigation, route }) {
             <View style={{ marginTop: 20 }}>
               <TextInput
                 label="Amount*"
-                value={amount}
+                value={''+amount}
                 mode="outlined"
                 keyboardType="numeric"
                 onChangeText={(text) => setAmount(text)}
