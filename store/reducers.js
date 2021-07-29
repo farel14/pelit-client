@@ -15,6 +15,7 @@ import {
   SET_TRANSACTION_BY_DATE,
   SET_LOADING_TRANSACTION,
   SET_IS_LOGIN,
+  SET_ERROR_LOGIN
 } from "./actionTypesFaisal";
 
 const initialState = {
@@ -29,7 +30,8 @@ const initialState = {
   allTransaction: {},
   transByCategory: {},
   transByDate: {},
-  loadingTransaction: {},
+  loadingTransaction: false,
+  errorLogin: false
 };
 
 function reducer(state = initialState, action) {
@@ -59,6 +61,8 @@ function reducer(state = initialState, action) {
       return { ...state, loadingTransaction: payload };
     case SET_LOADING_FETCH_TRANSACTION:
       return { ...state, loadingTransaction: payload };
+    case SET_ERROR_LOGIN:
+      return { ...state, errorLogin: payload };
     default:
       return state;
   }

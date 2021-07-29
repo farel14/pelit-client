@@ -9,7 +9,8 @@ import {
   Pressable,
   Text,
   Platform,
-  Button
+  Button,
+  ImageBackground
 } from "react-native";
 import { dateFormatter } from "../helpers/dateFormatter.js";
 import SpendSummary from "../components/spendSummary";
@@ -32,6 +33,16 @@ export default function MyProfile({
 
   return (
     <ScrollView contentContainerStyle={styles.pageScrollContainer}>
+      <ImageBackground
+        style={{ flex: 1 }}
+        //We are using online image to set background
+        source={{
+          uri:
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZiUTun3fuJmLmAJfTGM7Hl32p5Wt9zVV7Ww&usqp=CAU',
+        }}
+        //You can also set image from your project folder
+        //require('./images/background_image.jpg')        //
+      >
       <View style={styles.pageViewContainer}>
         <View style={styles.pageTitle}>
           <View style={styles.userName}>
@@ -85,8 +96,7 @@ export default function MyProfile({
           </View>
         </View>
 
-        <View style={{ marginTop: 30 }} />
-        <Separator />
+        <View style={{ marginTop: 15 }} />
 
         {user.Transactions ? 
          <SpendSummary allSpending={user.Transactions} activeTarget={activeTarget} user={user}/>
@@ -116,6 +126,7 @@ export default function MyProfile({
           </View>
         </Modal>
       </View>
+      </ImageBackground>
     </ScrollView>
   );
 }
@@ -135,7 +146,7 @@ const styles = StyleSheet.create({
   pageViewContainer: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: "#04009A",
+    // backgroundColor: "#04009A",
   },
   pageTitle: {
     flexDirection: "row",
@@ -165,7 +176,7 @@ const styles = StyleSheet.create({
   userDetails: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 35,
     color: "white",
   },
   userDetailTexts: {

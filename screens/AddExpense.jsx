@@ -12,7 +12,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dateFormatter } from "../helpers/dateFormatter";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
-
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import RNPickerSelect from "react-native-picker-select";
@@ -31,7 +30,7 @@ export default function AddExpense({ navigation, route }) {
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
   const [receiptImage, setReceiptImage] = useState("");
   const [UserId, setUserId] = useState("");
   const [note, setNote] = useState("");
@@ -174,6 +173,33 @@ export default function AddExpense({ navigation, route }) {
             behavior="position"
             keyboardVerticalOffset={keyboardVerticalOffset}
           >
+            <View
+              style={{
+                marginRight: 30,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.typeDate}>Transaction Date*</Text>
+              <Text>{dateFormatter(date)}</Text>
+            </View>
+            <Button
+              onPress={showDatepicker}
+              color={"blue"}
+              title="Pick a date"
+            />
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={dateHandler}
+              />
+            )}
+
             <View style={{ marginTop: 20 }}>
               <DropDown
                 label={"Record Type*"}
@@ -193,6 +219,7 @@ export default function AddExpense({ navigation, route }) {
               />
             </View>
 
+            {}
             <View style={{ marginTop: 20 }}>
               <DropDown
                 label={"Category*"}
@@ -212,6 +239,7 @@ export default function AddExpense({ navigation, route }) {
             <View style={{ marginTop: 20 }}>
               <TextInput
                 label="Record Title*"
+                mode="outlined"
                 value={title}
                 onChangeText={(text) => setTitle(text)}
               />
@@ -221,97 +249,63 @@ export default function AddExpense({ navigation, route }) {
               <TextInput
                 label="Amount*"
                 value={amount}
+                mode="outlined"
                 keyboardType="numeric"
                 onChangeText={(text) => setAmount(text)}
               />
             </View>
 
-            <View
-              style={{
-                marginRight: 30,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text style={styles.typeDate}>Transaction Date*</Text>
-              <Text>{dateFormatter(date)}</Text>
-            </View>
-            <Button onPress={showDatepicker} title="Pick a date" />
-            {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                display="default"
-                onChange={dateHandler}
-              />
-            )}
-
-            {/* <Text>Amount</Text>
-        <View style={{ flexDirection: "row" }}>
-          <Text style={{ fontSize: 15, flex: 1, textAlign: "center" }}>
-            Rp{" "}
-          </Text>
-          <TextInput
-            style={{ fontSize: 15, flex: 4, textAlign: "left" }}
-            onChangeText={setAmount}
-            keyboardType="numeric"
-          />
-        </View> */}
-
-            <View style={{ marginTop: 20 }}>
-              <Text style={{ marginBottom: 10, fontWeight: "bold" }}>
-                Receipt Image
-              </Text>
-              {receiptImage ? (
-                <>
-                  <Image
-                    style={styles.image}
-                    source={{
-                      uri: receiptImage.uri,
-                    }}
-                  />
-                  <Button
-                    onPress={() => setReceiptImage("")}
-                    title="Clear Image"
-                    style={styles.buttonStyle}
-                  />
-                </>
-              ) : (
-                <Button
-                  onPress={uploadImageHandler}
-                  title="Upload Image"
-                  style={styles.buttonStyle}
-                />
-              )}
-            </View>
-
             <View style={{ marginTop: 20 }}>
               <TextInput
                 label="Notes"
+                mode="outlined"
                 value={note}
                 onChangeText={(text) => setNote(text)}
               />
             </View>
-
-            {/* <Text>Note</Text> */}
-            {/* <TextInput
-          label="Amount"
-          style={{ fontSize: 15, height: 200, flex: 4, textAlign: "left" }}
-          value={note}
-          onChangeText={setNote}
-        /> */}
-
-            <View style={{ marginTop: 20 }} />
-            <Button
-              onPress={submitHandler}
-              color={"green"}
-              title="Submit Record"
-              style={styles.buttonStyle}
-            />
           </KeyboardAvoidingView>
+
+          <View style={{ marginTop: 20 }}>
+            <Text style={{ marginBottom: 10, fontWeight: "bold" }}>
+              Receipt Image
+            </Text>
+            {receiptImage ? (
+              <>
+                <Image
+                  style={styles.image}
+                  source={{
+                    uri: receiptImage.uri,
+                  }}
+                />
+                <Button
+                  onPress={() => setReceiptImage("")}
+                  title="Clear Image"
+                  color={"blue"}
+                  style={styles.buttonStyle}
+                />
+              </>
+            ) : (
+              <Button
+                onPress={uploadImageHandler}
+                title="Upload Image"
+                color={"black"}
+                style={styles.buttonStyle}
+              />
+            )}
+          </View>
+
+          {type && category && title && amount ? (
+            <View style={{ marginTop: 20, marginBottom: 30 }}>
+              <Button
+                onPress={submitHandler}
+                color={"green"}
+                title="Submit Record"
+                style={styles.buttonStyle}
+              />
+            </View>
+          ) : (
+            <View style={{ marginTop: 20, marginBottom: 30 }} />
+          )}
         </ScrollView>
       </Provider>
     </>
