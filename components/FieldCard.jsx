@@ -9,17 +9,39 @@ import {
   Image,
 } from "react-native";
 import ModalItem from "./ModalItem";
-import { fetchDeleteTransaction } from "../store/actionsFaisal";
+import {
+  fetchDeleteTransaction,
+  fetchTransactionByCategory,
+  fetchTransactionByDate,
+} from "../store/actionsFaisal";
 import { useDispatch } from "react-redux";
 import NumberFormat from "react-number-format";
 import { Avatar } from "react-native-paper";
 import { useEffect } from "react";
 import { Icon, Overlay } from "react-native-elements";
+import { monthYearFormatter } from "../helpers/dateFormatter";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function FieldCard({ item, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [icon, setIcon] = useState("");
   const dispatch = useDispatch();
+  const [dataAsyncUser, setDataAsyncUser] = useState("");
+  const date = new Date();
+  const monthYear = monthYearFormatter(date);
+
+  async function getItem() {
+    const dataAsync = await AsyncStorage.getItem("@dataUser");
+    setDataAsyncUser(JSON.parse(dataAsync));
+  }
+  useEffect(() => {
+    getItem();
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
+    // dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
+  }, [dataAsyncUser]);
 
   useEffect(() => {
     switch (item.category) {
@@ -94,12 +116,14 @@ export default function FieldCard({ item, navigation }) {
 
   function handleEditItem() {
     setModalVisible(!modalVisible);
-    navigation.navigate("Edit Expense", { item });
+    navigation.navigate("EditExpense", { item });
   }
 
   function handleDeleteItem() {
     setModalVisible(!modalVisible);
     dispatch(fetchDeleteTransaction(item.id));
+    dispdispatch(fetchTransactionByDate(monthYear.numMonth, UserId));
+    dispatch(fetchTransactionByCategory(monthYear.numMonth, UserId));
   }
 
   return (
