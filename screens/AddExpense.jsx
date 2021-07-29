@@ -20,6 +20,10 @@ import { postTransaction } from "../store/actions";
 import { useForm, Controller } from "react-hook-form";
 import { Provider, TextInput } from "react-native-paper";
 import DropDown from "../helpers/react-native-paper-dropdown";
+import {
+  fetchTransactionByDate,
+  fetchTransactionByCategory,
+} from "../store/actionsFaisal";
 
 export default function AddExpense({ navigation, route }) {
   const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
@@ -37,6 +41,8 @@ export default function AddExpense({ navigation, route }) {
 
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
+  const newDate = new Date();
+  const monthYear = monthYearFormatter(newDate);
 
   const genderList = [
     { label: "Male", value: "male" },
@@ -162,6 +168,8 @@ export default function AddExpense({ navigation, route }) {
     // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
     console.log(payload, "ini di submit handler");
     await dispatch(postTransaction({ payload, UserId }));
+    dispatch(fetchTransactionByDate(monthYear.numMonth, UserId));
+    dispatch(fetchTransactionByCategory(monthYear.numMonth, UserId));
     navigation.navigate("Home");
   }
 
@@ -314,7 +322,7 @@ export default function AddExpense({ navigation, route }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: "#fff",
     color: "black",
     paddingHorizontal: 10,

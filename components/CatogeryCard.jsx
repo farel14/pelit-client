@@ -9,7 +9,7 @@ import {
   Image,
   KeyboardAvoidingView,
   ScrollView,
-  Modal
+  Modal,
 } from "react-native";
 import ModalItem from "./ModalItem";
 import { monthYearFormatter, monthFormatter } from "../helpers/dateFormatter";
@@ -18,7 +18,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactionByCategory } from "../store/actionsFaisal";
 import FieldCardCategory from "./FieldCardCategory";
-import NumberFormat from 'react-number-format'
+import NumberFormat from "react-number-format";
 
 export default function CategoryCard({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -35,7 +35,7 @@ export default function CategoryCard({ navigation }) {
 
   function handleEditItem() {
     setModalVisible(!modalVisible);
-    navigation.navigate("Edit Expense", { TransactionId: item.id });
+    navigation.navigate("EditExpense", { TransactionId: item.id });
   }
 
   function handleDeleteItem() {
@@ -64,21 +64,32 @@ export default function CategoryCard({ navigation }) {
             <View
               style={{
                 flexDirection: "row",
-                justifyContent: 'space-between',
-                width: 300
+                justifyContent: "space-between",
+                width: 300,
               }}
             >
               <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
                 <Text style={styles.textDateCard}>{data.category}</Text>
               </TouchableOpacity>
-              <NumberFormat value={data.total} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
-                <Text style={styles.textTotalCard}>{formattedValue}</Text>
-              } />
-            </View> 
+              <NumberFormat
+                value={data.total}
+                displayType={"text"}
+                thousandSeparator={true}
+                decimalScale={0}
+                renderText={(formattedValue) => (
+                  <Text style={styles.textTotalCard}>{formattedValue}</Text>
+                )}
+              />
+            </View>
             <Text style={styles.borderTitleCard}></Text>
 
             {data.items.map((item, index) => (
-              <FieldCardCategory key={index} data={data} item={item} navigation={navigation}></FieldCardCategory>
+              <FieldCardCategory
+                key={index}
+                data={data}
+                item={item}
+                navigation={navigation}
+              ></FieldCardCategory>
             ))}
           </View>
         </View>
@@ -110,7 +121,7 @@ const styles = StyleSheet.create({
   },
   textTotalCard: {
     fontSize: 15,
-    textAlign: 'right',
+    textAlign: "right",
     // paddingHorizontal: 10,
     fontWeight: "bold",
   },

@@ -8,7 +8,7 @@ import {
   Image,
   Modal,
   Pressable,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { monthYearFormatter, monthFormatter } from "../helpers/dateFormatter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,7 +16,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactionByDate } from "../store/actionsFaisal";
 import FieldCard from "./FieldCard";
-import NumberFormat from 'react-number-format'
+import NumberFormat from "react-number-format";
 
 export default function DateCard({ navigation }) {
   const dispatch = useDispatch();
@@ -35,53 +35,56 @@ export default function DateCard({ navigation }) {
 
   useEffect(() => {
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-    console.log(dataAsyncUser)
+    // dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
   }, [dataAsyncUser]);
 
   if (!dataAsyncUser || !dataTransByDate.length) return null;
 
   // dataTransByDate = dataTransByDate.sort((a, b) => a.date - b.date);
 
-  console.log(dataTransByDate, 'data')
   return (
     <>
-    {
-      dataTransByDate !== {}
-      ?
-      <View style={styles.container}>
-      {/* <Text style={styles.textWarning}>You Have No Recorded Transactions</Text> */}
-      {dataTransByDate.map((data, index) => (
-        <View style={{ alignItems: "center" }} key={index}>
-          <View style={styles.cardPerDate}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: 'space-between',
-                width: 300
-              }}
-            >
-              <Text style={styles.textDateCard}>{data.nameDate}</Text>
-              <NumberFormat value={data.total} displayType={'text'} thousandSeparator={true} decimalScale={0} renderText={formattedValue =>
-                <Text style={styles.textTotalCard}>{formattedValue}</Text>
-              } />
-            </View>
-            <Text style={styles.borderTitleCard}></Text>
+      {dataTransByDate !== {} ? (
+        <View style={styles.container}>
+          {/* <Text style={styles.textWarning}>You Have No Recorded Transactions</Text> */}
+          {dataTransByDate.map((data, index) => (
+            <View style={{ alignItems: "center" }} key={index}>
+              <View style={styles.cardPerDate}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    width: 300,
+                  }}
+                >
+                  <Text style={styles.textDateCard}>{data.nameDate}</Text>
+                  <NumberFormat
+                    value={data.total}
+                    displayType={"text"}
+                    thousandSeparator={true}
+                    decimalScale={0}
+                    renderText={(formattedValue) => (
+                      <Text style={styles.textTotalCard}>{formattedValue}</Text>
+                    )}
+                  />
+                </View>
+                <Text style={styles.borderTitleCard}></Text>
 
-            {data.items.map((item, index) => (
-              <FieldCard
-                key={index}
-                item={item}
-                navigation={navigation}
-              ></FieldCard>
-            ))}
-          </View>
+                {data.items.map((item, index) => (
+                  <FieldCard
+                    key={index}
+                    item={item}
+                    navigation={navigation}
+                  ></FieldCard>
+                ))}
+              </View>
+            </View>
+          ))}
         </View>
-      ))}
-    </View>
-      :
-      <ActivityIndicator size="large" color="#00ff00" />
-    }
-   </>
+      ) : (
+        <ActivityIndicator size="large" color="#00ff00" />
+      )}
+    </>
   );
 }
 
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
   },
   textTotalCard: {
     fontSize: 15,
-    textAlign: 'right',
+    textAlign: "right",
     // paddingHorizontal: 10,
     fontWeight: "bold",
   },

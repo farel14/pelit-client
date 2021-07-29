@@ -6,9 +6,7 @@ import {
   SET_IS_LOGIN,
   SET_ERROR_LOGIN,
 } from "./actionTypesFaisal";
-import {
-Alert
-} from "react-native";
+import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function setIsLogin(input) {
@@ -53,13 +51,13 @@ export function setLoadingTransaction(input) {
   };
 }
 
-export function fetchLoginUser(email, password) {  
-  console.log('MASUK LOGIN')
-  let result = {}
+export function fetchLoginUser(email, password) {
+  console.log("MASUK LOGIN");
+  let result = {};
   return async (dispatch) => {
-    dispatch(setLoadingTransaction(true))
+    dispatch(setLoadingTransaction(true));
     try {
-      const response = await fetch("http://3.83.144.143:3000/login", {
+      const response = await fetch("https://pelit-app.herokuapp.com/login", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -71,25 +69,26 @@ export function fetchLoginUser(email, password) {
         }),
       });
       result = await response.json();
+      // console.log(result, "ini result");
 
       if (result.access_token) {
-        console.log('BERHASIL')
+        console.log("BERHASIL");
         await AsyncStorage.setItem("@dataUser", JSON.stringify(result));
         dispatch(setIsLogin(true));
-        dispatch(setAllTransactionUser(result.data));
-        dispatch(setLoadingTransaction(false))
-      } else if (result.message = 'Wrong Email/Password') {
-        console.log('SALAH PASSWORD')
-        dispatch(setLoadingTransaction(false))
-        console.log(result)
+        dispatch(setAllTransactionUser(result));
+        dispatch(setLoadingTransaction(false));
+      } else if ((result.message = "Wrong Email/Password")) {
+        console.log("SALAH PASSWORD");
+        dispatch(setLoadingTransaction(false));
+        console.log(result);
         Alert.alert("Wrong email/password");
         dispatch(setIsLogin(false));
       } else {
-        console.log('MASIH LOADING')
+        console.log("MASIH LOADING");
       }
     } catch (err) {
-      console.log('ERROR')
-      console.log(err)
+      console.log("ERROR");
+      console.log(err);
     }
   };
 }
@@ -97,7 +96,7 @@ export function fetchLoginUser(email, password) {
 export function fetchRegisterUser(fullName, email, password) {
   return async (dispatch) => {
     try {
-      const response = await fetch("http://3.83.144.143:3000/register", {
+      const response = await fetch("https://pelit-app.herokuapp.com/register", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -123,7 +122,7 @@ export function fetchTransactionByDate(month, data) {
       dispatch(setLoadingTransaction(true));
       if (data) {
         const response = await fetch(
-          `http://3.83.144.143:3000/transactions/date/${
+          `https://pelit-app.herokuapp.com/transactions/date/${
             data.id
           }/${+month}`
         );
@@ -144,7 +143,7 @@ export function fetchTransactionByCategory(month, data) {
       dispatch(setLoadingTransaction(true));
       if (data) {
         const response = await fetch(
-          `http://3.83.144.143:3000/transactions/category/${
+          `https://pelit-app.herokuapp.com/transactions/category/${
             data.id
           }/${+month}`
         );
@@ -165,7 +164,7 @@ export function fetchDeleteTransaction(id) {
     try {
       dispatch(setLoadingTransaction(true));
       const response = await fetch(
-        `http://3.83.144.143:3000/transactions/${id}`,
+        `https://pelit-app.herokuapp.com:3000/transactions/${id}`,
         { method: "delete" }
       );
       const result = await response.json();

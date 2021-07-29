@@ -14,7 +14,7 @@ import {
   Pressable,
   ActivityIndicator,
   ImageBackground,
-  Modal
+  Modal,
 } from "react-native";
 import {
   LineChart,
@@ -27,8 +27,8 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { monthList } from "../helpers/dateBetween.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNPickerSelect from 'react-native-picker-select'
-import {Picker} from '@react-native-picker/picker';
+import RNPickerSelect from "react-native-picker-select";
+import { Picker } from "@react-native-picker/picker";
 
 const Separator = () => <View style={styles.separator} />;
 
@@ -55,8 +55,8 @@ export default function ExpenseReport({ navigation, route }) {
     new Date(new Date(endOfMonth).setDate(new Date(endOfMonth).getDate() - 150))
   );
   const [modalVisible, setModalVisible] = useState(false);
-  const [pickerStart, setPickerStart] = useState('2')
-  const [pickerEnd, setPickerEnd] = useState('6')
+  const [pickerStart, setPickerStart] = useState("2");
+  const [pickerEnd, setPickerEnd] = useState("6");
   const [modeStart, setModeStart] = useState("date");
   const [modeEnd, setModeEnd] = useState("date");
   const [showStart, setShowStart] = useState(false);
@@ -89,11 +89,11 @@ export default function ExpenseReport({ navigation, route }) {
   function open() {
     pickerRef.current.focus();
   }
-  
+
   function close() {
     pickerRef.current.blur();
   }
-  
+
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
     setDataUser(JSON.parse(dataUser));
@@ -226,20 +226,20 @@ export default function ExpenseReport({ navigation, route }) {
   }, [start, end]);
 
   const onChangeStart = (selectedDate) => {
-    let month = +selectedDate
-    setDateStart(new Date(2021,month,1));
-    setPickerStart(selectedDate)
-    setStart(monthYearFormatterReport(new Date(2021,month,1)));
+    let month = +selectedDate;
+    setDateStart(new Date(2021, month, 1));
+    setPickerStart(selectedDate);
+    setStart(monthYearFormatterReport(new Date(2021, month, 1)));
   };
 
   const onChangeEnd = (selectedDate) => {
     if (+selectedDate <= +pickerStart) {
-      alert('End date can not be earlier than start date')
+      alert("End date can not be earlier than start date");
     } else {
-      let month = +selectedDate
-      setDateEnd(new Date(2021,month + 1, 0));
-      setPickerEnd(selectedDate)
-      setEnd(monthYearFormatterReport(new Date(2021,month + 1, 0)))  
+      let month = +selectedDate;
+      setDateEnd(new Date(2021, month + 1, 0));
+      setPickerEnd(selectedDate);
+      setEnd(monthYearFormatterReport(new Date(2021, month + 1, 0)));
     }
   };
 
@@ -266,7 +266,7 @@ export default function ExpenseReport({ navigation, route }) {
   }
 
   // console.log(income, 'INCOME')
-  // console.log(expenses, 'EXP')
+  console.log(expenses, "EXP");
   // console.log(nettIncome, 'NETT')
   // console.log(monthArr, 'MONTHARR')
   // console.log(start, end)
@@ -279,65 +279,183 @@ export default function ExpenseReport({ navigation, route }) {
         style={{ flex: 1 }}
         //We are using online image to set background
         source={{
-          uri:
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZiUTun3fuJmLmAJfTGM7Hl32p5Wt9zVV7Ww&usqp=CAU',
+          uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZiUTun3fuJmLmAJfTGM7Hl32p5Wt9zVV7Ww&usqp=CAU",
         }}
       >
-        
-      <View style={styles.pageViewContainer}>
-        <View style={{ alignItems: "center" }}>
-          <View style={{ marginTop: 25}}></View>
+        <View style={styles.pageViewContainer}>
+          <View style={{ alignItems: "center" }}>
+            <View style={{ marginTop: 25 }}></View>
 
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-            <Text style={styles.dash}>From</Text>
-              <Picker style={styles.picker}
-                dropdownIconColor={'black'}
-                ref={pickerRef}
-                mode={'dropdown'}
-                selectedValue={pickerStart}
-                onValueChange={(itemValue) =>
-                  onChangeStart(itemValue)
-                }>
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'January' value= '0' />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'February' value= '1'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'March' value= '2'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'April' value= '3' />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'May' value= '4' />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'June' value= '5'   />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'July' value= '6'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'August' value= '7'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'September' value= '8' />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'October' value= '9'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'November' value= '10'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'December' value= '11'  />
-              </Picker>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.dash}>From</Text>
+                <Picker
+                  style={styles.picker}
+                  dropdownIconColor={"black"}
+                  ref={pickerRef}
+                  mode={"dropdown"}
+                  selectedValue={pickerStart}
+                  onValueChange={(itemValue) => onChangeStart(itemValue)}
+                >
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="January"
+                    value="0"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="February"
+                    value="1"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="March"
+                    value="2"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="April"
+                    value="3"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="May"
+                    value="4"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="June"
+                    value="5"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="July"
+                    value="6"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="August"
+                    value="7"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="September"
+                    value="8"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="October"
+                    value="9"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="November"
+                    value="10"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="December"
+                    value="11"
+                  />
+                </Picker>
 
-              <Text style={styles.dash}>To</Text>
-              <Picker style={styles.picker}
-                dropdownIconColor={'black'}
-                ref={pickerRef}
-                mode={'dropdown'}
-                selectedValue={pickerEnd}
-                onValueChange={(itemValue) =>
-                  onChangeEnd(itemValue)
-                }>
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'January' value= '0' />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'February' value= '1'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'March' value= '2'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'April' value= '3' />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'May' value= '4' />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'June' value= '5'   />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'July' value= '6'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'August' value= '7'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'September' value= '8' />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'October' value= '9'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'November' value= '10'  />
-                <Picker.Item style={{fontSize: 14}} fontFamily={'roboto'} label= 'December' value= '11'  />
-              </Picker>
+                <Text style={styles.dash}>To</Text>
+                <Picker
+                  style={styles.picker}
+                  dropdownIconColor={"black"}
+                  ref={pickerRef}
+                  mode={"dropdown"}
+                  selectedValue={pickerEnd}
+                  onValueChange={(itemValue) => onChangeEnd(itemValue)}
+                >
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="January"
+                    value="0"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="February"
+                    value="1"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="March"
+                    value="2"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="April"
+                    value="3"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="May"
+                    value="4"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="June"
+                    value="5"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="July"
+                    value="6"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="August"
+                    value="7"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="September"
+                    value="8"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="October"
+                    value="9"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="November"
+                    value="10"
+                  />
+                  <Picker.Item
+                    style={{ fontSize: 14 }}
+                    fontFamily={"roboto"}
+                    label="December"
+                    value="11"
+                  />
+                </Picker>
+              </View>
+            </View>
           </View>
-        </View>
-        </View>
 
           <Text style={{ color: "white", marginTop: 30 }}>
             Monthly Nett Income (Income - Expense)
@@ -388,53 +506,54 @@ export default function ExpenseReport({ navigation, route }) {
             <ActivityIndicator size="large" color="#00ff00" />
           )}
           <View style={{ marginTop: 20 }}>
-          <Text style={{ color: "white" }}>Monthly Expense</Text>
-          {expenses.length > 0 ? (
-            <BarChart
-              data={{
-                labels: monthArr,
-                datasets: [
-                  {
-                    data: expenses,
+            <Text style={{ color: "white" }}>Monthly Expense</Text>
+            {expenses.length > 0 ? (
+              <BarChart
+                data={{
+                  labels: monthArr,
+                  datasets: [
+                    {
+                      data: expenses,
+                    },
+                  ],
+                }}
+                withDots={false}
+                marginTop={"15"}
+                showValuesOnTopOfBars={true}
+                width={screenWidth * 0.9} // from react-native
+                height={200}
+                yAxisSuffix="Mn"
+                yAxisInterval={1} // optional, defaults to 1
+                chartConfig={{
+                  fillShadowGradient: "white",
+                  fillShadowGradientOpacity: 1,
+                  backgroundColor: "#e26a00",
+                  backgroundGradientFrom: "#5854f0",
+                  backgroundGradientTo: "#0041ab",
+                  decimalPlaces: 0, // optional, defaults to 2dp
+                  color: (opacity = 1) => `rgba(255, 167, 38, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    `rgba(225, 225, 225, ${opacity})`,
+                  style: {
+                    borderRadius: 16,
                   },
-                ],
-              }}
-              withDots={false}
-              marginTop={"15"}
-              showValuesOnTopOfBars={true}
-              width={screenWidth * 0.9} // from react-native
-              height={200}
-              yAxisSuffix="Mn"
-              yAxisInterval={1} // optional, defaults to 1
-              chartConfig={{
-                fillShadowGradient: "white",
-                fillShadowGradientOpacity: 1,
-                backgroundColor: "#e26a00",
-                backgroundGradientFrom: "#5854f0",
-                backgroundGradientTo: "#0041ab",
-                decimalPlaces: 0, // optional, defaults to 2dp
-                color: (opacity = 1) => `rgba(255, 167, 38, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(225, 225, 225, ${opacity})`,
-                style: {
+                  propsForBackgroundLines: {
+                    r: "0",
+                    strokeWidth: "0.2",
+                    stroke: "black",
+                  },
+                }}
+                bezier
+                style={{
+                  marginVertical: 8,
                   borderRadius: 16,
-                },
-                propsForBackgroundLines: {
-                  r: "0",
-                  strokeWidth: "0.2",
-                  stroke: "black",
-                },
-              }}
-              bezier
-              style={{
-                marginVertical: 8,
-                borderRadius: 16,
-              }}
-            />
-          ) : (
-            <ActivityIndicator size="large" color="#00ff00" />
-          )}
+                }}
+              />
+            ) : (
+              <ActivityIndicator size="large" color="#00ff00" />
+            )}
+          </View>
         </View>
-      </View>
       </ImageBackground>
     </ScrollView>
   );
@@ -471,7 +590,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     // alignItems: 'center',
     width: 130,
-    color: 'black',
+    color: "black",
     marginBottom: 10,
   },
   centeredView: {
@@ -480,11 +599,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingLeft: 15,
     width: 350,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    justifyContent: "space-between",
+    flexDirection: "row",
     backgroundColor: "lightyellow",
     borderRadius: 20,
     paddingHorizontal: 10,
@@ -493,15 +612,15 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   dash: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color:'black'
+    fontWeight: "bold",
+    color: "black",
   },
 });

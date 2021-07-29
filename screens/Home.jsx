@@ -28,6 +28,7 @@ export default function Home({ navigation }) {
   const monthYear = monthYearFormatter(date);
   const [dataUser, setDataUser] = useState("");
   const dataTransByDate = useSelector((state) => state.transByDate);
+  const dataAllTransaction = useSelector((state) => state.allTransaction);
   const [displayCard, setDisplayCard] = useState("Date");
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
@@ -41,6 +42,20 @@ export default function Home({ navigation }) {
   }, []);
 
   if (!dataUser || !dataTransByDate) return null;
+
+  // console.log(dataAllTransaction, "ini data all transactions");
+
+  let totalncome = 0;
+  let totalExpense = 0;
+  for (let i = 0; i < dataTransByDate.length; i++) {
+    for (let j = 0; j < dataTransByDate[i].items.length; j++) {
+      if (dataTransByDate[i].items[j].type === "Income") {
+        totalncome += dataTransByDate[i].items[j].amount;
+      } else if (dataTransByDate[i].items[j].type === "Expense") {
+        totalExpense += dataTransByDate[i].items[j].amount;
+      }
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -64,7 +79,7 @@ export default function Home({ navigation }) {
                 <Text style={styles.textTop}>{monthYear.name}</Text>
                 <TouchableOpacity
                   style={styles.buttonAdd}
-                  onPress={() => navigation.navigate("Add Record")}
+                  onPress={() => navigation.navigate("AddRecord")}
                 >
                   <Text style={styles.textAdd}>+</Text>
                 </TouchableOpacity>
@@ -118,7 +133,7 @@ export default function Home({ navigation }) {
                 }}
               >
                 <NumberFormat
-                  value={dataUser.data.Transactions.totalIncome}
+                  value={totalncome}
                   displayType={"text"}
                   thousandSeparator={true}
                   decimalScale={0}
@@ -127,7 +142,7 @@ export default function Home({ navigation }) {
                   )}
                 />
                 <NumberFormat
-                  value={dataUser.data.Transactions.totalExpense}
+                  value={totalExpense}
                   displayType={"text"}
                   thousandSeparator={true}
                   decimalScale={0}
@@ -136,7 +151,7 @@ export default function Home({ navigation }) {
                   )}
                 />
                 <NumberFormat
-                  value={dataUser.data.balance}
+                  value={dataAllTransaction.data.balance}
                   displayType={"text"}
                   thousandSeparator={true}
                   decimalScale={0}
@@ -182,7 +197,7 @@ export default function Home({ navigation }) {
                 </Text>
               </TouchableOpacity>
             </View>
-            {dataUser.data.Transactions.data ? (
+            {dataUser.access_token ? (
               dataUser.data.Transactions.data.length ? (
                 displayCard === "Date" ? (
                   <DateCard navigation={navigation}></DateCard>

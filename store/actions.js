@@ -21,14 +21,17 @@ export function postTransaction({ payload, UserId }) {
     console.log(payload, "ini payload di action");
     try {
       console.log(payload, UserId, "masuk actions");
-      let res = await fetch(`http://3.83.144.143:3000/transactions/${UserId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        // body: JSON.stringify(payload),
-        body: payload,
-      });
+      let res = await fetch(
+        `https://pelit-app.herokuapp.com/transactions/${UserId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          // body: JSON.stringify(payload),
+          body: payload,
+        }
+      );
       // res = await res.json();
       res = await res.json();
       console.log("Success:", res);
@@ -41,7 +44,7 @@ export function postOcr(payload) {
   return async (dispatch) => {
     try {
       console.log(payload, "SEBELUM POST OCR");
-      let res = await fetch("http://3.83.144.143:3000/ocr", {
+      let res = await fetch("https://pelit-app.herokuapp.com/ocr", {
         method: "POST",
         headers: {
           "Content-Type": "multipart/form-data",
@@ -63,7 +66,7 @@ export function fetchTransaction(TransactionId) {
     try {
       dispatch(setLoadingFeTransaction(true));
       let res = await fetch(
-        `http://3.83.144.143:3000/transactions/expense/${TransactionId}`,
+        `https://pelit-app.herokuapp.com/transactions/expense/${TransactionId}`,
         {
           method: "GET", // or 'PUT'
           // headers: {
