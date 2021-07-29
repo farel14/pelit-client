@@ -11,7 +11,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { postTransaction } from "../store/actions";
 import { useForm, Controller } from "react-hook-form";
 import { Provider, TextInput } from "react-native-paper";
-import DropDown from "react-native-paper-dropdown";
+import DropDown from "../helpers/react-native-paper-dropdown";
 
 export default function AddExpense({ navigation, route }) {
   const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
