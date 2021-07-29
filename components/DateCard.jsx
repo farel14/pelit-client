@@ -25,25 +25,33 @@ export default function DateCard({ navigation }) {
   const monthYear = monthYearFormatter(date);
   let dataTransByDate = useSelector((state) => state.transByDate);
 
-  async function getItem() {
-    const dataAsync = await AsyncStorage.getItem("@dataUser");
-    setDataAsyncUser(JSON.parse(dataAsync));
-  }
   useEffect(() => {
+    async function getItem() {
+      // await AsyncStorage.setItem("@dataUser", '12');
+      const dataAsync = JSON.parse(await AsyncStorage.getItem("@dataUser"));
+      setDataAsyncUser(dataAsync);
+      // console.log(monthYear.numMonth, dataAsyncUser.data?.id, 'month date')
+      dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsync.data));
+      console.log(dataTransByDate, 'dataTransByDate')
+
+    }
     getItem();
   }, []);
 
-  useEffect(() => {
-    dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-  }, [dataAsyncUser]);
+  // useEffect(() => {
+  //   console.log(monthYear.numMonth, dataAsyncUser, 'bulan, async data')
+  //   dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
+  // }, [dataAsyncUser]);
 
   if (!dataAsyncUser) return null;
+
+  // console.log(dataTransByDate)
 
   // dataTransByDate = dataTransByDate.sort((a, b) => a.date - b.date);
 
   return (
     <>
-      {dataTransByDate !== {} ? (
+      {Object.keys(dataTransByDate).length !== 0 ? (
         <View style={styles.container}>
           {/* <Text style={styles.textWarning}>You Have No Recorded Transactions</Text> */}
           {dataTransByDate.map((data, index) => (

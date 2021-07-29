@@ -30,13 +30,18 @@ export default function Home({ navigation }) {
   const [dataUser, setDataUser] = useState("");
   const dataTransByDate = useSelector((state) => state.transByDate);
   const dataAllTransaction = useSelector((state) => state.allTransaction);
+  const isLoading = useSelector((state) => state.loadingTransaction);
   const [displayCard, setDisplayCard] = useState("Date");
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
   const dispatch = useDispatch();
 
   async function getItem() {
-    const dataUser = await AsyncStorage.getItem("@dataUser");
-    setDataUser(JSON.parse(dataUser));
+    // await AsyncStorage.setItem("@dataUser", '12');
+    const dataUserAsync = JSON.parse(await AsyncStorage.getItem("@dataUser"))
+
+    setDataUser(dataUserAsync);
+    console.log('dataUserAsync', dataUserAsync)
+    dispatch(fetchLoginUser(JSON.parse(dataUserAsync.email), JSON.parse(dataUserAsync.password)))
   }
 
   useEffect(() => {
@@ -118,7 +123,7 @@ export default function Home({ navigation }) {
             <Card>
               <Card.Cover
                 source={{
-                  uri: "https://st2.depositphotos.com/11133378/45776/v/950/depositphotos_457760054-stock-illustration-accumulating-saving-money-concept-horizontal.jpg",
+                  uri: "https://ik.imagekit.io/77pzczg37zw/Pelit_Home_Banner-JPG_NoEZdIR5e.jpg?updatedAt=1627546581557",
                 }}
                 style={{ height: 150 }}
               />

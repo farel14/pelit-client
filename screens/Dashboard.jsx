@@ -36,8 +36,10 @@ export default function Dashboard({ navigation, route }) {
   const [dataUser, setDataUser] = useState("");
 
   async function getItem() {
-    const dataUser = await AsyncStorage.getItem("@dataUser");
-    setDataUser(JSON.parse(dataUser));
+    // AsyncStorage.setItem("@dataUser", '12');
+    const dataUserAsync = await AsyncStorage.getItem("@dataUser");
+    console.log(dataUser)
+    setDataUser(JSON.parse(dataUserAsync));
   }
 
   useEffect(() => {

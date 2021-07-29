@@ -21,8 +21,8 @@ export function postTransaction({ payload, UserId }) {
     console.log(payload, "ini payload di action");
     try {
       console.log(payload, UserId, "masuk actions");
-      let res = await fetch(
-        `https://pelit-app.herokuapp.com/transactions/${UserId}`,
+      let res = await (await fetch(
+        `http://192.168.100.9:3000/transactions/${UserId}`,
         {
           method: "POST",
           headers: {
@@ -31,9 +31,9 @@ export function postTransaction({ payload, UserId }) {
           // body: JSON.stringify(payload),
           body: payload,
         }
-      );
+      )).json()
+      // console.log(await res.text())
       // res = await res.json();
-      res = await res.json();
       console.log("Success:", res);
     } catch (error) {
       console.error("Error:", error);
@@ -44,17 +44,17 @@ export function postOcr(payload) {
   return async (dispatch) => {
     try {
       console.log(payload, "SEBELUM POST OCR");
-      let res = await fetch("https://pelit-app.herokuapp.com/ocr", {
+      let res =  await (await fetch("http://192.168.100.9:3000/ocr", {
         method: "POST",
         headers: {
           "Content-Type": "multipart/form-data",
         },
         // body: JSON.stringify(payload),
         body: payload,
-      });
+      })).json()
 
-      res = await res.text();
-      res = await res.json();
+      // res = await res.text();
+      // res = await res.json();
       console.log("Success:", res);
       return res;
     } catch (error) {
@@ -68,7 +68,7 @@ export function fetchTransaction(TransactionId) {
     try {
       dispatch(setLoadingFeTransaction(true));
       let res = await fetch(
-        `https://pelit-app.herokuapp.com/transactions/expense/${TransactionId}`,
+        `http://192.168.100.9:3000/transactions/expense/${TransactionId}`,
         {
           method: "GET", // or 'PUT'
           // headers: {

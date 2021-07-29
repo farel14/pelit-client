@@ -106,7 +106,7 @@ export default function ExpenseReport({ navigation, route }) {
   useEffect(() => {
     if (dataUser.access_token) {
       fetch(
-        `http://3.83.144.143:3000/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Expense` //  // 2
+        `http://192.168.100.9:3000/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Expense` //  // 2
       )
         .then((response) => response.json())
         .then((data) => {
@@ -154,7 +154,7 @@ export default function ExpenseReport({ navigation, route }) {
 
           setExpenses(monthExp);
           return fetch(
-            `http://3.83.144.143:3000/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Income`
+            `http://192.168.100.9:3000/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Income`
           );
         })
         .then((response) => response.json())

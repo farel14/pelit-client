@@ -57,7 +57,7 @@ export function fetchLoginUser(email, password) {
   return async (dispatch) => {
     dispatch(setLoadingTransaction(true));
     try {
-      const response = await fetch("https://pelit-app.herokuapp.com/login", {
+      const response = await fetch("http://192.168.100.9:3000/login", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -69,9 +69,12 @@ export function fetchLoginUser(email, password) {
         }),
       });
       result = await response.json();
+      // console.log(typeof result, 'TYPENYA RESULTTTTTTTTTTTTTTTTTTTT')
       result.password = password;
       result.email = email;
+      // console.log(result, result)
       if (result.access_token) {
+        // await AsyncStorage.removeItem("@dataUser")
         await AsyncStorage.setItem("@dataUser", JSON.stringify(result));
         dispatch(setIsLogin(true));
         dispatch(setAllTransactionUser(result));
@@ -95,7 +98,7 @@ export function fetchLoginUser(email, password) {
 export function fetchRegisterUser(fullName, email, password) {
   return async (dispatch) => {
     try {
-      const response = await fetch("https://pelit-app.herokuapp.com/register", {
+      const response = await fetch("http://192.168.100.9:3000/register", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -120,12 +123,14 @@ export function fetchTransactionByDate(month, data) {
     try {
       dispatch(setLoadingTransaction(true));
       if (data) {
+        console.log(month, data.id, 'sebelum kirim')
         const response = await fetch(
-          `https://pelit-app.herokuapp.com/transactions/date/${
+          `http://192.168.100.9:3000/transactions/date/${
             data.id
           }/${+month}`
         );
         const result = await response.json();
+        console.log('result di action',result)
         dispatch(setTransactionByDate(result));
       }
     } catch (err) {
@@ -142,7 +147,7 @@ export function fetchTransactionByCategory(month, data) {
       dispatch(setLoadingTransaction(true));
       if (data) {
         const response = await fetch(
-          `https://pelit-app.herokuapp.com/transactions/category/${
+          `http://192.168.100.9:3000/transactions/category/${
             data.id
           }/${+month}`
         );
@@ -150,7 +155,7 @@ export function fetchTransactionByCategory(month, data) {
         dispatch(setTransactionByCategoty(result));
       }
     } catch (err) {
-      console.log("error di fetch transaction by date", err);
+      console.log("error di fetch transaction by category", err);
     } finally {
       dispatch(setLoadingTransaction(false));
     }
@@ -163,7 +168,7 @@ export function fetchDeleteTransaction(id) {
     try {
       dispatch(setLoadingTransaction(true));
       const response = await fetch(
-        `https://pelit-app.herokuapp.com/transactions/${id}`,
+        `http://192.168.100.9:3000/transactions/${id}`,
         { method: "delete" }
       );
       const result = await response.json();
