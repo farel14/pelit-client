@@ -37,7 +37,7 @@ export default function DateCard({ navigation }) {
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
   }, [dataAsyncUser]);
 
-  if (!dataAsyncUser || !dataTransByDate.length) return null;
+  if (!dataAsyncUser) return null;
 
   // dataTransByDate = dataTransByDate.sort((a, b) => a.date - b.date);
 

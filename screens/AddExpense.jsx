@@ -152,7 +152,7 @@ export default function AddExpense({ navigation, route }) {
 
   async function submitHandler() {
     let dateParse = date.toLocaleDateString("id-ID").split("/");
-    dateParse = `${dateParse[2]}-${dateParse[0]}-${dateParse[1]}`;
+    dateParse = `${dateParse[2]}-${dateParse[1]}-${dateParse[0]}`;
 
     const payload = new FormData();
     payload.append("type", type);
@@ -173,10 +173,9 @@ export default function AddExpense({ navigation, route }) {
     }
     // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
     console.log(payload, "ini di submit handler");
-    setIsLoading(true)
+    setIsLoading(true);
 
     await dispatch(postTransaction({ payload, UserId }));
-    console.log(monthYear.numMonth, UserId, "ini di add expense");
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
     dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
     dispatch(fetchLoginUser(dataUser.email, dataUser.password));
@@ -186,7 +185,7 @@ export default function AddExpense({ navigation, route }) {
   if (isLoading)
     return (
       <View style={[styles.container, styles.horizontal, styles.loading]}>
-        <ActivityIndicator size="large" color="#00ff00"/>
+        <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
 
@@ -273,7 +272,7 @@ export default function AddExpense({ navigation, route }) {
             <View style={{ marginTop: 20 }}>
               <TextInput
                 label="Amount*"
-                value={''+amount}
+                value={"" + amount}
                 mode="outlined"
                 keyboardType="numeric"
                 onChangeText={(text) => setAmount(text)}
