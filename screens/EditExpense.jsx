@@ -6,7 +6,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { postTransaction, fetchTransaction } from "../store/actions";
 import { dateFormatter } from "../helpers/dateFormatter";
 import { Provider, TextInput } from "react-native-paper";
-import DropDown from "react-native-paper-dropdown";
+import DropDown from "../helpers/react-native-paper-dropdown";
 
 export default function EditExpense({ navigation, route }) {
   // !handle upload image di edit, butuh upload lagi?

@@ -122,6 +122,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
             alert('Can not set target')
         })
     }
+}
 
     function deleteTarget(e) {
         e.preventDefault()
