@@ -35,10 +35,9 @@ export default function DateCard({ navigation }) {
 
   useEffect(() => {
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-    // dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
   }, [dataAsyncUser]);
 
-  if (!dataAsyncUser || !dataTransByDate.length) return null;
+  if (!dataAsyncUser) return null;
 
   // dataTransByDate = dataTransByDate.sort((a, b) => a.date - b.date);
 

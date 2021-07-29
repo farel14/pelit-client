@@ -52,7 +52,7 @@ export function setLoadingTransaction(input) {
 }
 
 export function fetchLoginUser(email, password) {
-  console.log("MASUK LOGIN");
+  console.log(email, password, "masuk fetch ligin");
   let result = {};
   return async (dispatch) => {
     dispatch(setLoadingTransaction(true));
@@ -69,10 +69,9 @@ export function fetchLoginUser(email, password) {
         }),
       });
       result = await response.json();
-      // console.log(result, "ini result");
-
+      result.password = password;
+      result.email = email;
       if (result.access_token) {
-        console.log("BERHASIL");
         await AsyncStorage.setItem("@dataUser", JSON.stringify(result));
         dispatch(setIsLogin(true));
         dispatch(setAllTransactionUser(result));
@@ -164,7 +163,7 @@ export function fetchDeleteTransaction(id) {
     try {
       dispatch(setLoadingTransaction(true));
       const response = await fetch(
-        `https://pelit-app.herokuapp.com:3000/transactions/${id}`,
+        `https://pelit-app.herokuapp.com/transactions/${id}`,
         { method: "delete" }
       );
       const result = await response.json();

@@ -21,6 +21,7 @@ import NumberFormat from "react-number-format";
 import { Banner } from "react-native-paper";
 import { Icon } from "react-native-elements";
 import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
+import { fetchLoginUser } from "../store/actionsFaisal";
 
 export default function Home({ navigation }) {
   const [visible, setVisible] = React.useState(true);
@@ -31,6 +32,7 @@ export default function Home({ navigation }) {
   const dataAllTransaction = useSelector((state) => state.allTransaction);
   const [displayCard, setDisplayCard] = useState("Date");
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
+  const dispatch = useDispatch();
 
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
@@ -41,8 +43,16 @@ export default function Home({ navigation }) {
     getItem();
   }, []);
 
+  // useEffect(() => {
+  //   if (dataUser.access_token) {
+  //     dispatch(fetchLoginUser(dataUser.email, dataUser.password));
+  //   }
+  // }, [dataTransByDate.length, dataUser]);
+
   if (!dataUser || !dataTransByDate) return null;
 
+  // console.log(dataAllTransaction.data.balance, "ini data all transaction");
+  // console.log(dataTransByDate, "ini data trans by data");
   // console.log(dataAllTransaction, "ini data all transactions");
 
   let totalncome = 0;
@@ -151,7 +161,7 @@ export default function Home({ navigation }) {
                   )}
                 />
                 <NumberFormat
-                  value={dataAllTransaction.data.balance}
+                  value={dataAllTransaction.data?.balance || 0}
                   displayType={"text"}
                   thousandSeparator={true}
                   decimalScale={0}
