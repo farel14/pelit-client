@@ -36,7 +36,7 @@ export default function DateCard({ navigation }) {
 
     }
     getItem();
-  }, []);
+  }, [dataAsyncUser]);
 
   // useEffect(() => {
   //   console.log(monthYear.numMonth, dataAsyncUser, 'bulan, async data')

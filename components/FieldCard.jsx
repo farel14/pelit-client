@@ -29,6 +29,7 @@ export default function FieldCard({ item, navigation }) {
   const [dataAsyncUser, setDataAsyncUser] = useState("");
   const date = new Date();
   const monthYear = monthYearFormatter(date);
+  let flagS = false
 
   async function getItem() {
     const dataAsync = await AsyncStorage.getItem("@dataUser");
@@ -36,12 +37,12 @@ export default function FieldCard({ item, navigation }) {
   }
   useEffect(() => {
     getItem();
-  }, []);
+  }, [flagS, modalVisible]);
 
   useEffect(() => {
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
     // dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-  }, [dataAsyncUser]);
+  }, [dataAsyncUser, flagS, modalVisible]);
 
   useEffect(() => {
     switch (item.category) {
@@ -121,11 +122,15 @@ export default function FieldCard({ item, navigation }) {
 
   function handleDeleteItem() {
     setModalVisible(!modalVisible);
+    flagS = true
     dispatch(fetchDeleteTransaction(item.id));
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-    dispatch(
-      fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
-    );
+    dispatch(fetchLoginUser(dataAsyncUser.email, dataAsyncUser.password));
+    // dispatch(
+    //   fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
+    // );
+    // dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
+    // dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
   }
 
   return (

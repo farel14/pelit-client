@@ -22,6 +22,7 @@ import { Banner } from "react-native-paper";
 import { Icon } from "react-native-elements";
 import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
 import { fetchLoginUser } from "../store/actionsFaisal";
+import { getUserDetails } from "../store/actionsGaluh";
 
 export default function Home({ navigation }) {
   const [visible, setVisible] = React.useState(true);
@@ -30,29 +31,25 @@ export default function Home({ navigation }) {
   const [dataUser, setDataUser] = useState("");
   const dataTransByDate = useSelector((state) => state.transByDate);
   const dataAllTransaction = useSelector((state) => state.allTransaction);
-  const isLoading = useSelector((state) => state.loadingTransaction);
   const [displayCard, setDisplayCard] = useState("Date");
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
 
   async function getItem() {
-    // await AsyncStorage.setItem("@dataUser", '12');
-    const dataUserAsync = JSON.parse(await AsyncStorage.getItem("@dataUser"))
-
-    setDataUser(dataUserAsync);
-    console.log('dataUserAsync', dataUserAsync)
-    dispatch(fetchLoginUser(JSON.parse(dataUserAsync.email), JSON.parse(dataUserAsync.password)))
+    const dataUser = await AsyncStorage.getItem("@dataUser");
+    setDataUser(JSON.parse(dataUser));
   }
 
   useEffect(() => {
     getItem();
   }, []);
 
-  // useEffect(() => {
-  //   if (dataUser.access_token) {
-  //     dispatch(fetchLoginUser(dataUser.email, dataUser.password));
-  //   }
-  // }, [dataTransByDate.length, dataUser]);
+  useEffect(() => {
+    if (dataUser.access_token) {
+      dispatch(getUserDetails(dataUser.data.id));
+    }
+  }, [dataUser]);
 
   if (!dataUser || !dataTransByDate) return null;
 
@@ -123,7 +120,7 @@ export default function Home({ navigation }) {
             <Card>
               <Card.Cover
                 source={{
-                  uri: "https://ik.imagekit.io/77pzczg37zw/Pelit_Home_Banner-JPG_NoEZdIR5e.jpg?updatedAt=1627546581557",
+                  uri: "https://images-ext-2.discordapp.net/external/c8yxM9EXjbTRH9ssh8gEAFnX4EmSspXofQr95EQg7GI/%3FupdatedAt%3D1627546581557/https/ik.imagekit.io/77pzczg37zw/Pelit_Home_Banner-JPG_NoEZdIR5e.jpg?width=400&height=201",
                 }}
                 style={{ height: 150 }}
               />
@@ -166,7 +163,7 @@ export default function Home({ navigation }) {
                   )}
                 />
                 <NumberFormat
-                  value={dataAllTransaction.data?.balance || 0}
+                  value={user.balance || 0}
                   displayType={"text"}
                   thousandSeparator={true}
                   decimalScale={0}
