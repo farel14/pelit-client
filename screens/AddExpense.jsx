@@ -1,232 +1,397 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native"
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-import { dateFormatter } from "../helpers/dateFormatter";
-import * as ImagePicker from 'expo-image-picker';
-
-
-import { useSelector, useDispatch } from 'react-redux'
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { dateFormatter, monthYearFormatter } from "../helpers/dateFormatter";
+import * as ImagePicker from "expo-image-picker";
+import { Picker } from "@react-native-picker/picker";
+import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
-import RNPickerSelect from 'react-native-picker-select'
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { postTransaction } from '../store/actions'
+import RNPickerSelect from "react-native-picker-select";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { postTransaction } from "../store/actions";
+import { useForm, Controller } from "react-hook-form";
+import { Provider, TextInput } from "react-native-paper";
+import DropDown from "../helpers/react-native-paper-dropdown";
+import {
+  fetchTransactionByDate,
+  fetchTransactionByCategory,
+  fetchLoginUser,
+} from "../store/actionsFaisal";
 
 export default function AddExpense({ navigation, route }) {
-    const dispatch = useDispatch()
-    const [type, setType] = useState('')
-    const [category, setCategory] = useState('')
-    const [name, setName] = useState('')
-    const [date, setDate] = useState(new Date())
-    const [amount, setAmount] = useState(0)
-    const [receiptImage, setReceiptImage] = useState('')
-    const [UserId, setUserId] = useState('')
+  const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
+  const [typeDropDown, setTypeDropDown] = useState(false);
+  const [categoryDropDown, setCategoryDropDown] = useState(false);
+  const dispatch = useDispatch();
+  const [type, setType] = useState("Expense");
+  const [category, setCategory] = useState("");
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [amount, setAmount] = useState("");
+  const [receiptImage, setReceiptImage] = useState("");
+  const [UserId, setUserId] = useState("");
+  const [dataUser, setDataUser] = useState("");
+  const [note, setNote] = useState("");
 
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const newDate = new Date();
+  const monthYear = monthYearFormatter(newDate);
 
-    const expenseChoices = ['Housing', 'Transportation', 'Food & Beverage', 'Utilities', 'Insurance', 'Medical & Healthcare', 'Saving, Investing, & Debt Payments', 'Personal Spending', 'Other Expense']
-    const incomeChoices = ['Salary', 'Wages', 'Commission', 'Interest', 'Investments', 'Gifts', 'Allowance', 'Other Income']
-    const expenseItems = expenseChoices.map(ele => ({ label: ele, value: ele }))
-    const incomeItems = incomeChoices.map(ele => ({ label: ele, value: ele }))
+  const genderList = [
+    { label: "Male", value: "male" },
 
-    useEffect(() => {
-        // async function fetchStart() {
-        //     const dataAsyncUser = await AsyncStorage.getItem('@dataUser')
-        //     setUserId(dataAsyncUser.id)
-        // }
-        // fetchStart()
-        // !dummy
-        setUserId(2)
+    { label: "Female", value: "female" },
 
-        if (route.params) {
-            const { title: titleParam, total: totalParam, fullDate: dateParam } = route.params.data
-            const image = route.params.image
-            dateParam ? setDate(new Date(dateParam)) : null
-            titleParam ? setName(titleParam) : null
-            totalParam ? setAmount(totalParam) : null
-            image ? setReceiptImage(image) : null
-            console.log(receiptImage, 'receiptImage')
-        }
-        // console.log(route.params)
-    }, [])
+    { label: "Others", value: "others" },
+  ];
 
-    async function uploadImageHandler() {
-        console.log('gottem')
-        // (async () => {
-        if (Platform.OS !== 'web') {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-                alert('Sorry, we need camera roll permissions to make this work!');
-                return
-            }
-        }
-        //   })();
+  const expenseChoices = [
+    { label: "Housing", value: "Housing" },
+    { label: "Transportation", value: "Transportation" },
+    { label: "Food & Beverage", value: "Food & Beverage" },
+    { label: "Utilities", value: "Utilities" },
+    { label: "Insurance", value: "Insurance" },
+    { label: "Medical & Healthcare", value: "Medical & Healthcare" },
+    { label: "Invest & Debt", value: "Invest & Debt" },
+    { label: "Personal Spending", value: "Personal Spending" },
+    { label: "Other Expense", value: "Other Expense" },
+  ];
+  const incomeChoices = [
+    { label: "Salary", value: "Salary" },
+    { label: "Wages", value: "Wages" },
+    { label: "Commission", value: "Commission" },
+    { label: "Interest", value: "Interest" },
+    { label: "Investments", value: "Investments" },
+    { label: "Gifts", value: "Gifts" },
+    { label: "Allowance", value: "Allowance" },
+    { label: "Other Income", value: "Other Income" },
+  ];
 
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            // aspect: [4, 3],
-            quality: 1,
-        });
+  const expenseItems = expenseChoices.map((ele) => ({
+    label: ele,
+    value: ele,
+  }));
+  const incomeItems = incomeChoices.map((ele) => ({ label: ele, value: ele }));
 
-        console.log(result);
+  useEffect(() => {
+    (async () => {
+      const dataAsyncUser = await AsyncStorage.getItem("@dataUser");
+      setUserId(JSON.parse(dataAsyncUser).data.id);
+      setDataUser(JSON.parse(dataAsyncUser));
+      // console.log(UserId)
+    })();
+    // setUserId(29)
 
-        if (!result.cancelled) {
-            // console.log('tidak masuk', result)
-            setReceiptImage(result);
-            // setIsLoading(true)
-            // const processedImage = await postToServer(result)
-            // if (processedImage) {
-            //     // e.preventDefault()
-            //     console.log('siap-siap sebelum naviagate', processedImage)
-            //     setIsLoading(false)
-            //     navigation.navigate('AddExpense', {data: processedImage, imageUri: result.uri})
-            // }
-        }
+    if (route.params) {
+      const {
+        title: titleParam,
+        total: totalParam,
+        fullDate: dateParam,
+      } = route.params.data;
+      const image = route.params.image;
+      dateParam ? setDate(new Date(dateParam)) : null;
+      titleParam ? setTitle(titleParam) : null;
+      totalParam ? setAmount(totalParam) : null;
+      image ? setReceiptImage(image) : null;
+      // console.log(receiptImage, 'receiptImage')
+    }
+    // console.log(route.params)
+  }, []);
+
+  async function uploadImageHandler() {
+    if (Platform.OS !== "web") {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
+        return;
+      }
     }
 
-    const dateHandler = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        // setShow(Platform.OS === 'android');
-        setShow(false)
-        setDate(currentDate);
-    };
+    const photo = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      // aspect: [4, 3],
+      quality: 1,
+    });
 
-    const showMode = (currentMode) => {
-        setShow(true);
-        setMode(currentMode);
-    };
+    console.log(photo);
 
-    const showDatepicker = () => {
-        showMode('date');
-    };
-
-    // imagekit here
-
-    async function submitHandler(e) {
-        // data diubah jadi form
-        // const data = { type, category, name, date, amount, receiptImage }
-        // console.log(data)
-        const payload = new FormData();
-        payload.append("type", type);
-        payload.append("category", category);
-        payload.append("name", name);
-        payload.append("fullDate", date.toString());
-        payload.append("amount", amount);
-        payload.append("receiptImage", receiptImage);
-
-        // console.log(payload)
-        dispatch(postTransaction(payload, UserId))
-        // navigation.navigate('Home')
+    if (!photo.cancelled) {
+      setReceiptImage(photo);
+      // console.log(photo.uri)
     }
+  }
 
+  const dateHandler = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    // setShow(Platform.OS === 'android');
+    setShow(false);
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  async function submitHandler() {
+    let dateParse = date.toISOString();
+    // dateParse = `${dateParse[2]}-${dateParse[1]}-${dateParse[0]}`;
+
+    const payload = new FormData();
+    payload.append("type", type);
+    payload.append("category", category);
+    payload.append("title", title);
+    payload.append("fullDate", dateParse);
+    payload.append("note", note);
+
+    payload.append("amount", amount);
+    const mimeType = "image/jpeg";
+    const fileName = "receiptImage";
+    if (receiptImage) {
+      payload.append("receiptImage", {
+        uri: receiptImage.uri,
+        name: fileName,
+        type: mimeType,
+      });
+    }
+    // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
+    console.log(payload, "ini di submit handler");
+    setIsLoading(true);
+
+    await dispatch(postTransaction({ payload, UserId }));
+    dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
+    // dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
+    dispatch(fetchLoginUser(dataUser.email, dataUser.password));
+    navigation.navigate("Home");
+  }
+
+  if (isLoading)
     return (
-        <>
-            <View style={styles.test}>
-                {/* <Text>{JSON.stringify(navigation?.data)}</Text> */}
-                {/* <View>
-                    <Button onPress={showDatepicker} title="Show date picker!" />
-                </View>
-                <View>
-                    <Button onPress={showTimepicker} title="Show time picker!" />
-                </View> */}
-                {/* <Button
-                    title="Type"
-                    disabled
-                    onPress={() => Alert.alert('Cannot press this one')}
-                /> */}
-                <Text>Type</Text>
-                <RNPickerSelect
-                    // onValueChange={(value) => setType(value)}
-                    placeholder={{ label: 'Pick a type' }}
-                    onValueChange={setType}
-                    items={[
-                        { label: 'Expense', value: 'Expense' },
-                        { label: 'Income', value: 'Income' },
-                    ]}
-                />
-                <Text>Category</Text>
-                <RNPickerSelect
-                    // onValueChange={(value) => setCategory(value)}
-                    placeholder={{ label: 'Pick a type first' }}
-                    onValueChange={setCategory}
-                    items={
-                        type === 'Expense'
-                            ? (expenseItems)
-                            : (
-                                // type === 'Income'
-                                incomeItems
-                                // ? (incomeItems)
-                                // : [{ label: 'Pick a category first', value: '' }]
-                            )
-                    }
-                />
-                <Text>RecordName</Text>
-                <TextInput onChangeText={setName} />
-                <Text>Date</Text>
-                <Text>{dateFormatter(date)}</Text>
-                <Button onPress={showDatepicker} title="Pick a date" />
-                {show && (<DateTimePicker
-                    testID="dateTimePicker"
-                    value={date}
-                    mode={mode}
-                    is24Hour={true}
-                    display="default"
-                    onChange={dateHandler}
-                />
-                )}
-                <Text>Amount</Text>
-                <View style={{ flexDirection: "row" }}>
-                    <Text style={{ fontSize: 15, flex: 1, textAlign: 'center' }}>Rp </Text>
-                    <TextInput style={{ fontSize: 15, flex: 4, textAlign: 'left' }} onChangeText={setAmount} keyboardType='numeric' />
-                </View>
-                <Text>Receipt Image</Text>
-                {receiptImage
-                    ? (<>
-                    {/* <Text>{JSON.stringify(receiptImage)}</Text> */}
-                        <Image 
-                        style={styles.image}
-                        source={{
-                            uri: receiptImage.uri
-                        }} />
-                        <Button
-                            onPress={() => setReceiptImage('')}
-                            title="Clear Image"
-                            style={styles.buttonStyle}
-                        />
-                    </>)
-                    :
-                    <Button
-                        onPress={uploadImageHandler}
-                        title="Upload Image"
-                        style={styles.buttonStyle}
-                    />
-                }
-                <Button
-                    onPress={submitHandler}
-                    title="Submit Record"
-                    style={styles.buttonStyle}
-                />
+      <View style={[styles.container, styles.horizontal, styles.loading]}>
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+
+  return (
+    <>
+      <Provider>
+        <ScrollView contentContainerStyle={styles.container}>
+          <KeyboardAvoidingView
+            behavior="position"
+            keyboardVerticalOffset={keyboardVerticalOffset}
+          >
+            <View
+              style={{
+                marginRight: 30,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.typeDate}>Transaction Date*</Text>
+              <Text>{dateFormatter(date)}</Text>
             </View>
-        </>
-    )
+            <Button
+              onPress={showDatepicker}
+              color={"blue"}
+              title="Pick a date"
+            />
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={dateHandler}
+              />
+            )}
+
+            <View style={{ marginTop: 20 }}>
+              <DropDown
+                label={"Record Type*"}
+                mode={"outlined"}
+                value={type}
+                setValue={setType}
+                list={[
+                  { label: "Expense", value: "Expense" },
+                  { label: "Income", value: "Income" },
+                ]}
+                visible={typeDropDown}
+                showDropDown={() => setTypeDropDown(true)}
+                onDismiss={() => setTypeDropDown(false)}
+                inputProps={{
+                  right: <TextInput.Icon name={"menu-down"} />,
+                }}
+              />
+            </View>
+
+            {}
+            <View style={{ marginTop: 20 }}>
+              <DropDown
+                label={"Category*"}
+                mode={"outlined"}
+                value={category}
+                setValue={setCategory}
+                list={type === "Expense" ? expenseChoices : incomeChoices}
+                visible={categoryDropDown}
+                showDropDown={() => setCategoryDropDown(true)}
+                onDismiss={() => setCategoryDropDown(false)}
+                inputProps={{
+                  right: <TextInput.Icon name={"menu-down"} />,
+                }}
+              />
+            </View>
+
+            <View style={{ marginTop: 20 }}>
+              <TextInput
+                label="Record Title*"
+                mode="outlined"
+                value={title}
+                onChangeText={(text) => setTitle(text)}
+              />
+            </View>
+
+            <View style={{ marginTop: 20 }}>
+              <TextInput
+                label="Amount*"
+                value={"" + amount}
+                mode="outlined"
+                keyboardType="numeric"
+                onChangeText={(text) => setAmount(text)}
+              />
+            </View>
+
+            <View style={{ marginTop: 20 }}>
+              <TextInput
+                label="Notes"
+                mode="outlined"
+                value={note}
+                onChangeText={(text) => setNote(text)}
+              />
+            </View>
+          </KeyboardAvoidingView>
+
+          <View style={{ marginTop: 20 }}>
+            <Text style={{ marginBottom: 10, fontWeight: "bold" }}>
+              Receipt Image
+            </Text>
+            {receiptImage ? (
+              <>
+                <Image
+                  style={styles.image}
+                  source={{
+                    uri: receiptImage.uri,
+                  }}
+                />
+                <Button
+                  onPress={() => setReceiptImage("")}
+                  title="Clear Image"
+                  color={"blue"}
+                  style={styles.buttonStyle}
+                />
+              </>
+            ) : (
+              <Button
+                onPress={uploadImageHandler}
+                title="Upload Image"
+                color={"black"}
+                style={styles.buttonStyle}
+              />
+            )}
+          </View>
+
+          {type && category && title && amount ? (
+            <View style={{ marginTop: 20, marginBottom: 30 }}>
+              <Button
+                onPress={submitHandler}
+                color={"green"}
+                title="Submit Record"
+                style={styles.buttonStyle}
+              />
+            </View>
+          ) : (
+            <View style={{ marginTop: 20, marginBottom: 30 }} />
+          )}
+        </ScrollView>
+      </Provider>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
-    test: {
-        flex: 1,
-        backgroundColor: '#61dafb',
-        color: 'black'
-    },
-    buttonStyle: {
-        backgroundColor: 'green',
-        color: 'black'
-    }, 
-    image: {
-        // width: 200,
-        // height: 200,
-        flex: 1,
-        marginHorizontal: 4,
-        marginVertical: 4
-    }
-})
+  container: {
+    flexGrow: 1,
+    backgroundColor: "#fff",
+    color: "black",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  type: {
+    marginTop: 20,
+    backgroundColor: "black",
+    width: 100,
+    color: "white",
+    textAlign: "center",
+    borderRadius: 5,
+    height: 22,
+  },
+  typeDate: {
+    marginTop: 20,
+    // backgroundColor: "black",
+    fontWeight: "bold",
+    marginBottom: 10,
+    // width: '80%',
+    color: "black",
+    textAlign: "center",
+    borderRadius: 5,
+    height: 22,
+  },
+  recordName: {
+    marginTop: 18,
+    marginLeft: 15,
+    borderWidth: 1,
+    borderColor: "black",
+    width: 225,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  selectType: {
+    color: "white",
+    marginLeft: 120,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 5,
+    marginTop: -22,
+    // width: 70,
+  },
+  buttonStyle: {
+    backgroundColor: "green",
+    color: "black",
+  },
+  image: {
+    // width: 200,
+    // height: 200,
+    flex: 1,
+    marginHorizontal: 4,
+    marginVertical: 4,
+  },
+});

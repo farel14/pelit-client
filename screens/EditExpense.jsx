@@ -1,179 +1,274 @@
 import React, { useEffect } from "react";
-import { View, Text, Button, StyleSheet, TextInput } from "react-native"
-import { useSelector, useDispatch } from 'react-redux'
+import { View, Text, Button, StyleSheet, Image, ScrollView, ActivityIndicator, KeyboardAvoidingView } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-import RNPickerSelect from 'react-native-picker-select'
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { postTransaction, fetchTransaction } from "../store/actions";
 import { dateFormatter } from "../helpers/dateFormatter";
-import {postTransaction, fetchTransaction} from '../store/actions'
+import { Provider, TextInput } from "react-native-paper";
+import DropDown from "../helpers/react-native-paper-dropdown";
 
 export default function EditExpense({ navigation, route }) {
-    // !handle upload image di edit, butuh upload lagi?
-    const dispatch = useDispatch()
-    // const {TransactionId} = route.params
-    const [type, setType] = useState('')
-    const [category, setCategory] = useState('')
-    const [name, setName] = useState('')
-    const [date, setDate] = useState('')
-    const [amount, setAmount] = useState(0)
-    const [receiptImage, setReceiptImage] = useState('')
-    const [UserId, setUserId] = useState('')
+  // !handle upload image di edit, butuh upload lagi?
+  const dispatch = useDispatch();
+  // const { id } = route.params.item;
+  const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
+  const [type, setType] = useState("");
+  const [category, setCategory] = useState("");
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [amount, setAmount] = useState('');
+  let [receiptImage, setReceiptImage] = useState("");
+  const [UserId, setUserId] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const transaction = useSelector((state) => state.transaction);
+  const [typeDropDown, setTypeDropDown] = useState(false);
+  const [categoryDropDown, setCategoryDropDown] = useState(false);
 
+  const [showDropDown, setShowDropDown] = useState(false);
 
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    
-    const expenseChoices = ['Housing', 'Transportation', 'Food & Beverage', 'Utilities', 'Insurance', 'Medical & Healthcare', 'Saving, Investing, & Debt Payments', 'Personal Spending', 'Other Expense']
-    const incomeChoices = ['Salary', 'Wages', 'Commission', 'Interest', 'Investments', 'Gifts', 'Allowance', 'Other Income']
-    const expenseItems = expenseChoices.map(ele => ({ label: ele, value: ele }))
-    const incomeItems = incomeChoices.map(ele => ({ label: ele, value: ele }))
-    
-    useEffect(() => {
+  // const loadingtransaction = useSelector((state) => state.loadingTransaction);
 
-        async function fetchStart() {
-            await dispatch(fetchTransaction(2))
-            // await dispatch(fetchTransaction(TransactionId))
-            const transaction = useSelector(state => state.transaction)
-            console.log(transaction)
-            setType(transaction.type)
-            setCategory(transaction.category)
-            setName(transaction.name)
-            setDate(transaction.date)
-            setAmount(transaction.amount)
-            setUserId(transaction.UserId)
-            // setReceiptImage(transaction.type)
-            setIsLoading(false)
-        }
-        fetchStart()
-    }, [])
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
 
+  const expenseChoices = [
+    {label: 'Housing', value: 'Housing'},
+    {label: 'Transportation', value: 'Transportation'},
+    {label: 'Food & Beverage', value: 'Food & Beverage'},
+    {label: 'Utilities', value: 'Utilities'},
+    {label: 'Insurance', value: 'Insurance'},
+    {label: 'Medical & Healthcare', value: 'Medical & Healthcare'},
+    {label: 'Invest & Debt', value: 'Invest & Debt'},
+    {label: 'Personal Spending', value: 'Personal Spending'},
+    {label: 'Other Expense', value: 'Other Expense'},
+  ];
+  const incomeChoices = [
+    {label: 'Salary', value: 'Salary'},
+    {label: 'Wages', value: 'Wages'},
+    {label: 'Commission', value: 'Commission'},
+    {label: 'Interest', value: 'Interest'},
+    {label: 'Investments', value: 'Investments'},
+    {label: 'Gifts', value: 'Gifts'},
+    {label: 'Allowance', value: 'Allowance'},
+    {label: 'Other Income', value: 'Other Income'},
+  ];
 
-    const dateHandler = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'android');
-        setDate(currentDate);
-    };
+  const expenseItems = expenseChoices.map((ele) => ({
+    label: ele,
+    value: ele,
+  }));
+  const incomeItems = incomeChoices.map((ele) => ({ label: ele, value: ele }));
 
-    const showMode = (currentMode) => {
-        setShow(true);
-        setMode(currentMode);
-    };
+  useEffect(() => {
+    // await dispatch(fetchTransaction(2))
+    dispatch(fetchTransaction(route.params.item.id));
+  }, []);
 
-    const showDatepicker = () => {
-        showMode('date');
-    };
+  useEffect(() => {
+    setType(transaction.type);
+    setCategory(transaction.category);
+    setTitle(transaction.title);
+    setDate(new Date(transaction.fullDate));
+    setAmount(`${transaction.amount}`);
+    setUserId(transaction.UserId);
+    setReceiptImage(transaction.receiptImage);
+  }, [transaction]);
 
-    // imagekit here
+  const dateHandler = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === "android");
+    setDate(currentDate);
+  };
 
-    async function submitHandler(e) {
-        // data diubah jadi form
-        // const data = { type, category, name, date, amount, receiptImage }
-        // console.log(data)
-        const payload = new FormData();
-        payload.append("type", type);
-        payload.append("category", category);
-        payload.append("name", name);
-        payload.append("fullDate", date.toString());
-        payload.append("amount", amount);
-        payload.append("receiptImage", receiptImage);
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
 
-        // console.log(payload)
-        dispatch(postTransaction(payload, UserId))
-        // navigation.navigate('Home')
-    }
+  const showDatepicker = () => {
+    showMode("date");
+  };
 
-    if (isLoading) return (<View><Text>Loading screen here</Text></View>)
+  async function submitHandler(e) {
+    // data diubah jadi form
+    // const data = { type, category, title, date, amount, receiptImage }
+    // console.log(data)
 
+    const dateParse = date.toLocaleDateString("id-ID");
+
+    const payload = new FormData();
+    payload.append("type", type);
+    payload.append("category", category);
+    payload.append("title", title);
+    payload.append("fullDate", dateParse);
+    payload.append("note", note);
+
+    payload.append("amount", amount);
+    payload.append("receiptImage", receiptImage);
+
+    dispatch(postTransaction(payload, UserId));
+    navigation.navigate("Home");
+  }
+
+  if (isLoading || !amount)
     return (
-        <>
-            <View style={styles.test}>
-                <Text>Type</Text>
-                <RNPickerSelect
-                    // onValueChange={(value) => setType(value)}
-                    placeholder={{ label: 'Pick a type' }}
-                    selectedValue={type}
-                    onValueChange={setType}
-                    items={[
-                        { label: 'Expense', value: 'Expense' },
-                        { label: 'Income', value: 'Income' },
-                    ]}
-                />
-                <Text>Category</Text>
-                <RNPickerSelect
-                    // onValueChange={(value) => setCategory(value)}
-                    placeholder={{ label: 'Pick a type first' }}
-                    onValueChange={setCategory}
-                    selectedValue={category}
-                    items={
-                        type === 'Expense'
-                            ? (expenseItems)
-                            : (
-                                // type === 'Income'
-                                incomeItems
-                                // ? (incomeItems)
-                                // : [{ label: 'Pick a category first', value: '' }]
-                            )
-                    }
-                />
-                <Text>RecordName</Text>
-                <TextInput onChangeText={setName} value={name} />
-                <Text>Date</Text>
-                <Text>{dateFormatter(date)}</Text>
-                <Button onPress={showDatepicker} title="Pick a date" />
-                {show && (<DateTimePicker
-                    testID="dateTimePicker"
-                    value={date}
-                    mode={mode}
-                    is24Hour={true}
-                    display="default"
-                    onChange={dateHandler}
-                />
-                )}
-                <Text>Amount</Text>
-                <View style={{ flexDirection: "row" }}>
-                    <Text style={{ fontSize: 15, flex: 1, textAlign: 'center' }}>Rp </Text>
-                    <TextInput style={{ fontSize: 15, flex: 4, textAlign: 'left' }} onChangeText={setAmount} value={amount} keyboardType='numeric' />
-                </View>
-                <Text>Receipt Image</Text>
-                {receiptImage
-                    ? (<>
-                    {/* <Text>{JSON.stringify(receiptImage)}</Text> */}
-                        <Image 
-                        style={styles.image}
-                        source={{
-                            uri: receiptImage.uri
-                        }} />
-                        <Button
-                            onPress={() => setReceiptImage('')}
-                            title="Clear Image"
-                            style={styles.buttonStyle}
-                        />
-                    </>)
-                    :
-                    <Button
-                        onPress={uploadImageHandler}
-                        title="Upload Image"
-                        style={styles.buttonStyle}
-                    />
-                }
-                <Button
-                    onPress={submitHandler}
-                    title="Submit Record"
-                    style={styles.buttonStyle}
-                />
-            </View>
-        </>
-    )
+      <View style={styles.container}>
+      <ActivityIndicator size="large" color="#00ff00" />
+    </View>
+    );
+
+  if (!receiptImage)
+    receiptImage =
+      "https://upload.wikimedia.org/wikipedia/commons/0/0a/No-image-available.png";
+
+  return (
+    <>
+    <Provider>
+    <ScrollView contentContainerStyle={styles.containerStyle}>
+    <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={keyboardVerticalOffset}
+      >
+
+      <View style={{ marginRight: 30, marginTop:10, flexDirection: "row", justifyContent:'space-between', alignItems: 'center'}}>
+          <Text style={styles.typeDate}>Transaction Date*</Text>
+          <Text>{dateFormatter(date)}</Text>
+        </View>
+        <Button onPress={showDatepicker} title="Pick a date" />
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            display="default"
+            onChange={dateHandler}
+          />
+        )}
+
+        <View style={{marginTop: 20}}>
+          <DropDown
+            label={"Record Type*"}
+            mode={"outlined"}
+            value={type}
+            setValue={setType}
+            list={[{label: 'Expense', value: 'Expense'},{label: 'Income', value: 'Income'}]}
+            visible={typeDropDown}
+            showDropDown={() => setTypeDropDown(true)}
+            onDismiss={() => setTypeDropDown(false)}
+            inputProps={{
+              right: <TextInput.Icon name={"menu-down"} />,
+            }}
+          />
+          </View>
+
+        <View style={{marginTop: 20}}>
+        <DropDown
+          label={"Category*"}
+          mode={"outlined"}
+          value={category}
+          setValue={setCategory}
+          list={
+            type === "Expense"
+              ? expenseChoices
+              : incomeChoices
+          }
+          visible={categoryDropDown}
+          showDropDown={() => setCategoryDropDown(true)}
+          onDismiss={() => setCategoryDropDown(false)}
+          inputProps={{
+            right: <TextInput.Icon name={"menu-down"} />,
+          }}
+            />
+        </View>
+
+        <View style={{marginTop: 20}}>
+        <TextInput
+        label="Record Title*"
+        value={title}
+        mode={"outlined"}
+        onChangeText={text => setTitle(text)}
+        />
+        </View>
+        
+        <View style={{marginTop: 20}}>
+        <TextInput
+        label="Amount*"
+        value={amount}
+        mode={"outlined"}
+        keyboardType="numeric"
+        onChangeText={text => setAmount(text)}
+        />
+        </View>
+        </KeyboardAvoidingView>
+
+        <View style={{marginTop: 20, textAlign: 'center'}}>
+        <Text style={{marginBottom: 20, fontWeight: 'bold'}}>Receipt Image</Text>
+        <Image
+          style={receiptImage == 'https://upload.wikimedia.org/wikipedia/commons/0/0a/No-image-available.png' ? styles.receiptImageEmpty : styles.receiptImage}
+          source={{
+            uri: `${receiptImage}`,
+          }}
+        />
+        </View>
+        {
+          type && category && title && amount ?
+          <View style={{marginTop: 20, marginBottom: 30}}>
+          <Button
+            onPress={submitHandler}
+            title="Submit Record"
+            color="black"
+            style={styles.buttonStyle}
+          />
+          </View>  
+          :
+          <View style={{marginTop: 20, marginBottom: 30}}/>        
+        }
+
+      </ScrollView>
+      </Provider>
+      </>
+  );
 }
 
 const styles = StyleSheet.create({
-    test: {
-        flex: 1,
-        backgroundColor: 'blue',
-        color: 'black'
-    },
-    buttonStyle: {
-        backgroundColor: 'green'
-    }
-})
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: "black",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  buttonStyle: {
+    backgroundColor: "green",
+  },
+  receiptImage: {
+    width: 350,
+    height: 200,
+    resizeMode:"center"
+  },
+  receiptImageEmpty: {
+    width: 50,
+    height: 50,
+    resizeMode:"center"
+  },
+  containerStyle: {
+    flexGrow: 1,
+    marginHorizontal: 20,
+    justifyContent: "center",
+  },
+  typeDate: {
+    marginTop: 20,
+    // backgroundColor: "black",
+    fontWeight: 'bold',
+    marginBottom: 10,
+    // width: '80%',
+    color: "black",
+    textAlign: "center",
+    borderRadius: 5,
+    height: 22,
+  },
+});
