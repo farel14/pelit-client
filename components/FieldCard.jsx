@@ -21,6 +21,7 @@ import { useEffect } from "react";
 import { Icon, Overlay } from "react-native-elements";
 import { monthYearFormatter } from "../helpers/dateFormatter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getUserDetails } from "../store/actionsGaluh";
 
 export default function FieldCard({ item, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,7 +30,7 @@ export default function FieldCard({ item, navigation }) {
   const [dataAsyncUser, setDataAsyncUser] = useState("");
   const date = new Date();
   const monthYear = monthYearFormatter(date);
-  let flagS = false
+  let flagS = false;
 
   async function getItem() {
     const dataAsync = await AsyncStorage.getItem("@dataUser");
@@ -42,7 +43,7 @@ export default function FieldCard({ item, navigation }) {
   useEffect(() => {
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
     // dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-  }, [dataAsyncUser, flagS, modalVisible]);
+  }, []);
 
   useEffect(() => {
     switch (item.category) {
@@ -120,15 +121,15 @@ export default function FieldCard({ item, navigation }) {
     navigation.navigate("EditExpense", { item });
   }
 
-  function handleDeleteItem() {
+  async function handleDeleteItem() {
     setModalVisible(!modalVisible);
-    flagS = true
-    dispatch(fetchDeleteTransaction(item.id));
+    flagS = true;
+    await dispatch(fetchDeleteTransaction(item.id));
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-    dispatch(fetchLoginUser(dataAsyncUser.email, dataAsyncUser.password));
-    // dispatch(
-    //   fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
-    // );
+    dispatch(
+      fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
+    );
+    dispatch(getUserDetails(dataAsyncUser.data.id));
     // dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
     // dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
   }

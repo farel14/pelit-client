@@ -21,7 +21,11 @@ import NumberFormat from "react-number-format";
 import { Banner } from "react-native-paper";
 import { Icon } from "react-native-elements";
 import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
-import { fetchLoginUser } from "../store/actionsFaisal";
+import {
+  fetchLoginUser,
+  fetchTransactionByCategory,
+  fetchTransactionByDate,
+} from "../store/actionsFaisal";
 import { getUserDetails } from "../store/actionsGaluh";
 
 export default function Home({ navigation }) {
@@ -30,11 +34,13 @@ export default function Home({ navigation }) {
   const monthYear = monthYearFormatter(date);
   const [dataUser, setDataUser] = useState("");
   const dataTransByDate = useSelector((state) => state.transByDate);
+  const dataTransByCategory = useSelector((state) => state.dataTransByCategory);
   const dataAllTransaction = useSelector((state) => state.allTransaction);
   const [displayCard, setDisplayCard] = useState("Date");
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const loadingTransaction = useSelector((state) => state.loadingTransaction);
 
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
@@ -48,14 +54,14 @@ export default function Home({ navigation }) {
   useEffect(() => {
     if (dataUser.access_token) {
       dispatch(getUserDetails(dataUser.data.id));
+      dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
+      dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
     }
   }, [dataUser]);
 
-  if (!dataUser || !dataTransByDate) return null;
+  console.log(dataTransByDate, "ini trans by date");
 
-  // console.log(dataAllTransaction.data.balance, "ini data all transaction");
-  // console.log(dataTransByDate, "ini data trans by data");
-  // console.log(dataAllTransaction, "ini data all transactions");
+  if (!dataUser || !dataTransByDate) return null;
 
   let totalncome = 0;
   let totalExpense = 0;
@@ -209,8 +215,8 @@ export default function Home({ navigation }) {
                 </Text>
               </TouchableOpacity>
             </View>
-            {dataUser.access_token ? (
-              dataUser.data.Transactions.data.length ? (
+            {!loadingTransaction ? (
+              dataTransByDate.length ? (
                 displayCard === "Date" ? (
                   <DateCard navigation={navigation}></DateCard>
                 ) : (

@@ -52,12 +52,12 @@ export function setLoadingTransaction(input) {
 }
 
 export function fetchLoginUser(email, password) {
-  console.log(email, password, "masuk fetch ligin");
+  console.log(email, password, "masuk fetch login");
   let result = {};
   return async (dispatch) => {
     dispatch(setLoadingTransaction(true));
     try {
-      const response = await fetch("http://192.168.100.9:3000/login", {
+      const response = await fetch("https://pelit-app.herokuapp.com/login", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -70,8 +70,6 @@ export function fetchLoginUser(email, password) {
       });
       result = await response.json();
       // console.log(typeof result, 'TYPENYA RESULTTTTTTTTTTTTTTTTTTTT')
-      result.password = password;
-      result.email = email;
       // console.log(result, result)
       if (result.access_token) {
         // await AsyncStorage.removeItem("@dataUser")
@@ -95,20 +93,17 @@ export function fetchLoginUser(email, password) {
   };
 }
 
-export function fetchRegisterUser(fullName, email, password) {
+export function fetchRegisterUser(payload) {
+  console.log(payload, "ini payload di action");
   return async (dispatch) => {
     try {
-      const response = await fetch("http://192.168.100.9:3000/register", {
+      const response = await fetch("https://pelit-app.herokuapp.com/register", {
         method: "POST",
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
-        body: JSON.stringify({
-          email: email.replace(" ", ""),
-          password,
-          fullName,
-        }),
+        // body: JSON.stringify(payload),
+        body: payload,
       });
       const result = await response.json();
       return result.message;
@@ -123,14 +118,11 @@ export function fetchTransactionByDate(month, data) {
     try {
       dispatch(setLoadingTransaction(true));
       if (data) {
-        console.log(month, data.id, 'sebelum kirim')
         const response = await fetch(
-          `http://192.168.100.9:3000/transactions/date/${
-            data.id
-          }/${+month}`
+          `https://pelit-app.herokuapp.com/transactions/date/${data.id}/${month}`
         );
         const result = await response.json();
-        console.log('result di action',result)
+        console.log("result di action", result);
         dispatch(setTransactionByDate(result));
       }
     } catch (err) {
@@ -147,7 +139,7 @@ export function fetchTransactionByCategory(month, data) {
       dispatch(setLoadingTransaction(true));
       if (data) {
         const response = await fetch(
-          `http://192.168.100.9:3000/transactions/category/${
+          `https://pelit-app.herokuapp.com/transactions/category/${
             data.id
           }/${+month}`
         );
@@ -168,8 +160,10 @@ export function fetchDeleteTransaction(id) {
     try {
       dispatch(setLoadingTransaction(true));
       const response = await fetch(
-        `http://192.168.100.9:3000/transactions/${id}`,
-        { method: "delete" }
+        `https://pelit-app.herokuapp.com/transactions/${id}`,
+        {
+          method: "delete",
+        }
       );
       const result = await response.json();
       console.log(result, "ini delete");

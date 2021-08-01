@@ -11,21 +11,65 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRegisterUser } from "../store/actionsFaisal";
+import * as ImagePicker from "expo-image-picker";
 
 export default function Register({ navigation }) {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [balance, setBalance] = useState("");
+  const [capturedImage, setCapturedImage] = useState(null);
   const keyboardVerticalOffset = Platform.OS === "android" ? -25 : 0;
 
+  async function imagePickerHandler() {
+    // console.log('gottem')
+    // (async () => {
+    if (Platform.OS !== "web") {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
+        return;
+      }
+    }
+    //   })();
+
+    const photo = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      // aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!photo.cancelled) {
+      console.log("imagePicker photo", photo);
+      setCapturedImage(photo);
+    }
+  }
+
   function handleRegisterButton() {
-    if (!email && !password)
-      Alert.alert("Please input your email and password");
-    else if (!email) Alert.alert("Please input your email");
-    else if (!password) Alert.alert("Please input your password");
-    else {
-      dispatch(fetchRegisterUser(fullName, email, password)).then((message) => {
+    let message = [];
+    if (!fullName) message.push("full name");
+    if (!email) message.push("email");
+    if (!password) message.push("password");
+    if (!email || !password || !fullName) {
+      Alert.alert(`Please input your ${message.join(", ")}`);
+    } else {
+      const payload = new FormData();
+      if (capturedImage) {
+        payload.append("photoProfile", {
+          uri: capturedImage.uri,
+          name: "photoProfile",
+          type: "image/jpeg",
+        });
+      }
+      payload.append("fullName", fullName);
+      payload.append("email", email);
+      payload.append("balance", balance);
+      payload.append("password", password);
+      console.log(payload);
+      dispatch(fetchRegisterUser(payload)).then((message) => {
         if (message === "Registered Successfully") {
           Alert.alert("Registered has been successfully");
           navigation.navigate("Login");
@@ -46,25 +90,99 @@ export default function Register({ navigation }) {
         <Image
           style={styles.logo}
           source={{
-            uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
+            uri: "https://ik.imagekit.io/77pzczg37zw/Pelit__7__Vcs5VVGWI.png?updatedAt=1627559688674",
           }}
         />
-        <Text style={styles.text}>Full Name</Text>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={(e) => setFullName(e)}
-        ></TextInput>
-        <Text style={styles.text}>Email</Text>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={(e) => setEmail(e)}
-        ></TextInput>
-        <Text style={styles.text}>Password</Text>
-        <TextInput
-          style={styles.textInput}
-          secureTextEntry={true}
-          onChangeText={(e) => setPassword(e)}
-        ></TextInput>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.text}>Full Name*</Text>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={(e) => setFullName(e)}
+          ></TextInput>
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.text}>Email*</Text>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={(e) => setEmail(e)}
+          ></TextInput>
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.text}>Balance</Text>
+          <TextInput
+            style={styles.textInput}
+            keyboardType="numeric"
+            onChangeText={(e) => setBalance(e)}
+          ></TextInput>
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.text}>Photo</Text>
+          {!capturedImage ? (
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                onPress={imagePickerHandler}
+                style={{
+                  width: 200,
+                  marginBottom: 10,
+                  borderRadius: 10,
+                  backgroundColor: "#fff",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 30,
+                  marginTop: 15,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "black",
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  Select Photo Profile
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                onPress={imagePickerHandler}
+                style={{
+                  width: 200,
+                  borderRadius: 10,
+                  backgroundColor: "green",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 30,
+                  marginTop: 15,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  Change Photo
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.text}>Password*</Text>
+          <TextInput
+            style={styles.textInput}
+            secureTextEntry={true}
+            onChangeText={(e) => setPassword(e)}
+          ></TextInput>
+        </View>
+
         <TouchableOpacity
           style={styles.buttonRegister}
           onPress={handleRegisterButton}
@@ -79,26 +197,29 @@ export default function Register({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#04009A",
+    backgroundColor: "midnightblue",
     alignItems: "center",
     paddingTop: 50,
   },
   logo: {
-    width: 130,
-    height: 130,
+    width: 150,
+    height: 150,
     marginLeft: 90,
+    marginBottom: 20,
   },
   text: {
-    fontSize: 22,
+    fontSize: 18,
     color: "white",
     fontWeight: "bold",
     marginTop: 15,
-    marginBottom: 20,
+    marginBottom: 10,
+    width: 100,
   },
   textInput: {
-    fontSize: 17,
-    width: 300,
-    height: 40,
+    fontSize: 15,
+    width: 200,
+    height: 30,
+    marginTop: 15,
     backgroundColor: "#E8F0F2",
     color: "black",
     borderColor: "#053742",
@@ -108,8 +229,8 @@ const styles = StyleSheet.create({
   },
   buttonRegister: {
     width: 300,
-    height: 40,
-    paddingVertical: 5,
+    height: 32,
+    paddingVertical: 2,
     alignItems: "center",
     borderRadius: 10,
     marginVertical: 40,
@@ -117,6 +238,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontSize: 20,
+    fontSize: 18,
   },
 });

@@ -24,6 +24,7 @@ import { Icon, Overlay } from "react-native-elements";
 export default function FieldCardCategory({ item, data, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [icon, setIcon] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     switch (data.category) {

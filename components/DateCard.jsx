@@ -27,25 +27,19 @@ export default function DateCard({ navigation }) {
 
   useEffect(() => {
     async function getItem() {
-      // await AsyncStorage.setItem("@dataUser", '12');
       const dataAsync = JSON.parse(await AsyncStorage.getItem("@dataUser"));
       setDataAsyncUser(dataAsync);
-      // console.log(monthYear.numMonth, dataAsyncUser.data?.id, 'month date')
-      dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsync.data));
-      console.log(dataTransByDate, 'dataTransByDate')
-
     }
     getItem();
-  }, [dataAsyncUser]);
+  }, []);
 
-  // useEffect(() => {
-  //   console.log(monthYear.numMonth, dataAsyncUser, 'bulan, async data')
-  //   dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-  // }, [dataAsyncUser]);
+  useEffect(() => {
+    if (dataAsyncUser.access_token) {
+      dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
+    }
+  }, []);
 
-  if (!dataAsyncUser) return null;
-
-  // console.log(dataTransByDate)
+  if (!dataAsyncUser || !dataTransByDate.length) return null;
 
   // dataTransByDate = dataTransByDate.sort((a, b) => a.date - b.date);
 
