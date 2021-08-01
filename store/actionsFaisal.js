@@ -52,7 +52,7 @@ export function setLoadingTransaction(input) {
 }
 
 export function fetchLoginUser(email, password) {
-  console.log(email, password, "masuk fetch ligin");
+  console.log(email, password, "masuk fetch login");
   let result = {};
   return async (dispatch) => {
     dispatch(setLoadingTransaction(true));
@@ -69,9 +69,10 @@ export function fetchLoginUser(email, password) {
         }),
       });
       result = await response.json();
-      result.password = password;
-      result.email = email;
+      // console.log(typeof result, 'TYPENYA RESULTTTTTTTTTTTTTTTTTTTT')
+      // console.log(result, result)
       if (result.access_token) {
+        // await AsyncStorage.removeItem("@dataUser")
         await AsyncStorage.setItem("@dataUser", JSON.stringify(result));
         dispatch(setIsLogin(true));
         dispatch(setAllTransactionUser(result));
@@ -92,20 +93,17 @@ export function fetchLoginUser(email, password) {
   };
 }
 
-export function fetchRegisterUser(fullName, email, password) {
+export function fetchRegisterUser(payload) {
+  console.log(payload, "ini payload di action");
   return async (dispatch) => {
     try {
       const response = await fetch("https://pelit-app.herokuapp.com/register", {
         method: "POST",
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
-        body: JSON.stringify({
-          email: email.replace(" ", ""),
-          password,
-          fullName,
-        }),
+        // body: JSON.stringify(payload),
+        body: payload,
       });
       const result = await response.json();
       return result.message;
@@ -121,11 +119,10 @@ export function fetchTransactionByDate(month, data) {
       dispatch(setLoadingTransaction(true));
       if (data) {
         const response = await fetch(
-          `https://pelit-app.herokuapp.com/transactions/date/${
-            data.id
-          }/${+month}`
+          `https://pelit-app.herokuapp.com/transactions/date/${data.id}/${month}`
         );
         const result = await response.json();
+        console.log("result di action", result);
         dispatch(setTransactionByDate(result));
       }
     } catch (err) {
@@ -150,7 +147,7 @@ export function fetchTransactionByCategory(month, data) {
         dispatch(setTransactionByCategoty(result));
       }
     } catch (err) {
-      console.log("error di fetch transaction by date", err);
+      console.log("error di fetch transaction by category", err);
     } finally {
       dispatch(setLoadingTransaction(false));
     }
@@ -164,7 +161,9 @@ export function fetchDeleteTransaction(id) {
       dispatch(setLoadingTransaction(true));
       const response = await fetch(
         `https://pelit-app.herokuapp.com/transactions/${id}`,
-        { method: "delete" }
+        {
+          method: "delete",
+        }
       );
       const result = await response.json();
       console.log(result, "ini delete");

@@ -21,7 +21,12 @@ import NumberFormat from "react-number-format";
 import { Banner } from "react-native-paper";
 import { Icon } from "react-native-elements";
 import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
-import { fetchLoginUser } from "../store/actionsFaisal";
+import {
+  fetchLoginUser,
+  fetchTransactionByCategory,
+  fetchTransactionByDate,
+} from "../store/actionsFaisal";
+import { getUserDetails } from "../store/actionsGaluh";
 
 export default function Home({ navigation }) {
   const [visible, setVisible] = React.useState(true);
@@ -29,10 +34,13 @@ export default function Home({ navigation }) {
   const monthYear = monthYearFormatter(date);
   const [dataUser, setDataUser] = useState("");
   const dataTransByDate = useSelector((state) => state.transByDate);
+  const dataTransByCategory = useSelector((state) => state.dataTransByCategory);
   const dataAllTransaction = useSelector((state) => state.allTransaction);
   const [displayCard, setDisplayCard] = useState("Date");
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  const loadingTransaction = useSelector((state) => state.loadingTransaction);
 
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
@@ -43,17 +51,17 @@ export default function Home({ navigation }) {
     getItem();
   }, []);
 
-  // useEffect(() => {
-  //   if (dataUser.access_token) {
-  //     dispatch(fetchLoginUser(dataUser.email, dataUser.password));
-  //   }
-  // }, [dataTransByDate.length, dataUser]);
+  useEffect(() => {
+    if (dataUser.access_token) {
+      dispatch(getUserDetails(dataUser.data.id));
+      dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
+      dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
+    }
+  }, [dataUser]);
+
+  console.log(dataTransByDate, "ini trans by date");
 
   if (!dataUser || !dataTransByDate) return null;
-
-  // console.log(dataAllTransaction.data.balance, "ini data all transaction");
-  // console.log(dataTransByDate, "ini data trans by data");
-  // console.log(dataAllTransaction, "ini data all transactions");
 
   let totalncome = 0;
   let totalExpense = 0;
@@ -118,7 +126,7 @@ export default function Home({ navigation }) {
             <Card>
               <Card.Cover
                 source={{
-                  uri: "https://st2.depositphotos.com/11133378/45776/v/950/depositphotos_457760054-stock-illustration-accumulating-saving-money-concept-horizontal.jpg",
+                  uri: "https://images-ext-2.discordapp.net/external/c8yxM9EXjbTRH9ssh8gEAFnX4EmSspXofQr95EQg7GI/%3FupdatedAt%3D1627546581557/https/ik.imagekit.io/77pzczg37zw/Pelit_Home_Banner-JPG_NoEZdIR5e.jpg?width=400&height=201",
                 }}
                 style={{ height: 150 }}
               />
@@ -161,7 +169,7 @@ export default function Home({ navigation }) {
                   )}
                 />
                 <NumberFormat
-                  value={dataAllTransaction.data?.balance || 0}
+                  value={user.balance || 0}
                   displayType={"text"}
                   thousandSeparator={true}
                   decimalScale={0}
@@ -207,8 +215,8 @@ export default function Home({ navigation }) {
                 </Text>
               </TouchableOpacity>
             </View>
-            {dataUser.access_token ? (
-              dataUser.data.Transactions.data.length ? (
+            {!loadingTransaction ? (
+              dataTransByDate.length ? (
                 displayCard === "Date" ? (
                   <DateCard navigation={navigation}></DateCard>
                 ) : (

@@ -33,6 +33,18 @@ export default function CategoryCard({ navigation }) {
     setDataAsyncUser(JSON.parse(dataAsync));
   }
 
+  useEffect(() => {
+    getItem();
+  }, []);
+
+  useEffect(() => {
+    if (dataAsyncUser.access_token) {
+      dispatch(
+        fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
+      );
+    }
+  }, []);
+
   function handleEditItem() {
     setModalVisible(!modalVisible);
     navigation.navigate("EditExpense", { TransactionId: item.id });
@@ -42,16 +54,6 @@ export default function CategoryCard({ navigation }) {
     setModalVisible(!modalVisible);
     dispatch(fetchDeleteTransaction(item.id));
   }
-
-  useEffect(() => {
-    getItem();
-  }, []);
-
-  useEffect(() => {
-    dispatch(
-      fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
-    );
-  }, [dataAsyncUser]);
 
   if (!dataAsyncUser || !dataTransByCategory.length) return null;
 
@@ -68,7 +70,7 @@ export default function CategoryCard({ navigation }) {
                 width: 300,
               }}
             >
-              <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+              <TouchableOpacity onPress={() => handleEditItem(!modalVisible)}>
                 <Text style={styles.textDateCard}>{data.category}</Text>
               </TouchableOpacity>
               <NumberFormat

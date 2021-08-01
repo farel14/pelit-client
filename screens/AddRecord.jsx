@@ -97,7 +97,7 @@ export default function AddRecord({ navigation, route }) {
     });
 
     if (!photo.cancelled) {
-      console.log('imagePicker photo', photo)
+      console.log("imagePicker photo", photo);
       setCapturedImage(photo);
       setIsLoading(true);
 
@@ -133,7 +133,7 @@ export default function AddRecord({ navigation, route }) {
       console.log(payload, "ini photo post to server");
       // payload.append("dummyText", "dummy");
       const data = await dispatch(postOcr(payload));
-      console.log('INI DATAAAAAAAA DARI OCR',data);
+      console.log("INI DATAAAAAAAA DARI OCR", data);
 
       return await dispatch(postOcr(payload));
     } catch (error) {
@@ -151,7 +151,7 @@ export default function AddRecord({ navigation, route }) {
   async function takePictureHandler() {
     if (!camera) return;
     const photo = await camera.takePictureAsync({ quality: 0.1 });
-    console.log(photo, 'foto mentah');
+    console.log(photo, "foto mentah");
     setPreviewVisible(true);
     setCapturedImage(photo);
   }
@@ -159,7 +159,7 @@ export default function AddRecord({ navigation, route }) {
   if (isLoading)
     return (
       <View style={[styles.container, styles.horizontal, styles.loading]}>
-        <ActivityIndicator size="large" color="#00ff00"/>
+        <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
 
@@ -232,7 +232,7 @@ export default function AddRecord({ navigation, route }) {
           <TouchableOpacity
             onPress={startCameraHandler}
             style={{
-              width:230,
+              width: 230,
               marginBottom: 10,
               borderRadius: 4,
               backgroundColor: "#14274e",
@@ -258,7 +258,7 @@ export default function AddRecord({ navigation, route }) {
           <TouchableOpacity
             onPress={imagePickerHandler}
             style={{
-              width:230,
+              width: 230,
               marginBottom: 10,
               borderRadius: 4,
               backgroundColor: "#14274e",
@@ -283,7 +283,7 @@ export default function AddRecord({ navigation, route }) {
           <TouchableOpacity
             onPress={toAddExpense}
             style={{
-              width:230,
+              width: 230,
               padding: 10,
               height: 200,
               backgroundColor: "#14274e",
@@ -327,5 +327,5 @@ const styles = StyleSheet.create({
   },
   loading: {
     flex: 1,
-  }
+  },
 });

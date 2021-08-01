@@ -32,7 +32,7 @@ export function postTransaction({ payload, UserId }) {
           body: payload,
         }
       );
-      // res = await res.json();
+      // console.log(await res.text())
       res = await res.json();
       console.log("Success:", res);
     } catch (error) {
@@ -40,21 +40,49 @@ export function postTransaction({ payload, UserId }) {
     }
   };
 }
+
+export function putTransaction({ payload }) {
+  return async (dispatch) => {
+    try {
+      console.log(payload, "masuk actions");
+      let res = await fetch(
+        `https://pelit-app.herokuapp.com/transactions/${payload.TransactionId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // body: JSON.stringify(payload),
+          body: JSON.stringify(payload),
+        }
+      );
+      await res.json();
+      // res = await res.json();
+      console.log("Success:", res);
+      // return res;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+}
+
 export function postOcr(payload) {
   return async (dispatch) => {
     try {
       console.log(payload, "SEBELUM POST OCR");
-      let res = await fetch("https://pelit-app.herokuapp.com/ocr", {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        // body: JSON.stringify(payload),
-        body: payload,
-      });
+      let res = await (
+        await fetch("https://pelit-app.herokuapp.com/ocr", {
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          // body: JSON.stringify(payload),
+          body: payload,
+        })
+      ).json();
 
-      res = await res.text();
-      res = await res.json();
+      // res = await res.text();
+      // res = await res.json();
       console.log("Success:", res);
       return res;
     } catch (error) {

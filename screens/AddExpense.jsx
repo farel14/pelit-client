@@ -21,12 +21,12 @@ import { postTransaction } from "../store/actions";
 import { useForm, Controller } from "react-hook-form";
 import { Provider, TextInput } from "react-native-paper";
 import DropDown from "../helpers/react-native-paper-dropdown";
-import { monthYearFormatter } from "../helpers/dateFormatter";
 import {
   fetchTransactionByDate,
   fetchTransactionByCategory,
   fetchLoginUser,
 } from "../store/actionsFaisal";
+import { getUserDetails } from "../store/actionsGaluh";
 
 export default function AddExpense({ navigation, route }) {
   const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
@@ -90,6 +90,7 @@ export default function AddExpense({ navigation, route }) {
       const dataAsyncUser = await AsyncStorage.getItem("@dataUser");
       setUserId(JSON.parse(dataAsyncUser).data.id);
       setDataUser(JSON.parse(dataAsyncUser));
+      // console.log(UserId)
     })();
     // setUserId(29)
 
@@ -151,8 +152,8 @@ export default function AddExpense({ navigation, route }) {
   };
 
   async function submitHandler() {
-    let dateParse = date.toLocaleDateString("id-ID").split("/");
-    dateParse = `${dateParse[2]}-${dateParse[1]}-${dateParse[0]}`;
+    let dateParse = date.toISOString();
+    // dateParse = `${dateParse[2]}-${dateParse[1]}-${dateParse[0]}`;
 
     const payload = new FormData();
     payload.append("type", type);
@@ -172,13 +173,13 @@ export default function AddExpense({ navigation, route }) {
       });
     }
     // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
-    console.log(payload, "ini di submit handler");
+    // console.log(payload, "ini di submit handler");
     setIsLoading(true);
 
     await dispatch(postTransaction({ payload, UserId }));
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
     dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
-    dispatch(fetchLoginUser(dataUser.email, dataUser.password));
+    dispatch(getUserDetails(dataUser.data.id));
     navigation.navigate("Home");
   }
 
