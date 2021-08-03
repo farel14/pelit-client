@@ -29,6 +29,7 @@ export default function Home({ navigation }) {
   const [dataUser, setDataUser] = useState("");
   const dataTransByDate = useSelector((state) => state.transByDate);
   const [displayCard, setDisplayCard] = useState("Date");
+  const [ok, setOK] = useState("false")
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 
   async function getItem() {
@@ -36,10 +37,15 @@ export default function Home({ navigation }) {
     setDataUser(JSON.parse(dataUser));
   }
 
+  // if (dataUser !== {}) {
+  //   setOK(true)
+  // }
+
   useEffect(() => {
     getItem();
   }, []);
 
+  // console.log(dataTransByDate, dataUser, 'DATA HOME')
   if (!dataUser || !dataTransByDate) return null;
 
   return (
@@ -93,7 +99,7 @@ export default function Home({ navigation }) {
             <Card>
               <Card.Cover
                 source={{
-                  uri: "https://st2.depositphotos.com/11133378/45776/v/950/depositphotos_457760054-stock-illustration-accumulating-saving-money-concept-horizontal.jpg",
+                  uri: "https://ik.imagekit.io/77pzczg37zw/Pelit_Home_Banner-JPG_NoEZdIR5e.jpg?updatedAt=1627546581557",
                 }}
                 style={{ height: 150 }}
               />
@@ -118,7 +124,7 @@ export default function Home({ navigation }) {
                 }}
               >
                 <NumberFormat
-                  value={dataUser.data.Transactions.totalIncome}
+                  value={'11250000'}
                   displayType={"text"}
                   thousandSeparator={true}
                   decimalScale={0}
@@ -127,7 +133,7 @@ export default function Home({ navigation }) {
                   )}
                 />
                 <NumberFormat
-                  value={dataUser.data.Transactions.totalExpense}
+                  value={'-9326000'}
                   displayType={"text"}
                   thousandSeparator={true}
                   decimalScale={0}

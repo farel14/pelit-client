@@ -54,6 +54,7 @@ export function setLoadingTransaction(input) {
 }
 
 export function fetchLoginUser(email, password) {  
+  console.log(email, password, 'email', 'password')
   let result = {}
   return async (dispatch) => {
     dispatch(setLoadingTransaction(true))
@@ -72,7 +73,9 @@ export function fetchLoginUser(email, password) {
       result = await response.json();
 
       if (result.access_token) {
+        console.log(result, 'MASUK')
         await AsyncStorage.setItem("@dataUser", JSON.stringify(result));
+        console.log('SUDAH MASUK')
         dispatch(setIsLogin(true));
         dispatch(setAllTransactionUser(result.data));
         dispatch(setLoadingTransaction(false))

@@ -46,7 +46,7 @@ export default function Register({ navigation }) {
         <Image
           style={styles.logo}
           source={{
-            uri: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Android_O_Preview_Logo.png",
+            uri: "https://ik.imagekit.io/77pzczg37zw/Pelit__7__Vcs5VVGWI.png?updatedAt=1627559688674",
           }}
         />
         <Text style={styles.text}>Full Name</Text>
@@ -79,13 +79,13 @@ export default function Register({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#04009A",
+    backgroundColor: "midnightblue",
     alignItems: "center",
     paddingTop: 50,
   },
   logo: {
-    width: 130,
-    height: 130,
+    width: 150,
+    height: 160,
     marginLeft: 90,
   },
   text: {

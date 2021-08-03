@@ -41,7 +41,7 @@ export default function DateCard({ navigation }) {
 
   // dataTransByDate = dataTransByDate.sort((a, b) => a.date - b.date);
 
-  console.log(dataTransByDate, 'data')
+  console.log(dataTransByDate, 'DATA')
   return (
     <>
     {

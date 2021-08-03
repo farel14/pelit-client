@@ -38,6 +38,8 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
 
     let spending = 0
 
+    console.log(monthToday)
+
     for (let i = 0; i < allSpending.data.length; i++) {
         if (allSpending.data[i].month == monthToday) {
             if (allSpending.data[i].type == 'Expense') {
@@ -95,9 +97,11 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
         e.preventDefault()
         if (targetAmount == '') {
             alert('Please add your target savings amount')
-        } else if (new Date(dateEnd) < new Date()) {
-            alert('Can not set target in the past')
-        } else {
+        } 
+        // else if (new Date(dateEnd) <= new Date()) {
+        //     alert('Can not set target in the past')
+        // } 
+        else {
             setModalVisible(!modalVisible)
             let newTarget = {}
             newTarget.startDate = dateStart
